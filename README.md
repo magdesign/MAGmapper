@@ -39,4 +39,9 @@ Next steps:
 - Image slide show with directory listener, blending, timer
 - Webcam, RPi cam input
 
+###Milestone6:
+- Add generators: https://threejs.org/examples/?q=partic#canvas_particles_sprites
+- Audio reactive FX
+
+
 
