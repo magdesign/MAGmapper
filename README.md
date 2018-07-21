@@ -2,6 +2,12 @@
 A Videomapper based on three.js<br />
 Should run on any plattform using Chrome or Firefox.<br />
 
+<br /><br />
+Reached so far:<br />
+
+- Basic understandment of Three.js
+- Draggable 3d object in browser.
+
 <br />
 Next steps:
 
@@ -28,20 +34,21 @@ Next steps:
 - Keyboard shortcut to create new quad and delete selected quad.
 - Add more shapes like triangles, circles.
 - Check if it is possible to grid up existing textures (like Warp function in  Mapio).
-- Audio support (HDMI, Jack, Alsa)
+- Audio support (HDMI, Jack, Alsa).
 
 ###Milestone4:
 - Remote control from another webbrowser (serving with lighttp, websockets, python server), the most lightweight version as possible.
 
 ###Milestone5:
 - Play/Pause
-- Adjust brightness contrast of input texture
-- Image slide show with directory listener, blending, timer
-- Webcam, RPi cam input
+- Adjust brightness contrast of input texture.
+- Image slide show with directory listener, blending, timer.
+- Webcam, RPi cam input.
 
 ###Milestone6:
 - Add generators: https://threejs.org/examples/?q=partic#canvas_particles_sprites
-- Audio reactive FX
+- Audio reactive FX.
+- Sync various players with each other, or source from tcp-server.
 
 
 
