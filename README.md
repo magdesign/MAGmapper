@@ -11,7 +11,7 @@ Next steps:
 - Load custom Textures (images, image folders, videos) https://threejs.org/docs/#api/textures/VideoTexture
 - Test spline planes, is it possible to use bezier handles on them?: https://threejs.org/examples/#webgl_geometry_nurbs
 <br />
-
+<br />
 
 ###Milestone1:
 - Functional prototype of a quad surface with a video texture which can be distorted with dragging the corners. Corners get higlighted when mouse is near them (if possible).
