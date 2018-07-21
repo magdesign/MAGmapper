@@ -4,7 +4,9 @@ Should run on any plattform using Chrome or Firefox.<br />
 
 <br />
 Next steps:
+
 <br />
+
 - Change BoxGeometry to BufferGeometryquad style surface like here: https://threejs.org/examples/#webgl_buffergeometry_indexed
 - Make corners dragable, so when mouse + click on a corner, you can move its position
 - Add circular markers to corners to see them better, something like the red dot here: https://threejs.org/examples/#webgl_interactive_lines
