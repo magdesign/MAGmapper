@@ -1,6 +1,7 @@
 ## MAGmapper
-A Videomapper based on three.js
-Should run on any plattform using Chrome or Firefox.
+A Videomapper based on three.js<br />
+Should run on any plattform using Chrome or Firefox.<br />
+
 <br />
 Next steps:
 <br />
