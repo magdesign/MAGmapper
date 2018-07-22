@@ -1,6 +1,8 @@
 ## MAGmapper
 A Videomapper based on three.js<br />
 Should run on any plattform using Chrome or Firefox.<br />
+Testimage: https://pocketvj.com/video/PVJ_Testscreen.png <br />
+testvideo: https://pocketvj.com/video/PVJ_Testvideo2018.mp4 <br />
 
 <br /><br />
 Reached so far:<br />
@@ -13,7 +15,7 @@ Next steps:
 
 <br />
 
-- Change BoxGeometry to BufferGeometryquad style surface like here: https://threejs.org/examples/#webgl_buffergeometry_indexed
+- Change BoxGeometry to BufferGeometryquad style surface like in the example here: https://threejs.org/examples/#webgl_buffergeometry_indexed
 - Make corners dragable, so when mouse + click on a corner, you can move its position
 - Add circular markers to corners to see them better, something like the red dot here: https://threejs.org/examples/#webgl_interactive_lines
 - Load custom Textures (images, image folders, videos) https://threejs.org/docs/#api/textures/VideoTexture
