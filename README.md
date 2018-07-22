@@ -3,7 +3,7 @@ A Videomapper based on three.js<br />
 Should run on any plattform using Chrome or Firefox.<br />
 
 Maybe we should use this: https://github.com/glowbox/maptasticjs <br />
-
+These guys do map with three.js : http://www.floz.fr/Tsuki8Projection-mapping-in-Japan <br />
 
 Testimage: https://pocketvj.com/video/PVJ_Testscreen.png <br />
 Testvideo: https://pocketvj.com/video/PVJ_Testvideo2018.mp4 <br />
