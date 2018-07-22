@@ -1,20 +1,17 @@
-## MAGmapper
+# MAGmapper
 A Videomapper based on three.js<br />
 Should run on any plattform using Chrome or Firefox.<br />
 Testimage: https://pocketvj.com/video/PVJ_Testscreen.png <br />
-testvideo: https://pocketvj.com/video/PVJ_Testvideo2018.mp4 <br />
-
+Testvideo: https://pocketvj.com/video/PVJ_Testvideo2018.mp4 <br />
 <br /><br />
-Reached so far:<br />
+Its in the very eearly developement stage, reached so far: <br />
 
-- Basic understandment of Three.js
+- Basic understandment of Three.js structure.
 - Draggable 3d object in browser.
 
 <br />
-Next steps:
-
+## Next steps:
 <br />
-
 - Change BoxGeometry to BufferGeometryquad style surface like in the example here: https://threejs.org/examples/#webgl_buffergeometry_indexed
 - Make corners dragable, so when mouse + click on a corner, you can move its position
 - Add circular markers to corners to see them better, something like the red dot here: https://threejs.org/examples/#webgl_interactive_lines
@@ -23,31 +20,31 @@ Next steps:
 <br />
 <br />
 
-###Milestone1:
+### Milestone1:
 - Functional prototype of a quad surface with a video texture which can be distorted with dragging the corners. Corners get higlighted when mouse is near them (if possible).
 <br />
 
-###Milestone2:
+### Milestone2:
 - Add keyboard shortcuts (or overlay menu) to step thru video/image sources (changing sources).
 - Shortcut to save the actual comp and to create a new comp.
 - Define input texture size (similar to texture mode in ofxpimapper).
 
-###Milestone3:
+### Milestone3:
 - Keyboard shortcut to create new quad and delete selected quad.
 - Add more shapes like triangles, circles.
 - Check if it is possible to grid up existing textures (like Warp function in  Mapio).
 - Audio support (HDMI, Jack, Alsa).
 
-###Milestone4:
+### Milestone4:
 - Remote control from another webbrowser (serving with lighttp, websockets, python server), the most lightweight version as possible.
 
-###Milestone5:
+### Milestone5:
 - Play/Pause
 - Adjust brightness contrast of input texture.
 - Image slide show with directory listener, blending, timer.
 - Webcam, RPi cam input.
 
-###Milestone6:
+### Milestone6:
 - Add generators: https://threejs.org/examples/?q=partic#canvas_particles_sprites
 - Audio reactive FX.
 - Sync various players with each other, or source from tcp-server.
