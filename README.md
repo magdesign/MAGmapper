@@ -10,7 +10,9 @@ Its in the very eearly developement stage, reached so far: <br />
 - Draggable 3d object in browser.
 
 <br />
-## Next steps:
+
+
+### Next Steps:
 <br />
 - Change BoxGeometry to BufferGeometryquad style surface like in the example here: https://threejs.org/examples/#webgl_buffergeometry_indexed
 - Make corners dragable, so when mouse + click on a corner, you can move its position
