@@ -4,7 +4,7 @@ Should run on any plattform using Chrome or Firefox.<br />
 Testimage: https://pocketvj.com/video/PVJ_Testscreen.png <br />
 Testvideo: https://pocketvj.com/video/PVJ_Testvideo2018.mp4 <br />
 <br /><br />
-Its in the very eearly developement stage, reached so far: <br />
+Its in the very early developement stage, reached so far: <br />
 
 - Basic understandment of Three.js structure.
 - Draggable 3d object in browser.
@@ -18,6 +18,7 @@ Its in the very eearly developement stage, reached so far: <br />
 - Make corners dragable, so when mouse + click on a corner, you can move its position
 - Add circular markers to corners to see them better, something like the red dot here: https://threejs.org/examples/#webgl_interactive_lines
 - Load custom Textures (images, image folders, videos) https://threejs.org/docs/#api/textures/VideoTexture
+https://stackoverflow.com/questions/37884013/adding-video-as-texture-in-three-js
 - Test spline planes, is it possible to use bezier handles on them?: https://threejs.org/examples/#webgl_geometry_nurbs
 <br />
 <br />
