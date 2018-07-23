@@ -7,7 +7,7 @@ Looks great and has the basic functions.<br />
 Now we have to figure out if it is possible to load a video with omxplayer within a website and this tool,<br />
 so we could gain fully HW support on RPi and could use the sync script to sync multiple players.<br />
 These guys are talking about omxplayer supprt: https://www.raspberrypi.org/forums/viewtopic.php?t=40860
-but have no idea if this supports three.js and distorsion.
+but have no idea if this supports three.js and distorsion. Try implementation with this: <iframe src="file:///homepage.html?cmd=omxplayer%20--win%200,0,1920,1080%20/home/pi/video.mp4" width="2px" height="2px" frameborder="0"></iframe>
 <br />
 
 
