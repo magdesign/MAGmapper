@@ -3,6 +3,15 @@ A Videomapper based on three.js<br />
 Should run on any plattform using Chrome or Firefox.<br />
 
 Maybe we should use this: https://github.com/glowbox/maptasticjs <br />
+Looks great and has the basic functions.<br />
+Now we have to figure out if it is possible to load a video with omxplayer within a website and this tool,<br />
+so we could gain fully HW support on RPi and could use the sync script to sync multiple players.<br />
+These guys are talking about omxplayer supprt: https://www.raspberrypi.org/forums/viewtopic.php?t=40860
+but have no idea if this supports three.js and distorsion.
+<br />
+
+
+
 These guys do map with three.js : http://www.floz.fr/Tsuki8Projection-mapping-in-Japan <br />
 
 Testimage: https://pocketvj.com/video/PVJ_Testscreen.png <br />
