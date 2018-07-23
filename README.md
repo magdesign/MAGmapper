@@ -9,7 +9,7 @@ so we could gain fully HW support on RPi and could use the sync script to sync m
 These guys are talking about omxplayer supprt: https://www.raspberrypi.org/forums/viewtopic.php?t=40860
 but have no idea if this supports three.js and distorsion. Try implementation with this: <iframe src="file:///homepage.html?cmd=omxplayer%20--win%200,0,1920,1080%20/home/pi/video.mp4" width="2px" height="2px" frameborder="0"></iframe>
 <br />
-
+If there is no way to gain Video HW support thru iframe and omxplayer, we have to switch to this https://forums.resin.io/t/fullscreen-webkit-browser-with-hw-accelerated-css-webgl-and-html5-video-on-the-raspberrypi-3/741 operation system for full WebGL HW support.
 
 
 These guys do map with three.js : http://www.floz.fr/Tsuki8Projection-mapping-in-Japan <br />
