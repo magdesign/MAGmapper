@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --open --hot",
+    "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --hot",
     "build": "webpack --mode production --progress"
   },
   "author": "Brad Traversy",
