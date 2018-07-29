@@ -1,18 +1,25 @@
-import * as THREE from "three"
+import {
+    Scene,
+    PerspectiveCamera,
+    WebGLRenderer,
+    BoxGeometry,
+    PlaneGeometry,
+    MeshBasicMaterial,
+    Mesh
+} from "three"
 
+import DragControls  from "three-dragcontrols"
 // ################################
 // setup
 // ################################
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+let scene = new Scene();
+let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
-var renderer = new THREE.WebGLRenderer();
+let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
-
-
 
 
 // ################################
@@ -20,67 +27,33 @@ document.body.appendChild(renderer.domElement);
 // ################################
 
 
-var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+let objects = [];
 
+let cube = createCube(Math.random(), Math.random(), 1, 0xffffff);
+scene.add(cube);
+objects.push(cube);
 
-var cube = new THREE.Mesh( geometry, material );
-// var controls = prepareControls(cube);
+let cube1 = createCube(Math.random(), Math.random(), 1, 0xffffff);
+scene.add(cube1);
 
-
-var objects = [];
-for (var i = 0; i < 1; i++) {
-    var num = Math.random();
-    console.log(num);
-
-    var cube = createCube(num, 0xffffff);
-    scene.add(cube);
-    objects.push(cube);
-}
-
-
-
-//scene.add(cube);
 
 
 // DragControls benötigt zwangsweise ein array von meshes
-// var dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
-//
-// dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
-// dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
-//
-//
+let dragControls = new DragControls(objects, camera, renderer.domElement);
 
+dragControls.addEventListener( 'mousemove', () =>{ renderer.render(scene, camera); } );
 
 function animate() {
-    requestAnimationFrame( animate );
-    renderer.render( scene, camera );
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
 }
 
-function createCube(pos, color){
-    var geo = new THREE.PlaneGeometry( 1, 1, 1 );
-    var mat = new THREE.MeshBasicMaterial( { color: color } );
-    var cube = new THREE.Mesh( geo, mat );
-    cube.position.set(pos, 0, 0);
+function createCube(x, y, size, color) {
+    let geo = new PlaneGeometry(size, size, 1);
+    let mat = new MeshBasicMaterial({color: color});
+    let cube = new Mesh(geo, mat);
+    cube.position.set(x, y, 0);
     return cube;
-}
-
-/**
- hier wird der controller für das drag and drop definiert.
- Dieser wird für die EventListener benötigt
- */
-function prepareControls(obj){
-    var controls = new THREE.TrackballControls(obj);
-
-    controls.rotateSpeed = 1.0;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.noZoom = false;
-    controls.noPan = false;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
-
-    return controls
 }
 
 animate();
