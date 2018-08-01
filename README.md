@@ -17,7 +17,9 @@ but have no idea if this supports three.js and distorsion. Try implementation wi
 </br>
 Could not implement omxplayer within an iframe so far.
 But with newest chromium browser we have full HW support for playing videos.
-FullHD movies seem to run smooth in the browser, we need to figure out how to loop and for syncing we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
+FullHD movies seem to run smooth in the browser, we need to figure out how to loop (looping can be achieved when the video is set on a seperate html page and then in the iframe src= tag of the mapper is this page loaded.
+With this solution we could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/
+and for syncing we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
 
 
 
