@@ -3,28 +3,33 @@
 A Videomapper based on three.js
 Should run on any plattform using Chrome or Firefox.
 
-Maybe we should use [maptasticjs](https://github.com/glowbox/maptasticjs).
+We should use [maptasticjs](https://github.com/glowbox/maptasticjs).
 Looks great and has the basic functions.
 
-Now we have to figure out if it is possible to load a video with omxplayer within a website and this tool,
-so we could gain fully HW support on RPi and could use the sync script to sync multiple players.
+## Omxplayer
+We have to figure out if it is possible to load a video with omxplayer within a website in an iframe,
+with this we could gain fully HW support on RPi and could use the omxplayer-sync script to sync multiple players.
 
 These guys are talking about [omxplayer support](https://www.raspberrypi.org/forums/viewtopic.php?t=40860)
-but have no idea if this supports three.js and distorsion. Try implementation with this:
-
+and I tryed it, without success so far. What do they put into homepage.html?
 <br>
     <iframe src="file:///homepage.html?cmd=omxplayer%20--win%200,0,1920,1080%20/home/pi/video.mp4" width="2px" height="2px" frameborder="0"></iframe>
 </br>
-Could not implement omxplayer within an iframe so far.
-But with newest chromium browser we have full HW support for playing videos.
-FullHD movies seem to run smooth in the browser, we need to figure out how to loop (looping can be achieved when the video is set on a seperate html page and then in the iframe src= tag of the mapper is this page loaded.
-With this solution we could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/
-and for syncing we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
+
+
+## However
+With newest chromium browser we have full HW support for playing videos.</br>
+FullHD movies seem to run smooth in the browser, looping can be achieved when the video is set on a seperate html page and then this html is loaded in the iframe src= tag of the mapper html page. </br>
+With this solution we could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/  </br>
+this works on the online demo, but could not make it to work offline, I guess there is some kind of .js library missing </br>
+
+For syncing multiple players with the same source, we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
 
 
 
 These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
 
+## Testfiles
 - [Testimage](https://pocketvj.com/video/PVJ_Testscreen.png)
 - [Testvideo](https://pocketvj.com/video/PVJ_Testvideo2018.mp4)
 
