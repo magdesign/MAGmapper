@@ -15,8 +15,10 @@ but have no idea if this supports three.js and distorsion. Try implementation wi
 <br>
     <iframe src="file:///homepage.html?cmd=omxplayer%20--win%200,0,1920,1080%20/home/pi/video.mp4" width="2px" height="2px" frameborder="0"></iframe>
 </br>
+Could not implement omxplayer within an iframe so far.
+But with newest chromium browser we have full HW support for playing videos.
+FullHD movies seem to run smooth in the browser, we need to figure out how to loop and for syncing we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
 
-If there is no way to gain Video HW support thru iframe and omxplayer, we have to switch to [this](https://forums.resin.io/t/fullscreen-webkit-browser-with-hw-accelerated-css-webgl-and-html5-video-on-the-raspberrypi-3/741) operation system for full WebGL HW support.
 
 
 These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
