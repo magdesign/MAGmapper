@@ -1,12 +1,12 @@
 # MAGmapper
 ## Basic Idea
-A Videomapper based on three.js
+A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
 
 We should use [maptasticjs](https://github.com/glowbox/maptasticjs).
-Looks great and has the basic functions.
+It has the basic functions but is a bit weird coded.
 
-## Omxplayer
+##### Omxplayer
 We have to figure out if it is possible to load a video with omxplayer within a website in an iframe,
 with this we could gain fully HW support on RPi and could use the omxplayer-sync script to sync multiple players.
 
@@ -17,7 +17,7 @@ and I tryed it, without success so far. What do they put into homepage.html?
 </br>
 
 
-## However
+##### However
 With newest chromium browser we have full HW support for playing videos.</br>
 FullHD movies seem to run smooth in the browser, looping can be achieved when the video is set on a seperate html page and then this html is loaded in the iframe src= tag of the mapper html page. </br>
 With this solution we could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/  </br>
