@@ -45,6 +45,7 @@ problem described:
 http://www.reedbeta.com/blog/quadrilateral-interpolation-part-1/
 http://paulyg.f2s.com/uv.htm
 solutions:
+https://stackoverflow.com/questions/36372692/image-manipulation-add-image-with-corners-in-exact-positions
 https://stackoverflow.com/questions/20718663/computing-a-projective-transformation-to-texture-an-arbitrary-quad
 
 
