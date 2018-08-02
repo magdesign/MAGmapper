@@ -39,6 +39,16 @@ Its in the very early developement stage, reached so far:
 - Basic understandment of Three.js structure.
 - Draggable 3d object in browser.
 
+## Two triangels form a quad, but geometry does not distrot as we want
+
+problem described:
+http://www.reedbeta.com/blog/quadrilateral-interpolation-part-1/
+
+solutions:
+https://stackoverflow.com/questions/20718663/computing-a-projective-transformation-to-texture-an-arbitrary-quad
+
+
+
 ## Next Steps:
 
 - Change BoxGeometry to [BufferGeometryquad](https://threejs.org/examples/#webgl_buffergeometry_indexed) style surface like in the example here:
