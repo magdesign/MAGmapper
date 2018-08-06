@@ -3,7 +3,7 @@
 A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
 
-We should use [maptasticjs](https://github.com/glowbox/maptasticjs).
+We should use [maptasticjs] as reference for the basic concept(https://github.com/glowbox/maptasticjs).
 It has the basic functions but is a bit weird coded.
 
 ##### Omxplayer
