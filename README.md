@@ -47,7 +47,8 @@ http://paulyg.f2s.com/uv.htm</br>
 solutions:</br>
 https://stackoverflow.com/questions/36372692/image-manipulation-add-image-with-corners-in-exact-positions </br>
 https://stackoverflow.com/questions/20718663/computing-a-projective-transformation-to-texture-an-arbitrary-quad</br>
-
+Mathematical description:
+https://www.coursera.org/lecture/pre-calculus/converting-a-quadratic-function-from-standard-to-vertex-form-QwAr7</br>
 
 
 ## Next Steps:
