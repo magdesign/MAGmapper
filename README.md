@@ -82,7 +82,8 @@ https://stackoverflow.com/questions/20718663/computing-a-projective-transformati
 - Play/Pause
 - Adjust brightness contrast of input texture.
 - Image slide show with directory listener, blending, timer.
-- Webcam, RPi cam input.
+- Webcam, RPi cam input, HDMi board input.
+- Realtime Website input with refresh cycle.
 
 ### Milestone6:
 - Add [generators](https://threejs.org/examples/?q=partic#canvas_particles_sprites)
