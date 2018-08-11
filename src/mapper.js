@@ -31,10 +31,9 @@ function calcUvs(items) {
 function calcIndices(items) {
     let indices = [];
 
-    const part = 2;
     const size = Math.pow(items, 2);
 
-    for (let index = 0; index < size; index = index + part) {
+    for (let index = 0; index < size; index = index++) {
         indices = calcCube(indices, index);
     }
     return indices;
