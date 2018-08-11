@@ -4,7 +4,7 @@
   "description": "Starter pack for compiling ES6+ apps to ES5",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha-webpack \"test/**/*.js\"",
     "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --hot",
     "build": "webpack --mode production --progress"
   },
@@ -15,7 +15,10 @@
     "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "mocha": "^5.2.0",
+    "mocha-webpack": "^1.1.0",
     "webpack": "^4.16.1",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"
