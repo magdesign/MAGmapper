@@ -30,17 +30,8 @@ function calcUvs(items) {
 }
 
 function calcIndices(items) {
-    /*    let indices = [];
-
-    const size = Math.pow(items, 2);
-
-    for (let index = 0; index < size; index = index++) {
-        indices = calcCube(indices, index);
-    }*/
-
     let indices = [];
-    const size = Math.pow(items, 2)+ items - 1;
-
+    const size = Math.pow(items, 2)+ items - 1; // for every ending there must be an additional step
 
     for (let i = 0; i < size; i++) {
         indices = calcCube(indices, i ,items + 1);
@@ -50,15 +41,15 @@ function calcIndices(items) {
 }
 
  function calcCube(values, start, width) {
-    if(start !== width - 1){
-        values.push(
-            start,
-            start + 1,
-            start + width,
-            start + 1,
-            start + width,
-            start + width + 1,
-        );
-    }
+     if(start !== width - 1){
+         values.push(
+             start,
+             start + width,
+             start + 1,
+             start + 1,
+             start + width,
+             start + width + 1,
+         );
+     }
     return values;
 }
