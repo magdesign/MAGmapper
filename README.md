@@ -108,6 +108,12 @@ $ npm install
 $ npm start
 ```
 
+### Run Tests
+```sh
+$ mocha-webpack "test/**/*.js"
+```
+
+
 ### Build
 ```sh
 $ npm run build

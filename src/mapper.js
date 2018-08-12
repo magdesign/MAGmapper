@@ -2,7 +2,8 @@
 export const Mapper = {
     calcVertices: calcVertices,
     calcUvs: calcUvs,
-    calcIndices: calcIndices
+    calcIndices: calcIndices,
+    calcCube: calcCube,
 };
 
 function calcVertices(items) {
@@ -29,46 +30,35 @@ function calcUvs(items) {
 }
 
 function calcIndices(items) {
-    let indices = [];
+    /*    let indices = [];
 
     const size = Math.pow(items, 2);
 
     for (let index = 0; index < size; index = index++) {
         indices = calcCube(indices, index);
+    }*/
+
+    let indices = [];
+    const size = Math.pow(items, 2)+ items - 1;
+
+
+    for (let i = 0; i < size; i++) {
+        indices = calcCube(indices, i ,items + 1);
+        console.log("indices => "+ indices+ " i => " +i  +" item => "+items + " size => " + size);
     }
     return indices;
 }
 
-/**
- *
- * 6-7-8
- * 3-4-5
- * 0-1-2
- *
- *
- * itemsSize = 3
- * part = 2
- ** ** ** **
- * result:
- * 0,1,3
- * 1,4,3
-
-    23
-    01
-
-    0,1,2
-    1,2,3
- */
- function calcCube(values, bottomLeftPoint) {
-    const part = 2;
-    values.push(
-        bottomLeftPoint,
-        bottomLeftPoint + 1,
-        bottomLeftPoint + part,
-        bottomLeftPoint + 1,
-        bottomLeftPoint + part,
-        bottomLeftPoint + part + 1,
-
-    );
+ function calcCube(values, start, width) {
+    if(start !== width - 1){
+        values.push(
+            start,
+            start + 1,
+            start + width,
+            start + 1,
+            start + width,
+            start + width + 1,
+        );
+    }
     return values;
 }
