@@ -64,7 +64,7 @@ describe('Mapper', () => {
     describe('test indices', () => {
         it('should add indices with 1', () => {
             const result = Mapper.calcIndices(1);
-            const excpection =  [
+            const excpection = [
                 0, 2, 1,
                 1, 2, 3
             ];
@@ -93,4 +93,5 @@ describe('Mapper', () => {
             Assert.deepEqual(result, excpection);
         });
     });
+
 });

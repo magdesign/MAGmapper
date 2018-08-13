@@ -57,7 +57,7 @@ function animate() {
 
 function createMapper() {
 
-    const size = 2;
+    const size = 4;
 
     let vertices = Mapper.calcVertices(size);
     let uvs = Mapper.calcUvs(size);
@@ -84,7 +84,7 @@ function createMapper() {
     };
 
     let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
-    let material = new MeshBasicMaterial({map: texture, wireframe: false});
+    let material = new MeshBasicMaterial({map: texture, wireframe: true});
     return new Mesh(geometry, material);
 }
 
