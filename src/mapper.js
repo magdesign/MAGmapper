@@ -1,4 +1,3 @@
-
 export const Mapper = {
     calcVertices: calcVertices,
     calcUvs: calcUvs,
@@ -31,25 +30,25 @@ function calcUvs(items) {
 
 function calcIndices(items) {
     let indices = [];
-    const size = Math.pow(items, 2)+ items - 1; // for every ending there must be an additional step
+    const size = Math.pow(items, 2) + items - 1; // for every ending there must be an additional step
 
     for (let i = 0; i < size; i++) {
-        indices = calcCube(indices, i ,items + 1);
-        console.log("indices => "+ indices+ " i => " +i  +" item => "+items + " size => " + size);
+        indices = calcCube(indices, i, items + 1);
+        // console.log("indices => " + indices + " i => " + i + " item => " + items + " size => " + size);
     }
     return indices;
 }
 
- function calcCube(values, start, width) {
-     if(start !== width - 1){
-         values.push(
-             start,
-             start + width,
-             start + 1,
-             start + 1,
-             start + width,
-             start + width + 1,
-         );
-     }
+function calcCube(values, start, width) {
+    if (start !== width - 1) {
+        values.push(
+            start,
+            start + width,
+            start + 1,
+            start + 1,
+            start + width,
+            start + width + 1,
+        );
+    }
     return values;
 }

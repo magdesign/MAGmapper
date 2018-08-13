@@ -1,4 +1,4 @@
-import assert from 'assert';
+import Assert from 'assert';
 import {Mapper} from "../src/mapper"
 /*
 *
@@ -16,8 +16,8 @@ describe('Mapper', () => {
                 1, 2, 3
             ];
 
-            assert.deepEqual(result.length, expectedReuslt.length);
-            assert.deepEqual(result, expectedReuslt);
+            Assert.deepEqual(result.length, expectedReuslt.length);
+            Assert.deepEqual(result, expectedReuslt);
         });
 
         it('should calc Indices with 2', () => {
@@ -27,8 +27,8 @@ describe('Mapper', () => {
                 1, 3, 4
             ];
 
-            assert.deepEqual(result.length, expectedReuslt.length);
-            assert.deepEqual(result, expectedReuslt);
+            Assert.deepEqual(result.length, expectedReuslt.length);
+            Assert.deepEqual(result, expectedReuslt);
         });
 
         it('should calc Indices with 2 start 1', () => {
@@ -36,12 +36,11 @@ describe('Mapper', () => {
             const expectedReuslt = [
                 1, 4, 2,
                 2, 4, 5
-            ]
+            ];
 
-            assert.deepEqual(result.length, expectedReuslt.length);
-            assert.deepEqual(result, expectedReuslt);
+            Assert.deepEqual(result.length, expectedReuslt.length);
+            Assert.deepEqual(result, expectedReuslt);
         });
-
 
         it('should calc Indices with 4 start 1', () => {
             const result = Mapper.calcCube([], 1, 4);
@@ -50,15 +49,15 @@ describe('Mapper', () => {
                 2, 5, 6
             ];
 
-            assert.deepEqual(result.length, expectedReuslt.length);
-            assert.deepEqual(result, expectedReuslt);
+            Assert.deepEqual(result.length, expectedReuslt.length);
+            Assert.deepEqual(result, expectedReuslt);
         });
 
         it('should test end of map', () => {
             const result = Mapper.calcCube([], 2, 3);
 
             const expectedReuslt = [];
-            assert.deepEqual(result, expectedReuslt);
+            Assert.deepEqual(result, expectedReuslt);
         });
     });
 
@@ -70,8 +69,8 @@ describe('Mapper', () => {
                 1, 2, 3
             ];
 
-            assert.equal(result.length / 6, 1);
-            assert.deepEqual(result, excpection);
+            Assert.equal(result.length / 6, 1);
+            Assert.deepEqual(result, excpection);
         });
 
         it('should add indices with 2', () => {
@@ -90,8 +89,8 @@ describe('Mapper', () => {
                 5, 7, 8
             ];
 
-            assert.equal(result.length / 6, 4);
-            assert.deepEqual(result, excpection);
+            Assert.equal(result.length / 6, 4);
+            Assert.deepEqual(result, excpection);
         });
     });
 });

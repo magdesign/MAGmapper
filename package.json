@@ -4,9 +4,9 @@
   "description": "Starter pack for compiling ES6+ apps to ES5",
   "main": "app.js",
   "scripts": {
-    "test": "mocha-webpack \"test/**/*.js\"",
     "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --hot",
-    "build": "webpack --mode production --progress"
+    "build": "webpack --mode production --progress",
+    "test": "mocha --require babel-core/register"
   },
   "author": "Brad Traversy",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "mocha": "^5.2.0",
     "mocha-webpack": "^1.1.0",
     "webpack": "^4.16.5",
-    "webpack-cli": "^3.0.8",
+    "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
