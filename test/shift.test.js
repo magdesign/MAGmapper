@@ -6,10 +6,8 @@ import {Mapper} from "../src/mapper";
 
 describe('Shift', () => {
     describe('test cube index', () => {
-        it('should calc Indices with 1', () => {
+        it('should shift vertices one to top', () => {
             const vertices = Mapper.calcVertices(1);
-
-            Shift.top(vertices,1);
         });
     });
 
