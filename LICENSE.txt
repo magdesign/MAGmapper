@@ -6,4 +6,8 @@ The software is provided "as is", without warranty of any kind.
 
 If you use it and/or add functions, you should contribute your additions.
 
-It is not allowed to use it in any closed-source application or commercial product. It is not allowed to patent functions of this software. It is not allowed to distribute or sell this software without the autors permission.
+It is not allowed to use it in any closed-source application or commercial product. 
+It is not allowed to patent functions of this software. 
+It is not allowed to distribute or sell this software without the autors permission.
+
+You must include this license text in your application.
