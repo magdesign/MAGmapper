@@ -21,10 +21,11 @@ import {
 } from "three"
 import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
+import {Shift} from "./shift";
 
 let scene = new Scene();
 let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
+camera.position.z = 10;
 
 let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -57,11 +58,12 @@ function animate() {
 
 function createMapper() {
 
-    const size = 4;
+    const size = 12;
 
     let vertices = Mapper.calcVertices(size);
     let uvs = Mapper.calcUvs(size);
     let indices = Mapper.calcIndices(size);
+    vertices = Shift.top(vertices, 0, 0, 3, 1);
 
     console.log(vertices);
     console.log(uvs);
@@ -84,7 +86,7 @@ function createMapper() {
     };
 
     let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
-    let material = new MeshBasicMaterial({map: texture, wireframe: true});
+    let material = new MeshBasicMaterial({map: texture, wireframe: false});
     return new Mesh(geometry, material);
 }
 
