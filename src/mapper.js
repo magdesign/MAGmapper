@@ -28,6 +28,7 @@ function calcUvs(items) {
     return new Float32Array(uvs);
 }
 
+
 function calcIndices(items) {
     let indices = [];
     const size = Math.pow(items, 2) + items - 1; // for every ending there must be an additional step
@@ -38,6 +39,7 @@ function calcIndices(items) {
     }
     return indices;
 }
+
 
 function calcCube(values, start, width) {
     if (start !== width - 1) {
