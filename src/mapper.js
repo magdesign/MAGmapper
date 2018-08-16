@@ -1,19 +1,27 @@
+import {Coordinates} from "./rectangle";
+
 export const Mapper = {
-    calcVertices: calcVertices,
+    calcVertices(length, size) {
+        let coords = [];
+        const part = size / length;
+
+        for (let x = 0; x <= length; x = x + part) {
+            for (let y = 0; y <= length; y = y + part) {
+                coords.push(Coordinates(x, y));
+            }
+        }
+        return coords;
+    },
     calcUvs: calcUvs,
     calcIndices: calcIndices,
     calcCube: calcCube,
+    transform(vertices) {
+        return vertices
+            .map(coordinates => [coordinates.x, coordinates.y, coordinates.z])
+            .reduce((prev, curr) => prev.concat(curr))
+    }
 };
 
-function calcVertices(items) {
-    let coords = [];
-    for (let x = 0; x <= items; x++) {
-        for (let y = 0; y <= items; y++) {
-            coords.push(x, y, 0)
-        }
-    }
-    return new Float32Array(coords);
-}
 
 function calcUvs(items) {
     let uvs = [];
@@ -54,3 +62,4 @@ function calcCube(values, start, width) {
     }
     return values;
 }
+
