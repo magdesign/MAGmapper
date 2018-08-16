@@ -1,27 +1,31 @@
-
-const range = length => pow => Array
-    .from({length: Math.pow(length, pow)}, (_, i) => i);
+const range = length => pow => f => Array
+    .from(
+        {length: Math.pow(length, pow)},
+        (_, i) => f !== undefined ? f(i) : i
+    );
 
 const cube = x => y => Object({x, y, z: 0});
 
-const vertices2 = length => size => range(length)(2)
-    .map(x => range(length)(2)
-        .map(y => cube(x * size)(y * size)))
+
+const vertices2 = length => size => range(length)(1)()
+    .map(x => {
+        const fCube = cube(x * size);
+        return range(length)(1)(y => fCube(y * size))
+    })
     .reduce((p, c) => p.concat(c));
 
+
 const transform = vertices => vertices
-        .map(cube => [cube.x, cube.y, cube.z])
-        .reduce((p, c) => p.concat(c));
-
-
-
+    .map(cube => [cube.x, cube.y, cube.z])
+    .reduce((p, c) => p.concat(c));
 
 function calcVertices(length, size) {
     let coords = [];
     const part = size / length;
     for (let x = 0; x <= length; x = x + part) {
+        const cubey = cube(x);
         for (let y = 0; y <= length; y = y + part) {
-            coords.push(Coordinates(x, y));
+            coords.push(cubey(y));
         }
     }
     return coords;

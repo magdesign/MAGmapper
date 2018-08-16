@@ -98,8 +98,17 @@ describe('Mapper', () => {
 
 
         it('should generate functional', () => {
-            const resut = Mapper.vertices2(2)(1);
-            console.log(resut);
+            Assert.deepEqual(Mapper.transform(Mapper.vertices2(3)(1)), [
+                0,0,0,
+                0,1,0,
+                0,2,0,
+                1,0,0,
+                1,1,0,
+                1,2,0,
+                2,0,0,
+                2,1,0,
+                2,2,0,
+            ]);
         });
 
 
