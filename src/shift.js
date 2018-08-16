@@ -29,7 +29,7 @@ function getElemetsLenth(vertices) {
 function topRight(vertices,  x, y) {
 
 
-    const rel = calcRelation(, leftY, x, y);
+    const rel = calcRelation(, x, y);
 
 
     for (let i = 0; i < vertices.length; i = i + 3) {

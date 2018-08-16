@@ -95,6 +95,14 @@ describe('Mapper', () => {
     });
 
     describe('test vertices', () => {
+
+
+        it('should generate functional', () => {
+            const resut = Mapper.vertices2(2)(1);
+            console.log(resut);
+        });
+
+
         it('should generate 1*1', () => {
 
             Assert.deepEqual(Mapper.transform(Mapper.calcVertices(1,1)), [

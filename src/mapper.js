@@ -1,27 +1,31 @@
-import {Coordinates} from "./rectangle";
 
-export const Mapper = {
-    calcVertices(length, size) {
-        let coords = [];
-        const part = size / length;
+const range = length => pow => Array
+    .from({length: Math.pow(length, pow)}, (_, i) => i);
 
-        for (let x = 0; x <= length; x = x + part) {
-            for (let y = 0; y <= length; y = y + part) {
-                coords.push(Coordinates(x, y));
-            }
+const cube = x => y => Object({x, y, z: 0});
+
+const vertices2 = length => size => range(length)(2)
+    .map(x => range(length)(2)
+        .map(y => cube(x * size)(y * size)))
+    .reduce((p, c) => p.concat(c));
+
+const transform = vertices => vertices
+        .map(cube => [cube.x, cube.y, cube.z])
+        .reduce((p, c) => p.concat(c));
+
+
+
+
+function calcVertices(length, size) {
+    let coords = [];
+    const part = size / length;
+    for (let x = 0; x <= length; x = x + part) {
+        for (let y = 0; y <= length; y = y + part) {
+            coords.push(Coordinates(x, y));
         }
-        return coords;
-    },
-    calcUvs: calcUvs,
-    calcIndices: calcIndices,
-    calcCube: calcCube,
-    transform(vertices) {
-        return vertices
-            .map(coordinates => [coordinates.x, coordinates.y, coordinates.z])
-            .reduce((prev, curr) => prev.concat(curr))
     }
-};
-
+    return coords;
+}
 
 function calcUvs(items) {
     let uvs = [];
@@ -63,3 +67,11 @@ function calcCube(values, start, width) {
     return values;
 }
 
+export const Mapper = {
+    vertices2: vertices2,
+    calcVertices: calcVertices,
+    calcUvs: calcUvs,
+    calcIndices: calcIndices,
+    calcCube: calcCube,
+    transform
+};
