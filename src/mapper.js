@@ -1,17 +1,14 @@
-const range = length => pow => f => Array
-    .from(
-        {length: Math.pow(length, pow)},
+const range = length =>  f => Array
+    .from({length},
         (_, i) => f !== undefined ? f(i) : i
     );
 
 const cube = x => y => Object({x, y, z: 0});
 
 
-const vertices2 = length => size => range(length)(1)()
-    .map(x => {
-        const fCube = cube(x * size);
-        return range(length)(1)(y => fCube(y * size))
-    })
+const cartesis = length => fSize => range(length)()
+    .map(x => cube(fSize(x)))
+    .map(func => range(length)(y => func(fSize(y))))
     .reduce((p, c) => p.concat(c));
 
 
@@ -72,7 +69,7 @@ function calcCube(values, start, width) {
 }
 
 export const Mapper = {
-    vertices2: vertices2,
+    cartesis,
     calcVertices: calcVertices,
     calcUvs: calcUvs,
     calcIndices: calcIndices,

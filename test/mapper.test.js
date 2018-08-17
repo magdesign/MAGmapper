@@ -96,44 +96,62 @@ describe('Mapper', () => {
 
     describe('test vertices', () => {
 
-
-        it('should generate functional', () => {
-            Assert.deepEqual(Mapper.transform(Mapper.vertices2(3)(1)), [
-                0,0,0,
-                0,1,0,
-                0,2,0,
-                1,0,0,
-                1,1,0,
-                1,2,0,
-                2,0,0,
-                2,1,0,
-                2,2,0,
-            ]);
-        });
-
-
         it('should generate 1*1', () => {
 
-            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(1,1)), [
-                0,0,0,
-                0,1,0,
-                1,0,0,
-                1,1,0
+            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(1, 1)), [
+                0, 0, 0,
+                0, 1, 0,
+                1, 0, 0,
+                1, 1, 0
             ]);
         });
 
         it('should generate 2*2', () => {
             Assert.deepEqual(Mapper.transform(Mapper.calcVertices(2, 2)), [
-                0,0,0,
-                0,1,0,
-                0,2,0,
-                1,0,0,
-                1,1,0,
-                1,2,0,
-                2,0,0,
-                2,1,0,
-                2,2,0,
+                0, 0, 0,
+                0, 1, 0,
+                0, 2, 0,
+                1, 0, 0,
+                1, 1, 0,
+                1, 2, 0,
+                2, 0, 0,
+                2, 1, 0,
+                2, 2, 0,
             ]);
         });
     });
+
+
+    describe('test coordiantes', () => {
+        it('should generate functional', () => {
+            Assert.deepEqual(Mapper.transform(Mapper.cartesis(3)(i => i)), [
+                0, 0, 0,
+                0, 1, 0,
+                0, 2, 0,
+                1, 0, 0,
+                1, 1, 0,
+                1, 2, 0,
+                2, 0, 0,
+                2, 1, 0,
+                2, 2, 0,
+            ]);
+        });
+
+        it('should generate functional uv mapping', () => {
+            const size = 1/3;
+            const result = Mapper.transform(Mapper.cartesis(3)(val => size * (val + 1)));
+            Assert.deepEqual(result, [
+                0.3333333333333333, 0.3333333333333333, 0,
+                0.3333333333333333, 0.6666666666666666, 0,
+                0.3333333333333333, 1, 0,
+                0.6666666666666666, 0.3333333333333333, 0,
+                0.6666666666666666, 0.6666666666666666, 0,
+                0.6666666666666666, 1, 0,
+                1, 0.3333333333333333, 0,
+                1, 0.6666666666666666, 0,
+                1, 1, 0
+            ]);
+        });
+    });
+
 });
