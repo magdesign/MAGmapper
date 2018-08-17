@@ -1,35 +1,36 @@
-export const Shift = {
-    top: top,
-};
 
-/**
- *
- * @param vertices
- * @param dimension x = 0
- *                  y = 1
- *                  z = 2
- * @returns {*}
- */
+
+
 function getSize(vertices, dimension) {
     const size = 3;
     return vertices[size + dimension] - vertices[dimension];
 }
 
-function calcRelation(leftX, leftY, rightX, rightY) {
-    const difX = rightX - leftX;
-    const difY = rightY - leftY;
 
+
+function calcRelation() {
     return difY / difX;
 }
 
-function getElemetsLenth(vertices) {
-    return Math.sqrt(vertices.length / 3) - 1;
-}
+function topRigth(vertices,  x, y) {
 
-function topRight(vertices,  x, y) {
+    const itemsLength =  Math.sqrt(vertices.length);
+    
+    const topRightEdge = vertices[vertices.length - 1];
+    const topLeftEdge = vertices[vertices.length - itemsLength - 1];
+    const bottomRightEdge = vertices[itemsLength - 1];
+
+    const deltaX = x - topRightEdge.x;
+    const deltaY = y - topRightEdge.y;
+
+    console.log(deltaY)
+    console.log(deltaX)
 
 
-    const rel = calcRelation(, x, y);
+    const length = topRightEdge.x -topLeftEdge.x;
+    const heigth = topRightEdge.y -topLeftEdge.y;
+
+    const rel = heigth /length
 
 
     for (let i = 0; i < vertices.length; i = i + 3) {
@@ -42,3 +43,6 @@ function topRight(vertices,  x, y) {
     return vertices;
 }
 
+export const Shift = {
+    topRigth: topRigth,
+};

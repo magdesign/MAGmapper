@@ -7,7 +7,7 @@ describe('Shift', () => {
     describe('test cube index', () => {
         it('should shift vertices one to top => 1*1', () => {
             const vertices = Mapper.calcVertices(1);
-            const result = Shift.top(vertices, 0, 0, 3, 1);
+            const result = Shift.top(vertices, 3, 3);
 
             const exp = [
                 0, 0, 0,
@@ -19,9 +19,11 @@ describe('Shift', () => {
             Assert.deepEqual(result, exp);
         });
 
-        it('should shift vertices one to top => 3*3', () => {
-            const vertices = Mapper.calcVertices(3);
-            const result = Shift.top(vertices, 0, 0, 3, 1);
+        it.only('should shift vertices one to top => 3*3', () => {
+            const vertices = Mapper.cartesis(3, 1)(i => i)
+
+            const result = Shift.topRigth(vertices, 3, 3);
+            console.log(result);
 
             const exp = [
                 0,0,0,
@@ -41,8 +43,8 @@ describe('Shift', () => {
                 3,2.6666667461395264,0,
                 3,4,0
             ];
+
             Assert.deepEqual(result, exp);
         });
     });
-
 });

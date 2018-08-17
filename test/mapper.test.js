@@ -122,7 +122,18 @@ describe('Mapper', () => {
     });
 
 
-    describe('test coordiantes', () => {
+    describe('test cartesis', () => {
+        it('should generate 1*1', () => {
+
+            Assert.deepEqual(Mapper.transform(Mapper.cartesis(1, 1)(i => i)), [
+                0, 0, 0,
+                0, 1, 0,
+                1, 0, 0,
+                1, 1, 0
+            ]);
+        });
+
+
         it('should generate functional', () => {
             Assert.deepEqual(Mapper.transform(Mapper.cartesis(3)(i => i)), [
                 0, 0, 0,
