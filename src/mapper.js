@@ -10,9 +10,12 @@ const cartesis = length => fSize => range(length)()
     .map(func => range(length)(y => func(fSize(y))))
     .reduce((p, c) => p.concat(c));
 
-export const transform = vertices => vertices
-    .map(cube => [cube.x, cube.y, cube.z])
-    .reduce((p, c) => p.concat(c));
+const uv = length => cartesis(length)(i =>  1/ (length - 1) * i);
+
+export const transform = vertices =>
+    new Float32Array(vertices
+        .map(cube => [cube.x, cube.y, cube.z])
+        .reduce((p, c) => p.concat(c)));
 
 function calcIndices(items) {
     let indices = [];
@@ -42,6 +45,7 @@ function calcCube(values, start, width) {
 
 export const Mapper = {
     cartesis,
+    uv,
     transform,
     calcIndices: calcIndices,
     calcCube: calcCube,

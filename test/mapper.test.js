@@ -152,7 +152,7 @@ describe('Mapper', () => {
 
             const size = 4;
 
-            const result = Mapper.cartesis(size)(val =>  1/(size -1) * (val ));
+            const result = Mapper.cartesis(size)(i =>  1/ (size - 1) * i);
 
             Assert.deepEqual(result, [ { x: 0, y: 0, z: 0 },
                 { x: 0, y: 0.3333333333333333, z: 0 },

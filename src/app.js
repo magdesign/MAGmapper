@@ -61,22 +61,22 @@ function createMapper() {
     const size = 3;
 
     let vertices = Mapper.transform(Mapper.cartesis(size)(i => i));
-    let uvs = Mapper.transform(Mapper.cartesis(size)(val =>  1/size * (val + 1)));
+    let uvs = Mapper.transform(Mapper.uv(size));
     let indices =  Mapper.calcIndices(size);
 
 
    // vertices = Mapper.transform(Shift.topRigth(vertices, 3, 3));
 
     console.log(vertices);
-    console.log("uv" + uvs);
+    console.log(uvs);
     console.log(indices);
 
 
 
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
-    geometry.addAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
-    geometry.addAttribute('uv', new BufferAttribute(new Float32Array(uvs), 3));
+    geometry.addAttribute('position', new BufferAttribute(vertices, 3));
+    geometry.addAttribute('uv', new BufferAttribute(uvs, 3));
 
 
     // geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
