@@ -76,7 +76,7 @@ function createMapper() {
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
     geometry.addAttribute('position', new BufferAttribute(new Float32Array(vertices), 3));
-    geometry.addAttribute('uv', new BufferAttribute(new Float32Array(uvs), 2));
+    geometry.addAttribute('uv', new BufferAttribute(new Float32Array(uvs), 3));
 
 
     // geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
