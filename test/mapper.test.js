@@ -149,8 +149,10 @@ describe('Mapper', () => {
         });
 
         it('should generate functional uv mapping', () => {
-            const size = 1/3;
-            const result = Mapper.transform(Mapper.cartesis(3)(val => size * (val + 1)));
+
+            const size = 3;
+
+            const result = Mapper.transform(Mapper.cartesis(3)(val =>  1/size * (val + 1)));
             Assert.deepEqual(result, [
                 0.3333333333333333, 0.3333333333333333, 0,
                 0.3333333333333333, 0.6666666666666666, 0,

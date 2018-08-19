@@ -1,5 +1,5 @@
-const range = length =>  f => Array
-    .from({length:length},
+const range = length => f => Array
+    .from({length: length},
         (_, i) => f !== undefined ? f(i) : i
     );
 
@@ -10,7 +10,7 @@ const cartesis = length => fSize => range(length)()
     .map(func => range(length)(y => func(fSize(y))))
     .reduce((p, c) => p.concat(c));
 
-const transform = vertices => vertices
+export const transform = vertices => vertices
     .map(cube => [cube.x, cube.y, cube.z])
     .reduce((p, c) => p.concat(c));
 

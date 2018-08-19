@@ -1,46 +1,44 @@
 
 
 
-function getSize(vertices, dimension) {
-    const size = 3;
-    return vertices[size + dimension] - vertices[dimension];
-}
-
-
-
-function calcRelation() {
-    return difY / difX;
-}
-
 function topRigth(vertices,  x, y) {
+    const edge = vertices[vertices.length - 1];
+    const edgebottom = vertices[0];
+    const sizeX = edge.x - edgebottom.x;
+    const sizeY = edge.y - edgebottom.y;
 
-    const itemsLength =  Math.sqrt(vertices.length);
-    
-    const topRightEdge = vertices[vertices.length - 1];
-    const topLeftEdge = vertices[vertices.length - itemsLength - 1];
-    const bottomRightEdge = vertices[itemsLength - 1];
-
-    const deltaX = x - topRightEdge.x;
-    const deltaY = y - topRightEdge.y;
-
-    console.log(deltaY)
-    console.log(deltaX)
+    const rX = x / edge.x;
+    const rY = y / edge.y;
 
 
-    const length = topRightEdge.x -topLeftEdge.x;
-    const heigth = topRightEdge.y -topLeftEdge.y;
 
-    const rel = heigth /length
+    for (let i = 0; i < vertices.length; i++) {
+        // console.log(vertices[i])
+
+        const resx = calcX(vertices[i], sizeY, rX);
+        const resy = calcY(vertices[i], sizeX, rY);
 
 
-    for (let i = 0; i < vertices.length; i = i + 3) {
-        const x = vertices[i];
-        const y = vertices[i+1];
-
-        const factor = x * rel / getElemetsLenth(vertices) + getSize(vertices, 1);
-        vertices[i+1] = factor * y;
+        vertices[i].x = resx;
+        vertices[i].y = resy;
     }
-    return vertices;
+    return vertices
+
+}
+
+function calcY(vertice, size, rel) {
+    const factor = vertice.x / size;
+    const newFactor = (rel - 1) * factor + 1;
+
+    return vertice.y * newFactor;
+}
+
+function calcX(vertice , size, rel) {
+    const factor = vertice.y / size;
+
+
+    const newFactor = (rel - 1) * factor + 1;
+    return vertice.x * newFactor;
 }
 
 export const Shift = {
