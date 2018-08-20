@@ -58,20 +58,18 @@ function animate() {
 
 function createMapper() {
 
-    const size = 3;
+    const size = 8;
 
-    let vertices = Mapper.transform(Mapper.cartesis(size)(i => i));
+    let vertices = Mapper.vertices(size, 4);
     let uvs = Mapper.transform(Mapper.uv(size));
     let indices =  Mapper.calcIndices(size);
 
 
-   // vertices = Mapper.transform(Shift.topRigth(vertices, 3, 3));
+    vertices = Mapper.transform(Shift.topRigth(vertices, 3, 3));
 
     console.log(vertices);
     console.log(uvs);
     console.log(indices);
-
-
 
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);

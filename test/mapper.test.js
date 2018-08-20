@@ -95,10 +95,10 @@ describe('Mapper', () => {
     });
 
     describe('test vertices', () => {
+        const SIZE = 2;
 
-        it('should generate 1*1', () => {
-
-            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(1, 1)), [
+        it('should generate vertices ' + SIZE, () => {
+            Assert.deepEqual(Mapper.transform(Mapper.vertices(SIZE, 1)), [
                 0, 0, 0,
                 0, 1, 0,
                 1, 0, 0,
@@ -106,35 +106,31 @@ describe('Mapper', () => {
             ]);
         });
 
-        it('should generate 2*2', () => {
-            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(2, 2)), [
-                0, 0, 0,
-                0, 1, 0,
-                0, 2, 0,
-                1, 0, 0,
-                1, 1, 0,
-                1, 2, 0,
-                2, 0, 0,
-                2, 1, 0,
-                2, 2, 0,
-            ]);
+        it('should generate uv ' + SIZE, () => {
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 1, y: 0, z: 0},
+                {x: 1, y: 1, z: 0}
+            ];
+            const actual = Mapper.uv(SIZE);
+            Assert.deepEqual(expected, actual);
+        });
+
+        it('should generate indices ' + SIZE, () => {
+            const expected = [
+                0, 2, 1,
+                1, 2, 3
+            ];
+            const actual = Mapper.calcIndices(2);
+            Assert.deepEqual(expected, actual);
         });
     });
 
 
     describe('test cartesis', () => {
-        it('should generate 1*1', () => {
 
-            Assert.deepEqual(Mapper.transform(Mapper.cartesis(1, 1)(i => i)), [
-                0, 0, 0,
-                0, 1, 0,
-                1, 0, 0,
-                1, 1, 0
-            ]);
-        });
-
-
-        it('should generate functional', () => {
+        it('should generate vertices', () => {
             Assert.deepEqual(Mapper.transform(Mapper.cartesis(3)(i => i)), [
                 0, 0, 0,
                 0, 1, 0,
@@ -151,25 +147,25 @@ describe('Mapper', () => {
         it('should generate functional uv mapping', () => {
 
             const size = 4;
+            const result = Mapper.uv(size);
 
-            const result = Mapper.cartesis(size)(i =>  1/ (size - 1) * i);
-
-            Assert.deepEqual(result, [ { x: 0, y: 0, z: 0 },
-                { x: 0, y: 0.3333333333333333, z: 0 },
-                { x: 0, y: 0.6666666666666666, z: 0 },
-                { x: 0, y: 1, z: 0 },
-                { x: 0.3333333333333333, y: 0, z: 0 },
-                { x: 0.3333333333333333, y: 0.3333333333333333, z: 0 },
-                { x: 0.3333333333333333, y: 0.6666666666666666, z: 0 },
-                { x: 0.3333333333333333, y: 1, z: 0 },
-                { x: 0.6666666666666666, y: 0, z: 0 },
-                { x: 0.6666666666666666, y: 0.3333333333333333, z: 0 },
-                { x: 0.6666666666666666, y: 0.6666666666666666, z: 0 },
-                { x: 0.6666666666666666, y: 1, z: 0 },
-                { x: 1, y: 0, z: 0 },
-                { x: 1, y: 0.3333333333333333, z: 0 },
-                { x: 1, y: 0.6666666666666666, z: 0 },
-                { x: 1, y: 1, z: 0 } ]);
+            Assert.deepEqual(result, [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 0.3333333333333333, z: 0},
+                {x: 0, y: 0.6666666666666666, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 0.3333333333333333, y: 0, z: 0},
+                {x: 0.3333333333333333, y: 0.3333333333333333, z: 0},
+                {x: 0.3333333333333333, y: 0.6666666666666666, z: 0},
+                {x: 0.3333333333333333, y: 1, z: 0},
+                {x: 0.6666666666666666, y: 0, z: 0},
+                {x: 0.6666666666666666, y: 0.3333333333333333, z: 0},
+                {x: 0.6666666666666666, y: 0.6666666666666666, z: 0},
+                {x: 0.6666666666666666, y: 1, z: 0},
+                {x: 1, y: 0, z: 0},
+                {x: 1, y: 0.3333333333333333, z: 0},
+                {x: 1, y: 0.6666666666666666, z: 0},
+                {x: 1, y: 1, z: 0}]);
         });
     });
 

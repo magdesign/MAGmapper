@@ -10,7 +10,8 @@ const cartesis = length => fSize => range(length)()
     .map(func => range(length)(y => func(fSize(y))))
     .reduce((p, c) => p.concat(c));
 
-const uv = length => cartesis(length)(i =>  1/ (length - 1) * i);
+const vertices = (size, length) => cartesis(size)(i => length / (size - 1) * i);
+const uv = size => cartesis(size)(i => 1 / (size - 1) * i);
 
 export const transform = vertices =>
     new Float32Array(vertices
@@ -18,6 +19,7 @@ export const transform = vertices =>
         .reduce((p, c) => p.concat(c)));
 
 function calcIndices(items) {
+    items--;
     let indices = [];
     const size = Math.pow(items, 2) + items - 1; // for every ending there must be an additional step
 
@@ -45,7 +47,8 @@ function calcCube(values, start, width) {
 
 export const Mapper = {
     cartesis,
-    uv,
+
+    uv,vertices,
     transform,
     calcIndices: calcIndices,
     calcCube: calcCube,
