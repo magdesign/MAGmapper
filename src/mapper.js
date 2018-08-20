@@ -5,12 +5,12 @@ const range = length => f => Array
 
 const cube = x => y => Object({x, y, z: 0});
 
-const edges = vertices => vertices.filter((_, i) => i === 0 ||
+const edges = vertices => vertices.filter((_, i) =>
+    i === 0 ||
     i === Math.sqrt(vertices.length) - 1 ||
     i === vertices.length - Math.sqrt(vertices.length) ||
     i === vertices.length - 1
 );
-
 
 const cartesis = length => fSize => range(length)()
     .map(x => cube(fSize(x)))
