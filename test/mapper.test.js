@@ -95,27 +95,82 @@ describe('Mapper', () => {
     });
 
     describe('test vertices', () => {
+
         it('should generate 1*1', () => {
-            Assert.deepEqual( Mapper.calcVertices(1), [
-                0,0,0,
-                0,1,0,
-                1,0,0,
-                1,1,0
+
+            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(1, 1)), [
+                0, 0, 0,
+                0, 1, 0,
+                1, 0, 0,
+                1, 1, 0
             ]);
         });
 
         it('should generate 2*2', () => {
-            Assert.deepEqual( Mapper.calcVertices(2), [
-                0,0,0,
-                0,1,0,
-                0,2,0,
-                1,0,0,
-                1,1,0,
-                1,2,0,
-                2,0,0,
-                2,1,0,
-                2,2,0,
+            Assert.deepEqual(Mapper.transform(Mapper.calcVertices(2, 2)), [
+                0, 0, 0,
+                0, 1, 0,
+                0, 2, 0,
+                1, 0, 0,
+                1, 1, 0,
+                1, 2, 0,
+                2, 0, 0,
+                2, 1, 0,
+                2, 2, 0,
             ]);
         });
     });
+
+
+    describe('test cartesis', () => {
+        it('should generate 1*1', () => {
+
+            Assert.deepEqual(Mapper.transform(Mapper.cartesis(1, 1)(i => i)), [
+                0, 0, 0,
+                0, 1, 0,
+                1, 0, 0,
+                1, 1, 0
+            ]);
+        });
+
+
+        it('should generate functional', () => {
+            Assert.deepEqual(Mapper.transform(Mapper.cartesis(3)(i => i)), [
+                0, 0, 0,
+                0, 1, 0,
+                0, 2, 0,
+                1, 0, 0,
+                1, 1, 0,
+                1, 2, 0,
+                2, 0, 0,
+                2, 1, 0,
+                2, 2, 0,
+            ]);
+        });
+
+        it('should generate functional uv mapping', () => {
+
+            const size = 4;
+
+            const result = Mapper.cartesis(size)(i =>  1/ (size - 1) * i);
+
+            Assert.deepEqual(result, [ { x: 0, y: 0, z: 0 },
+                { x: 0, y: 0.3333333333333333, z: 0 },
+                { x: 0, y: 0.6666666666666666, z: 0 },
+                { x: 0, y: 1, z: 0 },
+                { x: 0.3333333333333333, y: 0, z: 0 },
+                { x: 0.3333333333333333, y: 0.3333333333333333, z: 0 },
+                { x: 0.3333333333333333, y: 0.6666666666666666, z: 0 },
+                { x: 0.3333333333333333, y: 1, z: 0 },
+                { x: 0.6666666666666666, y: 0, z: 0 },
+                { x: 0.6666666666666666, y: 0.3333333333333333, z: 0 },
+                { x: 0.6666666666666666, y: 0.6666666666666666, z: 0 },
+                { x: 0.6666666666666666, y: 1, z: 0 },
+                { x: 1, y: 0, z: 0 },
+                { x: 1, y: 0.3333333333333333, z: 0 },
+                { x: 1, y: 0.6666666666666666, z: 0 },
+                { x: 1, y: 1, z: 0 } ]);
+        });
+    });
+
 });

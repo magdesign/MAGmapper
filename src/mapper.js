@@ -1,33 +1,21 @@
-export const Mapper = {
-    calcVertices: calcVertices,
-    calcUvs: calcUvs,
-    calcIndices: calcIndices,
-    calcCube: calcCube,
-};
+const range = length => f => Array
+    .from({length: length},
+        (_, i) => f !== undefined ? f(i) : i
+    );
 
-function calcVertices(items) {
-    let coords = [];
-    for (let x = 0; x <= items; x++) {
-        for (let y = 0; y <= items; y++) {
-            coords.push(x, y, 0)
-        }
-    }
-    return new Float32Array(coords);
-}
+const cube = x => y => Object({x, y, z: 0});
 
-function calcUvs(items) {
-    let uvs = [];
-    let size = 1;
-    let part = size / items;
+const cartesis = length => fSize => range(length)()
+    .map(x => cube(fSize(x)))
+    .map(func => range(length)(y => func(fSize(y))))
+    .reduce((p, c) => p.concat(c));
 
-    for (let x = 0; x <= size; x = x + part) {
-        for (let y = 0; y <= size; y = y + part) {
-            uvs.push(x, y)
-        }
-    }
-    return new Float32Array(uvs);
-}
+const uv = length => cartesis(length)(i =>  1/ (length - 1) * i);
 
+export const transform = vertices =>
+    new Float32Array(vertices
+        .map(cube => [cube.x, cube.y, cube.z])
+        .reduce((p, c) => p.concat(c)));
 
 function calcIndices(items) {
     let indices = [];
@@ -54,3 +42,11 @@ function calcCube(values, start, width) {
     }
     return values;
 }
+
+export const Mapper = {
+    cartesis,
+    uv,
+    transform,
+    calcIndices: calcIndices,
+    calcCube: calcCube,
+};

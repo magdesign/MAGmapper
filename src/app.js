@@ -58,12 +58,14 @@ function animate() {
 
 function createMapper() {
 
-    const size = 12;
+    const size = 3;
 
-    let vertices = Mapper.calcVertices(size);
-    let uvs = Mapper.calcUvs(size);
-    let indices = Mapper.calcIndices(size);
-    vertices = Shift.top(vertices, 0, 0, 3, 1);
+    let vertices = Mapper.transform(Mapper.cartesis(size)(i => i));
+    let uvs = Mapper.transform(Mapper.uv(size));
+    let indices =  Mapper.calcIndices(size);
+
+
+   // vertices = Mapper.transform(Shift.topRigth(vertices, 3, 3));
 
     console.log(vertices);
     console.log(uvs);
@@ -74,7 +76,7 @@ function createMapper() {
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
     geometry.addAttribute('position', new BufferAttribute(vertices, 3));
-    geometry.addAttribute('uv', new BufferAttribute(uvs, 2));
+    geometry.addAttribute('uv', new BufferAttribute(uvs, 3));
 
 
     // geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );

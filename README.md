@@ -3,18 +3,6 @@
 A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
 
-We should use [maptasticjs] as reference for the basic concept(https://github.com/glowbox/maptasticjs).
-It has the basic functions but is a bit weird coded.
-
-##### Omxplayer
-We have to figure out if it is possible to load a video with omxplayer within a website in an iframe,
-with this we could gain fully HW support on RPi and could use the omxplayer-sync script to sync multiple players.
-
-These guys are talking about [omxplayer support](https://www.raspberrypi.org/forums/viewtopic.php?t=40860)
-and I tryed it, without success so far. What do they put into homepage.html?
-<br>
-    <iframe src="file:///homepage.html?cmd=omxplayer%20--win%200,0,1920,1080%20/home/pi/video.mp4" width="2px" height="2px" frameborder="0"></iframe>
-</br>
 
 
 ##### However
@@ -24,7 +12,6 @@ With this solution we could also choose to load the video files from storge with
 this works on the online demo, but could not make it to work offline, I guess there is some kind of .js library missing </br>
 
 For syncing multiple players with the same source, we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos.
-
 
 
 These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
