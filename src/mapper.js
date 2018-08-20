@@ -47,8 +47,8 @@ function calcCube(values, start, width) {
 
 export const Mapper = {
     cartesis,
-
-    uv,vertices,
+    uv,
+    vertices,
     transform,
     calcIndices: calcIndices,
     calcCube: calcCube,

@@ -10,14 +10,9 @@ function topRigth(vertices,  x, y) {
     const rX = x / edge.x;
     const rY = y / edge.y;
 
-
-
     for (let i = 0; i < vertices.length; i++) {
-        // console.log(vertices[i])
-
         const resx = calcX(vertices[i], sizeY, rX);
         const resy = calcY(vertices[i], sizeX, rY);
-
 
         vertices[i].x = resx;
         vertices[i].y = resy;
@@ -35,7 +30,6 @@ function calcY(vertice, size, rel) {
 
 function calcX(vertice , size, rel) {
     const factor = vertice.y / size;
-
 
     const newFactor = (rel - 1) * factor + 1;
     return vertice.x * newFactor;

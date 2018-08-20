@@ -2,22 +2,14 @@ import {
     Scene,
     PerspectiveCamera,
     WebGLRenderer,
-    PlaneGeometry,
-    Geometry,
     BufferGeometry,
     BufferAttribute,
     TextureLoader,
-    MeshPhongMaterial,
     LoadingManager,
     MeshBasicMaterial,
     Mesh,
-    BackSide,
-    DoubleSide,
-    Vector2,
-    Vector3,
-    Face3,
-    ShapeBufferGeometry,
-    Shape
+    Sprite,
+    SpriteMaterial
 } from "three"
 import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
@@ -39,9 +31,11 @@ animate();
 function prepareShapes(camera, scene) {
     let objects = [];
 
-    let mapper = createMapper();
-    scene.add(mapper);
-    objects.push(mapper);
+    createMapper().forEach((obj)=>{
+        scene.add(obj);
+        objects.push(obj);
+    });
+
 
     let dragControls = new DragControls(objects, camera, renderer.domElement);
     dragControls.addEventListener('mousemove', () => {
@@ -56,20 +50,26 @@ function animate() {
 
 
 
+function makeSprite( color, parent ) {
+    var sprite = new Sprite( new SpriteMaterial( {
+        color: color
+    } ) );
+    parent.add( sprite );
+    sprite.position.set();
+    return sprite;
+}
+
+
 function createMapper() {
 
-    const size = 8;
+    const size = 10;
 
-    let vertices = Mapper.vertices(size, 4);
+    let vertices = Mapper.vertices(size, 10);
     let uvs = Mapper.transform(Mapper.uv(size));
     let indices =  Mapper.calcIndices(size);
 
+    vertices = Mapper.transform(Shift.topRigth(vertices, 4, 4));
 
-    vertices = Mapper.transform(Shift.topRigth(vertices, 3, 3));
-
-    console.log(vertices);
-    console.log(uvs);
-    console.log(indices);
 
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
@@ -86,59 +86,8 @@ function createMapper() {
     };
 
     let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
-    let material = new MeshBasicMaterial({map: texture, wireframe: false});
-    return new Mesh(geometry, material);
-}
-
-
-function createMapper2() {
-
-    console.log(Mapper.calcVertices(2));
-    console.log(Mapper.calcUvs(2));
-    console.log(Mapper.calcIndices(2));
-
-    //console.log(Mapper.calcIndices(1));
-    let imageSize = {
-        width: 1,
-        height: 1
-    };
-
-    // Identify the x, y, z coords where the image should be placed
-    let coords = {
-        x: -1,
-        y: -1,
-        z: 0
-    };
-
-    let vertices = new Float32Array([
-        coords.x, coords.y, coords.z,                                       // bottom left
-        coords.x + imageSize.width, coords.y, coords.z,                     // bottom right
-        coords.x, coords.y + imageSize.height, coords.z,                    // upper left,
-        coords.x + imageSize.width, coords.y + imageSize.height, coords.z,  // upper right
-    ]);
-
-    let uvs = new Float32Array([
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        1.0, 1.0,
-    ]);
-
-    let geometry = new BufferGeometry();
-    geometry.setIndex([0, 1, 2, 3, 2, 1]);
-    geometry.addAttribute('position', new BufferAttribute(vertices, 3));
-    geometry.addAttribute('uv', new BufferAttribute(uvs, 2));
-
-
-    // geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
-    // var material = new MeshBasicMaterial( { color: 0xff0000 } );
-    let manager = new LoadingManager();
-
-    manager.onProgress = function (item, loaded, total) {
-        console.log(item, loaded, total);
-    };
-
-    let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
-    let material = new MeshBasicMaterial({map: texture});
-    return new Mesh(geometry, material);
+    return [
+        new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: true})),
+        new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
+    ];
 }
