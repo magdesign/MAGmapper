@@ -29,21 +29,28 @@ prepareShapes(camera, scene);
 animate();
 
 function prepareShapes(camera, scene) {
-    let objects = [];
+    const size = 10;
+    const length = 5;
 
-    let obj = createMapper();
 
-    scene.add(obj.mapper);
+    let mapper = createMapper(size,length);
+    mapper.scene.forEach( item => scene.add(item));
 
-    obj.handles.forEach((obj) => {
-        scene.add(obj);
-        objects.push(obj);
-    });
 
-    let dragControls = new DragControls(objects, camera, renderer.domElement);
-    dragControls.addEventListener('mousemove', () => {
+    let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
+    dragControls.addEventListener('dragend', () => {
+        const topRight = scene.children[4].position;
+
+        let mapping = calcMapping(size, length);
+        let geometry = buildBufferGeometry(Shift.topRigth(mapping.vertices, topRight.x,topRight.y) , mapping.uvs, mapping.indices);
+        let mapperMesh = buildMesh(geometry);
+
+        scene.children[0] = mapperMesh;
+
         renderer.render(scene, camera);
     });
+
+
 }
 
 function animate() {
@@ -64,40 +71,41 @@ function makeSprite(x, y) {
 }
 
 
-function createMapper() {
-
-    const size = 10;
-
-    let vertices = Mapper.vertices(size, 5);
-
-    let uvs = Mapper.transform(Mapper.uv(size));
-    let indices = Mapper.calcIndices(size);
-
-
-    const transVertices = Mapper.transform(Shift.topRigth(vertices, 4, 4));
-
-
+function buildBufferGeometry(vertices, uvs, indices) {
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
-    geometry.addAttribute('position', new BufferAttribute(transVertices, 3));
-    geometry.addAttribute('uv', new BufferAttribute(uvs, 3));
+    geometry.addAttribute('position', new BufferAttribute(Mapper.transform(vertices), 3));
+    geometry.addAttribute('uv', new BufferAttribute(Mapper.transform(uvs), 3));
+    return geometry;
+}
 
-
-    // geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
-    // var material = new MeshBasicMaterial( { color: 0xff0000 } );
+function buildMesh(geometry) {
     let manager = new LoadingManager();
-
     manager.onProgress = function (item, loaded, total) {
         console.log(item, loaded, total);
     };
+    const texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
+    return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
+}
 
-    let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
-
-    const sprites = Mapper.edges(vertices).map(vert  => makeSprite(vert.x, vert.y));
-
-    console.log(sprites);
+function calcMapping(size, length) {
     return {
-        mapper: new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: true})),
-        handles: sprites
+        vertices:  Mapper.vertices(size, length),
+        uvs: Mapper.uv(size),
+        indices: Mapper.calcIndices(size)
+    }
+}
+
+function createMapper(size, length) {
+    let mapping = calcMapping(size, length);
+    let geometry = buildBufferGeometry(mapping.vertices, mapping.uvs, mapping.indices);
+    let mapperMesh = buildMesh(geometry);
+
+    const handler = Mapper.edges(mapping.vertices).map(vert => makeSprite(vert.x, vert.y));
+    const scene = Array.concat([mapperMesh], handler);
+
+    return {
+        handler,
+        scene
     };
 }
