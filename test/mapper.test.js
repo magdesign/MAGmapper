@@ -61,49 +61,20 @@ describe('Mapper', () => {
         });
     });
 
-    describe('test indices', () => {
-        it('should add indices with 1', () => {
-            const result = Mapper.calcIndices(1);
-            const excpection = [
-                0, 2, 1,
-                1, 2, 3
-            ];
-
-            Assert.equal(result.length / 6, 1);
-            Assert.deepEqual(result, excpection);
-        });
-
-        it('should add indices with 2', () => {
-            const result = Mapper.calcIndices(2);
-            const excpection = [
-                0, 3, 1,
-                1, 3, 4,
-
-                1, 4, 2,
-                2, 4, 5,
-
-                3, 6, 4,
-                4, 6, 7,
-
-                4, 7, 5,
-                5, 7, 8
-            ];
-
-            Assert.equal(result.length / 6, 4);
-            Assert.deepEqual(result, excpection);
-        });
-    });
 
     describe('test vertices', () => {
         const SIZE = 2;
 
         it('should generate vertices ' + SIZE, () => {
-            Assert.deepEqual(Mapper.transform(Mapper.vertices(SIZE, 1)), [
-                0, 0, 0,
-                0, 1, 0,
-                1, 0, 0,
-                1, 1, 0
-            ]);
+            const result = Mapper.vertices(SIZE, 1);
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 1, z: 0},
+                {x: 1, y: 0, z: 0},
+                {x: 1, y: 1, z: 0}
+            ];
+
+            Assert.deepEqual(expected, result);
         });
 
         it('should generate uv ' + SIZE, () => {
@@ -127,46 +98,21 @@ describe('Mapper', () => {
         });
     });
 
+    describe('test edges', () => {
 
-    describe('test cartesis', () => {
+        it('should generate edges ', () => {
 
-        it('should generate vertices', () => {
-            Assert.deepEqual(Mapper.transform(Mapper.cartesis(3)(i => i)), [
-                0, 0, 0,
-                0, 1, 0,
-                0, 2, 0,
-                1, 0, 0,
-                1, 1, 0,
-                1, 2, 0,
-                2, 0, 0,
-                2, 1, 0,
-                2, 2, 0,
-            ]);
-        });
+            const vert = Mapper.vertices(3, 3);
+            const result = Mapper.edges(vert);
 
-        it('should generate functional uv mapping', () => {
-
-            const size = 4;
-            const result = Mapper.uv(size);
-
-            Assert.deepEqual(result, [
+            const expected = [
                 {x: 0, y: 0, z: 0},
-                {x: 0, y: 0.3333333333333333, z: 0},
-                {x: 0, y: 0.6666666666666666, z: 0},
-                {x: 0, y: 1, z: 0},
-                {x: 0.3333333333333333, y: 0, z: 0},
-                {x: 0.3333333333333333, y: 0.3333333333333333, z: 0},
-                {x: 0.3333333333333333, y: 0.6666666666666666, z: 0},
-                {x: 0.3333333333333333, y: 1, z: 0},
-                {x: 0.6666666666666666, y: 0, z: 0},
-                {x: 0.6666666666666666, y: 0.3333333333333333, z: 0},
-                {x: 0.6666666666666666, y: 0.6666666666666666, z: 0},
-                {x: 0.6666666666666666, y: 1, z: 0},
-                {x: 1, y: 0, z: 0},
-                {x: 1, y: 0.3333333333333333, z: 0},
-                {x: 1, y: 0.6666666666666666, z: 0},
-                {x: 1, y: 1, z: 0}]);
-        });
-    });
+                {x: 0, y: 3, z: 0},
+                {x: 3, y: 0, z: 0},
+                {x: 3, y: 3, z: 0}
+            ];
+            Assert.deepEqual(expected, result);
 
+        });
+    })
 });

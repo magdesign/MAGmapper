@@ -71,6 +71,8 @@ function createMapper() {
     vertices = Mapper.transform(Shift.topRigth(vertices, 4, 4));
 
 
+
+
     let geometry = new BufferGeometry();
     geometry.setIndex(indices);
     geometry.addAttribute('position', new BufferAttribute(vertices, 3));
@@ -86,6 +88,7 @@ function createMapper() {
     };
 
     let texture = new TextureLoader(manager).load('textures/UV_Grid_Sm.jpg');
+
     return [
         new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: true})),
         new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
