@@ -12,6 +12,26 @@ const edges = vertices => vertices.filter((_, i) =>
     i === vertices.length - 1
 );
 
+const top = vertices => filterRows(vertices)((index, part, length) => index === length * (part + 1) - 1);
+const bottom = vertices => filterRows(vertices)((index, part, length) => index === length * part);
+const left = vertices => filterRows(vertices)((index, part, length) => index === part);
+const right = vertices => filterRows(vertices)((index, part, length) => index === length * (length - 1) + part);
+
+const filterRows = vertices => func => vertices
+    .filter((_, index) => rowCheckup(index, vertices.length, func));
+
+const rowCheckup = (index, length, func) =>
+    range(Math.sqrt(length))()
+        .map(part => func(index, part, Math.sqrt(length)))
+        .reduce((a, b) => a || b);
+
+export const Row = {
+    top,
+    bottom,
+    left,
+    right
+};
+
 const cartesis = length => fSize => range(length)()
     .map(x => cube(fSize(x)))
     .map(func => range(length)(y => func(fSize(y))))
@@ -60,4 +80,5 @@ export const Mapper = {
     transform,
     calcIndices: calcIndices,
     calcCube: calcCube,
+    range
 };

@@ -1,5 +1,5 @@
 import Assert from 'assert';
-import {Mapper} from "../src/mapper"
+import {Mapper, Row} from "../src/mapper"
 /*
 *
 *
@@ -98,7 +98,7 @@ describe('Mapper', () => {
         });
     });
 
-    describe('test edges', () => {
+    describe('test row', () => {
 
         it('should generate edges ', () => {
 
@@ -115,4 +115,61 @@ describe('Mapper', () => {
 
         });
     })
+
+
+    describe('test edges', () => {
+
+        it('should test row top', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Row.top(vert);
+
+            const expected = [
+                {x: 0, y: 3, z: 0},
+                {x: 1.5, y: 3, z: 0},
+                {x: 3, y: 3, z: 0}
+            ];
+            Assert.deepEqual(result, expected);
+        });
+
+        it('should test row bottom', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Row.bottom(vert);
+
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 1.5, y: 0, z: 0},
+                {x: 3, y: 0, z: 0}
+            ];
+            Assert.deepEqual(result, expected);
+        });
+
+        it('should test row left', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Row.left(vert);
+
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 1.5, z: 0},
+                {x: 0, y: 3, z: 0}
+            ];
+            Assert.deepEqual(result, expected);
+        });
+
+        it('should test row right', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Row.right(vert);
+
+            const expected = [
+                {x: 3, y: 0, z: 0},
+                {x: 3, y: 1.5, z: 0},
+                {x: 3, y: 3, z: 0}
+            ];
+            Assert.deepEqual(result, expected);
+        });
+    })
+
 });
