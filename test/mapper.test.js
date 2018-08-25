@@ -170,6 +170,19 @@ describe('Mapper', () => {
             ];
             Assert.deepEqual(result, expected);
         });
+
+        it('should test row ', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Row.row(vert, 1);
+
+            const expected = [
+                {x: 1.5, y: 0, z: 0},
+                {x: 1.5, y: 1.5, z: 0},
+                {x: 1.5, y: 3, z: 0}
+            ];
+            Assert.deepEqual(result, expected);
+        });
     })
 
 });

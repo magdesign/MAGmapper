@@ -6,7 +6,8 @@ import {Mapper} from "../src/mapper";
 describe('Shift', () => {
     describe('test cube index', () => {
         it('should shift vertices one to top => 1*1', () => {
-            const vertices = Mapper.cartesis(1, 1)(i => i);
+            const vertices = Mapper.vertices(4, 3);
+
             const result = Shift.topRigth(vertices, 4, 4);
 
             const exp = [
@@ -32,7 +33,8 @@ describe('Shift', () => {
         });
 
         it('should shift vertices one to top => 2*1', () => {
-            const vertices = Mapper.cartesis(4, 1)(i => i);
+            const vertices = Mapper.vertices(4, 3);
+
             const result = Shift.topRigth(vertices, 3, 4);
             const result2 = Shift.topLeft(result, 0, 4);
             console.log(result2);
