@@ -74,9 +74,46 @@ function topLeft(vertices, x, y) {
 
     return baseX.map((x,i)=> cube(x)(baseY[i]))
 }
+// todo finish implementation
+function bottomLeft(vertices, x, y) {
+
+    const verticeSide = Math.sqrt(vertices.length);
+
+    const bottomRight = Row.end(Row.bottom(vertices));
+    const bottomLeft = Row.start(Row.bottom(vertices));
+    const topLeft = Row.start(Row.top(vertices));
+
+    const deltaY = Mapper.range(verticeSide)()
+        .map((_, i) => part(i, verticeSide)(i => 1 - i) * (topRight.x - topLeft.x) * (y - topLeft.y) / (topRight.x - topLeft.x));
+
+    const deltaX = Mapper.range(verticeSide)()
+        .map((_, i) => part(i, verticeSide)(i => i) * (topLeft.y - bottomLeft.y) * (topLeft.x - x) / (topLeft.y - bottomLeft.y));
+
+    const baseY = Row.top(vertices)
+        .map((top, i) => {
+            return Row.bottom(vertices)
+                .map(bottom => ((top.y - bottom.y) + deltaY[i]) / (top.y - bottom.y))
+                .map((rel, ir) => Object({rel: rel, delta: deltaY[ir]}))
+        })
+        .reduce((p, c) => p.concat(c))
+        .map((value, i) => vertices[i].y * value.rel);
+
+
+    const baseX = Row.left(vertices)
+        .map((left) => {
+            return Row.right(vertices)
+                .map((right, ir) => ((right.x - left.x) + deltaX[ir]) / (right.x - left.x))
+                .map((rel, ir) => Object({rel: rel, delta: deltaX[ir]}))
+        })
+        .reduce((p, c) => p.concat(c))
+        .map((value, i) => value.rel * vertices[i].x - value.delta);
+
+    return baseX.map((x,i)=> cube(x)(baseY[i]))
+}
 
 
 export const Shift = {
     topRigth,
-    topLeft
+    topLeft,
+    bottomLeft
 };
