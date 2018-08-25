@@ -1,4 +1,4 @@
-import {Row} from "./mapper";
+import {cube, Row} from "./mapper";
 import {Mapper} from "./mapper";
 
 function topRigth(vertices, x, y) {
@@ -36,6 +36,8 @@ function calcX(vertice, size, rel) {
 }
 
 
+const part = (part, size) => func => func(part / (size - 1));
+const delta = (s, e) => e - s;
 
 function topLeft(vertices, x, y) {
 
@@ -43,39 +45,34 @@ function topLeft(vertices, x, y) {
 
     const topLeft = vertices[verticeSide - 1];
     const topRight = vertices[vertices.length - 1];
+    const bottomLeft = vertices[0];
 
-    const deltaX = topRight.x - topLeft.x;
-    const deltaY = topRight.y - topLeft.y;
+    const deltaY = Mapper.range(verticeSide)()
+        .map((_, i) => part(i, verticeSide)(i => 1 - i) * (topRight.x - topLeft.x) * (y - topLeft.y) / (topRight.x - topLeft.x));
 
-    const rely = deltaY / deltaX;
+    const deltaX = Mapper.range(verticeSide)()
+        .map((_, i) => part(i, verticeSide)(i => i) * (topLeft.y - bottomLeft.y) * (topLeft.x - x) / (topLeft.y - bottomLeft.y));
 
-    const delta = Mapper.range(verticeSide)()
-        .map((_, i) => (1 - i / (verticeSide - 1)) * deltaX)
-        .map(delta => delta * rely);
-
-    const base = Row.top(vertices)
+    const baseY = Row.top(vertices)
         .map((top, i) => {
             return Row.bottom(vertices)
-                .map(bottom=> (top.y - bottom.y) + delta[i]);
+                .map(bottom => ((top.y - bottom.y) + deltaY[i]) / (top.y - bottom.y))
+                .map((rel, ir) => Object({rel: rel, delta: deltaY[ir]}))
         })
-        .reduce((p, c) => p.concat(c));
+        .reduce((p, c) => p.concat(c))
+        .map((value, i) => vertices[i].y * value.rel);
 
 
-    console.log(base);
+    const baseX = Row.left(vertices)
+        .map((left) => {
+            return Row.right(vertices)
+                .map((right, ir) => ((right.x - left.x) + deltaX[ir]) / (right.x - left.x))
+                .map((rel, ir) => Object({rel: rel, delta: deltaX[ir]}))
+        })
+        .reduce((p, c) => p.concat(c))
+        .map((value, i) => value.rel * vertices[i].x - value.delta);
 
-
-    const maxY = [];
-
-
-    console.log("---res----");
-    for (let i = 0; i < Math.sqrt(vertices.length); i++) {
-
-
-        const reslt = i / verticeSide * rely;
-        console.log(reslt);
-    }
-
-    return vertices
+    return baseX.map((x,i)=> cube(x)(baseY[i]))
 }
 
 

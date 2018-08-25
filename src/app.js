@@ -40,10 +40,16 @@ function prepareShapes(camera, scene) {
     let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
     dragControls.addEventListener('dragend', () => {
         const topRight = scene.children[4].position;
+        const topLeft = scene.children[2].position;
 
         let mapping = calcMapping(size, length);
-        let geometry = buildBufferGeometry(Shift.topRigth(mapping.vertices, topRight.x,topRight.y) , mapping.uvs, mapping.indices);
+        let vert = Shift.topRigth(mapping.vertices, topRight.x,topRight.y);
+        vert = Shift.topLeft(vert, topLeft.x,topLeft.y);
+
+        let geometry = buildBufferGeometry(vert , mapping.uvs, mapping.indices);
         let mapperMesh = buildMesh(geometry);
+
+
 
         scene.children[0] = mapperMesh;
 

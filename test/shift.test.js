@@ -36,7 +36,7 @@ describe('Shift', () => {
             const vertices = Mapper.vertices(4, 3);
 
             const result = Shift.topRigth(vertices, 3, 4);
-            const result2 = Shift.topLeft(result, 0, 4);
+            const result2 = Shift.topLeft(result, -1, 4);
             console.log(result2);
 
 

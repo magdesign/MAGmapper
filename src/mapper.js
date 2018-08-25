@@ -3,7 +3,7 @@ const range = length => f => Array
         (_, i) => f !== undefined ? f(i) : i
     );
 
-const cube = x => y => Object({x, y, z: 0});
+export const cube = x => y => Object({x, y, z: 0});
 
 const edges = vertices => vertices.filter((_, i) =>
     i === 0 ||
@@ -16,6 +16,9 @@ const top = vertices => lineFilter(vertices)((index, part, length) => index === 
 const bottom = vertices => lineFilter(vertices)((index, part, length) => index === length * part);
 const left = vertices => lineFilter(vertices)((index, part, length) => index === part);
 const right = vertices => lineFilter(vertices)((index, part, length) => index === length * (length - 1) + part);
+
+const start = vertices => vertices[0];
+const end = vertices => vertices[vertices.length - 1];
 
 const row = (vertices, pos)=> lineFilter(vertices)((index, part, length) => index === length * pos  + part);
 
@@ -32,7 +35,9 @@ export const Row = {
     bottom,
     left,
     right,
-    row
+    row,
+    start,
+    end
 };
 
 const cartesis = length => fSize => range(length)()
