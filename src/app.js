@@ -33,8 +33,8 @@ function prepareShapes(camera, scene) {
     const length = 5;
 
 
-    let mapper = createMapper(size,length);
-    mapper.scene.forEach( item => scene.add(item));
+    let mapper = createMapper(size, length);
+    mapper.scene.forEach(item => scene.add(item));
 
 
     let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
@@ -42,14 +42,16 @@ function prepareShapes(camera, scene) {
         const topRight = scene.children[4].position;
         const topLeft = scene.children[2].position;
 
+        const bottomRight = scene.children[3].position;
+        const bottomLeft = scene.children[1].position;
+
+
         let mapping = calcMapping(size, length);
-        let vert = Shift.topRigth(mapping.vertices, topRight.x,topRight.y);
-        vert = Shift.topLeft(vert, topLeft.x,topLeft.y);
 
-        let geometry = buildBufferGeometry(vert , mapping.uvs, mapping.indices);
+        let vert = Shift.shift(size, bottomLeft, topLeft, bottomRight, topRight);
+
+        let geometry = buildBufferGeometry(vert, mapping.uvs, mapping.indices);
         let mapperMesh = buildMesh(geometry);
-
-
 
         scene.children[0] = mapperMesh;
 
@@ -96,7 +98,7 @@ function buildMesh(geometry) {
 
 function calcMapping(size, length) {
     return {
-        vertices:  Mapper.vertices(size, length),
+        vertices: Mapper.vertices(size, length),
         uvs: Mapper.uv(size),
         indices: Mapper.calcIndices(size)
     }

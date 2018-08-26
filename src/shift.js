@@ -36,27 +36,24 @@ function calcX(vertice, size, rel) {
 }
 
 
-const part = (part, size) => func => func(part / (size - 1));
-const delta = (s, e) => e - s;
+const calcPart = (part, size) => func => func(part / (size - 1));
+
+const delta = (side, start, end) => f => Mapper.range(side)()
+    .map((_, i) => calcPart(i, side)(f))
+    .map(part => part * (start - end));
 
 function topLeft(vertices, x, y) {
 
     const verticeSide = Math.sqrt(vertices.length);
 
-    const topLeft = vertices[verticeSide - 1];
-    const topRight = vertices[vertices.length - 1];
-    const bottomLeft = vertices[0];
-
-    const deltaY = Mapper.range(verticeSide)()
-        .map((_, i) => part(i, verticeSide)(i => 1 - i) * (topRight.x - topLeft.x) * (y - topLeft.y) / (topRight.x - topLeft.x));
-
-    const deltaX = Mapper.range(verticeSide)()
-        .map((_, i) => part(i, verticeSide)(i => i) * (topLeft.y - bottomLeft.y) * (topLeft.x - x) / (topLeft.y - bottomLeft.y));
+    const deltaY = delta(verticeSide, y, vertices[verticeSide - 1].y)(i => 1 - i);
+    const deltaX = delta(verticeSide, vertices[verticeSide - 1].x, x)(i => i);
 
     const baseY = Row.top(vertices)
         .map((top, i) => {
             return Row.bottom(vertices)
-                .map(bottom => ((top.y - bottom.y) + deltaY[i]) / (top.y - bottom.y))
+                .map(bottom => top.y - bottom.y)
+                .map(delta => (delta + deltaY[i]) / delta)
                 .map((rel, ir) => Object({rel: rel, delta: deltaY[ir]}))
         })
         .reduce((p, c) => p.concat(c))
@@ -66,14 +63,16 @@ function topLeft(vertices, x, y) {
     const baseX = Row.left(vertices)
         .map((left) => {
             return Row.right(vertices)
-                .map((right, ir) => ((right.x - left.x) + deltaX[ir]) / (right.x - left.x))
+                .map((right) => right.x - left.x)
+                .map((delta, ir) => (delta + deltaX[ir]) / delta)
                 .map((rel, ir) => Object({rel: rel, delta: deltaX[ir]}))
         })
         .reduce((p, c) => p.concat(c))
         .map((value, i) => value.rel * vertices[i].x - value.delta);
 
-    return baseX.map((x,i)=> cube(x)(baseY[i]))
+    return baseX.map((x, i) => cube(x)(baseY[i]))
 }
+
 // todo finish implementation
 function bottomLeft(vertices, x, y) {
 
@@ -108,12 +107,74 @@ function bottomLeft(vertices, x, y) {
         .reduce((p, c) => p.concat(c))
         .map((value, i) => value.rel * vertices[i].x - value.delta);
 
-    return baseX.map((x,i)=> cube(x)(baseY[i]))
+    return baseX.map((x, i) => cube(x)(baseY[i]))
 }
 
+
+const lineParts = (size, p1, p2) => Mapper
+    .range(size)()
+    .map(() => p2 - p1)
+    .map((delta, i) => calcPart(i, size)(i => i) * delta);
+
+const shift = (size, p1, p2, p3, p4) => {
+    const leftdelta = lineParts(size, p1.x, p2.x)
+        .map((_, i) => calcPart(i, size)(i => i))
+        .map((part) => part * (p2.x - p1.x))
+        .map((val, i) => Object({x: val, y: lineParts(size, p1.y, p2.y)[i]}));
+
+    const rightdelta = Mapper.range(size)(i => i)
+        .map((_, i) => calcPart(i, size)(i => i))
+        .map((part) => part * (p4.x - p3.x) + p3.x)
+        .map((val, i) => Object({x: val, y: lineParts(size, p1.x, p3.x)[i]}));
+
+    const x = rightdelta.map(right => leftdelta
+        .map(left => right.x - left.x)
+        .map((value, i) => value * calcPart(i, size)(i => i)))
+        .reduce((a, b) => a.concat(b));
+
+    const bottomdelta = lineParts(size, p1.y, p3.y)
+        .map((_, i) => calcPart(i, size)(i => i))
+        .map((part) => part * (p3.y - p1.y))
+        .map((val, i) => Object({y: val, x: lineParts(size, p1.x, p3.x)[i]}));
+
+    const topdelta = Mapper.range(size)(i => i)
+        .map((_, i) => calcPart(i, size)(i => i))
+        .map((part) => part * (p4.y - p2.y) + p2.y)
+        .map((val, i) => Object({y: val, x: lineParts(size, p2.y, p4.y)[i]}));
+
+    const y = topdelta
+        .map(top => bottomdelta
+            .map(bottom => top.y - bottom.y)
+            .map((value, i) => value * calcPart(i, size)(i => i)))
+        .reduce((a, b) => a.concat(b));
+
+    const parsedX = Mapper.range(size)()
+        .map((_,i) => Row.row(x,i))
+        .map((val,i) => val );
+
+    const resultX = parse(size, parsedX);
+
+    const result= [];
+    for (let i = 0; i < resultX.length; i++) {
+        result.push(Object({x: resultX[i], y: y[i], z:0}))
+    }
+
+    return result;
+};
+
+function parse(size, parsedX) {
+    const result = [];
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            result.push(parsedX[j][i])
+        }
+    }
+    return result;
+}
 
 export const Shift = {
     topRigth,
     topLeft,
-    bottomLeft
+    bottomLeft,
+    shift
 };

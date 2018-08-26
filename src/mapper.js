@@ -37,7 +37,8 @@ export const Row = {
     right,
     row,
     start,
-    end
+    end,
+    edges
 };
 
 const cartesis = length => fSize => range(length)()
