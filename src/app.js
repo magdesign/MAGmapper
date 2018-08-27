@@ -8,6 +8,7 @@ import {
     LoadingManager,
     MeshBasicMaterial,
     Mesh,
+    VideoTexture,
     Sprite,
     SpriteMaterial
 } from "three"
@@ -29,7 +30,7 @@ prepareShapes(camera, scene);
 animate();
 
 function prepareShapes(camera, scene) {
-    const size = 10;
+    const size = 30;
     const length = 5;
 
 
@@ -51,7 +52,7 @@ function prepareShapes(camera, scene) {
         let vert = Shift.shift(size, bottomLeft, topLeft, bottomRight, topRight);
 
         let geometry = buildBufferGeometry(vert, mapping.uvs, mapping.indices);
-        let mapperMesh = buildMesh(geometry);
+        let mapperMesh = buildVideoMesh(geometry);
 
         scene.children[0] = mapperMesh;
 
@@ -96,6 +97,20 @@ function buildMesh(geometry) {
     return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
 }
 
+function buildVideoMesh(geometry) {
+    let manager = new LoadingManager();
+    manager.onProgress = function (item, loaded, total) {
+        console.log(item, loaded, total);
+    };
+
+    var video = document.getElementById( 'video' );
+
+    const texture = new VideoTexture(video);
+    return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
+}
+
+
+
 function calcMapping(size, length) {
     return {
         vertices: Mapper.vertices(size, length),
@@ -107,7 +122,7 @@ function calcMapping(size, length) {
 function createMapper(size, length) {
     let mapping = calcMapping(size, length);
     let geometry = buildBufferGeometry(mapping.vertices, mapping.uvs, mapping.indices);
-    let mapperMesh = buildMesh(geometry);
+    let mapperMesh = buildVideoMesh(geometry);
 
     const handler = Mapper.edges(mapping.vertices).map(vert => makeSprite(vert.x, vert.y));
     const scene = Array.concat([mapperMesh], handler);
