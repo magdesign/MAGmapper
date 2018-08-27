@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --hot",
     "build": "webpack --mode production --progress",
-    "test": "mocha --require babel-core/register"
+    "test": "mocha --require babel-core/register",
+    "ws": "node Socket.js"
   },
   "author": "Brad Traversy",
   "license": "MIT",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "three": "^0.94.0",
-    "three-dragcontrols": "^0.88.2"
+    "three-dragcontrols": "^0.88.2",
+    "ws": "^6.0.0"
   }
 }

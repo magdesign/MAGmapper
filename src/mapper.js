@@ -30,6 +30,7 @@ const rowCheckup = (index, length, func) =>
         .map(part => func(index, part, Math.sqrt(length)))
         .reduce((a, b) => a || b);
 
+
 export const Row = {
     top,
     bottom,
