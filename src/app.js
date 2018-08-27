@@ -60,9 +60,7 @@ function prepareShapes(camera, scene) {
         scene.children[0] = mapperMesh;
 
         renderer.render(scene, camera);
-
         connection.send(JSON.stringify({topRight, topLeft, bottomRight, bottomLeft}));
-
     });
 
 
@@ -91,19 +89,14 @@ function prepareShapes(camera, scene) {
         scene.children[1].position.x = bottomLeft.x;
         scene.children[1].position.y = bottomLeft.y;
 
-
         let mapping = calcMapping(size, length);
-
         let vert = Shift.shift(size, bottomLeft, topLeft, bottomRight, topRight);
 
         let geometry = buildBufferGeometry(vert, mapping.uvs, mapping.indices);
         let mapperMesh = buildVideoMesh(geometry);
 
         scene.children[0] = mapperMesh;
-
         renderer.render(scene, camera);
-
-
     }
 }
 
@@ -115,7 +108,6 @@ function animate() {
 
 
 function makeSprite(x, y) {
-
     const texture = new TextureLoader().load("textures/sprite0.png");
     const material = new SpriteMaterial({map: texture});
 
