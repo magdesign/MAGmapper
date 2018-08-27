@@ -14,7 +14,6 @@ function shift(size, bottomLeft, topLeft, bottomRight, topRight) {
     }
 
     resultY = resultY.reduce((a, b) => a.concat(b));
-
     resultX = parse(size, resultX);
     const result = [];
     for (let i = 0; i < resultX.length; i++) {
