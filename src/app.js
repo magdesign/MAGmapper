@@ -134,7 +134,7 @@ function buildBufferGeometry(vertices, uvs, indices) {
     return geometry;
 }
 
-function buildVideoMesh(geometry) {
+function buildVideoMesh2(geometry) {
     let manager = new LoadingManager();
     manager.onProgress = function (item, loaded, total) {
         console.log(item, loaded, total);
@@ -144,7 +144,7 @@ function buildVideoMesh(geometry) {
 }
 
 //buildMesh
-function buildVideoMesh1(geometry) {
+function buildVideoMesh(geometry) {
     let manager = new LoadingManager();
     manager.onProgress = function (item, loaded, total) {
         console.log(item, loaded, total);
