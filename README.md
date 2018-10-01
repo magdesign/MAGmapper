@@ -13,32 +13,28 @@ For syncing multiple players with the same source, we would have to check this a
 
 These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
 
-## Testfiles
-
-- [Testimage](https://pocketvj.com/video/PVJ_Testscreen.png)
-- [Testvideo](https://pocketvj.com/video/PVJ_Testvideo2018.mp4)
-
 
 ## Reached so far:
 
-- Basic understandment of Three.js structure.
 - Draggable 3d object in browser.
 - Fixed perspective transforms with the mathematical approach.
+- Websockets integrated
 
 
 ## Next Steps:
 
-- Fix build file
-- Make corners dragable, so when mouse + click on a corner, you can move its position
-- Add circular markers to corners to see them better, something like the red dot [here](https://threejs.org/examples/#webgl_interactive_lines)
+- Fix build file to run without localhost:8080!!?
+- Video does not autoplay.
+- Add smooth to deinterlace the video.
+- Update in realtime when dragging object.
+- Keyboard shortcuts to show/hide handles.
+
 - Load custom [Textures](https://threejs.org/docs/#api/textures/VideoTexture) (images, image folders, videos, websites, ndi)
-- Adding a [video](https://stackoverflow.com/questions/37884013/adding-video-as-texture-in-three-js) to a texture
 - Make texture input source size and coverage selectable
-- Test spline planes, is it possible to use bezier handles on [webgl_geometry_nurbs](https://threejs.org/examples/#webgl_geometry_nurbs)
 - Add different shapes like circles, mesh wrap.
 
 ## Milestones
-### Milestone1:
+### Milestone1 (reached):
 - Functional prototype of a quad surface with a video texture which can be distorted with dragging the corners. Corners get higlighted when mouse is near them.
 
 
@@ -75,6 +71,8 @@ These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with t
 
 ## Usage
 
+Node.js must be installed on the system.
+
 ### Install
 ```sh
 $ npm install
@@ -84,6 +82,12 @@ $ npm install
 ```sh
 $ npm start
 ```
+
+### Websockets
+```sh
+$ npm run ws
+```
+
 
 ### Run Tests
 ```sh
@@ -96,3 +100,4 @@ $ mocha-webpack "test/**/*.js"
 $ npm run build
 ```
 
+Open browser and type: localhost:8080
