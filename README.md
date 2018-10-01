@@ -23,10 +23,10 @@ These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with t
 
 ## Next Steps:
 
-- Fix build file to run without localhost:8080!!?
-- Video does not autoplay.
-- Add smooth to deinterlace the video.
-- Update in realtime when dragging object.
+- Fix build file to run without localhost:8080, just with loading the index.html!!?
+- Video does not autoplay why?
+- Add smooth script to deinterlace the video,  I think its something like: THREE.LinearFilter ?).
+- Update in realtime when dragging object, show boarers of mapping surface when in editing mode (crosshairs, see:https://github.com/austince/maptasticjs)
 - Keyboard shortcuts to show/hide handles.
 
 - Load custom [Textures](https://threejs.org/docs/#api/textures/VideoTexture) (images, image folders, videos, websites, ndi)
