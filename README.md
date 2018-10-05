@@ -3,9 +3,13 @@
 A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
 
+See example here: https://mapper.jku.one/
+
+Feel free to contribute or donate :-)
+
 
 ##### Rpi support
-With newest chromium browser we have full HW support for playing videos on Rpi.</br>
+With newest chromium browser we have full HW support for playing videos on Rpi (??).</br>
 FullHD movies seem to run smooth in the browser, looping can be achieved when the video is set on a seperate html page. </br>
 With this solution we could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/  </br>
 
@@ -16,22 +20,23 @@ These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with t
 
 ## Reached so far:
 
-- Draggable 3d object in browser.
+- Draggable object in browser.
 - Fixed perspective transforms with the mathematical approach.
-- Websockets integrated
+- Websockets integrated, enable/disable websocket button
+- Show/Hide menu with ESC button
+- Enable/Disable Wireframe mode
+
 
 
 ## Next Steps:
 
-- Fix build file to run without localhost:8080, just with loading the index.html!!?
-- Video does not autoplay why?
-- Add smooth script to deinterlace the video,  I think its something like: THREE.LinearFilter ?).
-- Update in realtime when dragging object, show boarders of mapping surface when in editing mode (crosshairs, see:https://github.com/austince/maptasticjs)
-- Keyboard shortcuts to show/hide handles.
-
-- Load custom [Textures](https://threejs.org/docs/#api/textures/VideoTexture) (images, image folders, videos, websites, ndi)
+- Somehow RPi does not support EXT_texture_filter_anisotropic, need a function to disable it so it will run on PocketVJ.
+- Video does not autoplay why? Its because if the resolution of the screeen is too big, if resolution is smaller than fullHD it works...
+- Keyboard shortcut or menu button to show/hide handles.
+- Load custom [Textures], choose video (https://threejs.org/docs/#api/textures/VideoTexture) (images, image folders, videos, websites, ndi)
 - Make texture input source size and coverage selectable
 - Add different shapes like circles, mesh wrap.
+- Sync across various players.
 
 ## Milestones
 ### Milestone1 (reached):
