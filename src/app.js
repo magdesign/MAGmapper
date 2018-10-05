@@ -37,7 +37,9 @@ camera.position.z = config.cameraPosition;
 let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-
+/**
+ * Keylistener for enabling and disabling buttonbar
+ */
 window.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "Escape":
@@ -45,10 +47,8 @@ window.addEventListener("keydown", function (event) {
             const cssClass = document
                 .getElementById("buttonbar")
                 .getAttribute("class") === "show" ? "hide" : "show";
-            document.getElementById("buttonbar").setAttribute("class", cssClass );
-            break;
-        default:
-            return;
+
+            document.getElementById("buttonbar").setAttribute("class", cssClass);
     }
 }, true);
 
