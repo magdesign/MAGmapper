@@ -18,20 +18,20 @@ import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
 import {Shift} from "./shift";
 
-
 let config = {
-    websocketUrl: "ws://localhost:9030",
+    webSocketUrl: "ws://localhost:9030",
     cameraPosition: 10,
     wireframe: false,
     size: 30,
-    length: 5
+    length: 5,
+    dragHandleSprite: "textures/sprite0.png",
+    webSocketConnectionToggle: false,
 };
-
-
-let connection = new WebSocket(config.websocketUrl);
-
+let webSocket = null;
 let scene = new Scene();
 let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+
 camera.position.z = config.cameraPosition;
 
 
@@ -39,15 +39,65 @@ let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 
-// Button Area
+document.body.appendChild(renderer.domElement);
+
+// Button Wireframe
 document.getElementById("wireframe").addEventListener("click", () => {
     config.wireframe = !config.wireframe;
     renderMappingWithWebSocket();
 });
 
-document.body.appendChild(renderer.domElement);
-connection.onopen = () => prepareShapes(camera, scene);
+
+function setWebSocketToggle(toggle){
+    config.webSocketConnectionToggle = toggle;
+    const cssClass = toggle ? "active" : "inactive";
+    document.getElementById("websocket-connection").setAttribute("class", cssClass);
+}
+
+
+// Button websocket
+document.getElementById("websocket-toggle").addEventListener("click", () => {
+    config.webSocketUrl = document.getElementById("websocket-connection").value;
+
+    if (webSocket !== null && webSocket !== undefined) {
+        webSocket.close();
+    }
+
+    try {
+        webSocket = new WebSocket(config.webSocketUrl);
+        setWebSocketToggle(!config.webSocketConnectionToggle);
+
+
+        webSocket.onmessage = e => {
+            const data = JSON.parse(e.data);
+            config = data.config;
+
+            scene.children[4].position.x = data.points.topRight.x;
+            scene.children[4].position.y = data.points.topRight.y;
+
+            scene.children[2].position.x = data.points.topLeft.x;
+            scene.children[2].position.y = data.points.topLeft.y;
+
+            scene.children[3].position.x = data.points.bottomRight.x;
+            scene.children[3].position.y = data.points.bottomRight.y;
+
+            scene.children[1].position.x = data.points.bottomLeft.x;
+            scene.children[1].position.y = data.points.bottomLeft.y;
+            renderMapping(data.points);
+        };
+
+    }catch (e) {
+        setWebSocketToggle(false);
+    }
+
+
+
+});
+
+
+prepareShapes(camera, scene);
 animate();
+
 
 function getEdgePoints(scene) {
     return {
@@ -58,10 +108,15 @@ function getEdgePoints(scene) {
     };
 }
 
-function renderMappingWithWebSocket(){
+function renderMappingWithWebSocket() {
     const points = getEdgePoints(scene);
     renderMapping(points);
-    connection.send(JSON.stringify({points, config}));
+
+    if (config.webSocketConnectionToggle) {
+        const body = JSON.stringify({points, config});
+
+        webSocket.send(body);
+    }
 }
 
 function prepareShapes(camera, scene) {
@@ -71,35 +126,13 @@ function prepareShapes(camera, scene) {
 
 
     let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
+
+
     dragControls.addEventListener('drag', () => {
         renderMappingWithWebSocket();
     });
 
 
-    connection.onmessage = e => {
-        const data = JSON.parse(e.data);
-        config  =  data.config;
-
-        const topRight = data.points.topRight;
-        const topLeft = data.points.topLeft;
-
-        const bottomRight = data.points.bottomRight;
-        const bottomLeft = data.points.bottomLeft;
-
-        scene.children[4].position.x = topRight.x;
-        scene.children[4].position.y = topRight.y;
-
-        scene.children[2].position.x = topLeft.x;
-        scene.children[2].position.y = topLeft.y;
-
-        scene.children[3].position.x = bottomRight.x;
-        scene.children[3].position.y = bottomRight.y;
-
-        scene.children[1].position.x = bottomLeft.x;
-        scene.children[1].position.y = bottomLeft.y;
-
-        renderMapping(data.points);
-    }
 }
 
 
@@ -118,9 +151,9 @@ function animate() {
 }
 
 
-function makeSprite(x, y) {
+function makeDragHandleSprite(x, y) {
     const texture = new TextureLoader()
-        .load("textures/sprite0.png");
+        .load(config.dragHandleSprite);
 
     const material = new SpriteMaterial({map: texture});
 
@@ -167,13 +200,14 @@ function calcMapping(size, length) {
 }
 
 function createMapper(size, length) {
-    let mapping = calcMapping(size, length);
+    const mapping = calcMapping(size, length);
+
     let geometry = buildBufferGeometry(mapping.vertices, mapping.uvs, mapping.indices);
     let mapperMesh = buildVideoMesh(geometry);
 
     const handler = Mapper
         .edges(mapping.vertices)
-        .map(vert => makeSprite(vert.x, vert.y));
+        .map(coordinates => makeDragHandleSprite(coordinates.x, coordinates.y));
 
     const scene = Array.concat([mapperMesh], handler);
 

@@ -18,7 +18,6 @@ const left = vertices => lineFilter(vertices)((index, part, length) => index ===
 const right = vertices => lineFilter(vertices)((index, part, length) => index === length * (length - 1) + part);
 
 const start = vertices => vertices[0];
-const end = vertices => vertices[vertices.length - 1];
 
 const row = (vertices, pos)=> lineFilter(vertices)((index, part, length) => index === length * pos  + part);
 
@@ -38,8 +37,7 @@ export const Row = {
     right,
     row,
     start,
-    end,
-    edges
+
 };
 
 const cartesis = length => fSize => range(length)()
@@ -83,12 +81,10 @@ function calcCube(values, start, width) {
 }
 
 export const Mapper = {
-    cartesis,
     edges,
     uv,
     vertices,
     transform,
     calcIndices: calcIndices,
     calcCube: calcCube,
-    range
 };
