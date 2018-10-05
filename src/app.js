@@ -27,16 +27,30 @@ let config = {
     dragHandleSprite: "textures/sprite0.png",
     webSocketConnectionToggle: false,
 };
+
 let webSocket = null;
 let scene = new Scene();
 let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-
 camera.position.z = config.cameraPosition;
 
 
 let renderer = new WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+window.addEventListener("keydown", function (event) {
+    switch (event.key) {
+        case "Escape":
+            // dont judge me -> all the css stuff is dirty
+            const cssClass = document
+                .getElementById("buttonbar")
+                .getAttribute("class") === "show" ? "hide" : "show";
+            document.getElementById("buttonbar").setAttribute("class", cssClass );
+            break;
+        default:
+            return;
+    }
+}, true);
 
 
 document.body.appendChild(renderer.domElement);
@@ -89,15 +103,10 @@ document.getElementById("websocket-toggle").addEventListener("click", () => {
     }catch (e) {
         setWebSocketToggle(false);
     }
-
-
-
 });
-
 
 prepareShapes(camera, scene);
 animate();
-
 
 function getEdgePoints(scene) {
     return {
@@ -124,17 +133,13 @@ function prepareShapes(camera, scene) {
     let mapper = createMapper(config.size, config.length);
     mapper.scene.forEach(item => scene.add(item));
 
-
     let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
 
 
     dragControls.addEventListener('drag', () => {
         renderMappingWithWebSocket();
     });
-
-
 }
-
 
 function renderMapping(points) {
     let mapping = calcMapping(config.size, config.length);
