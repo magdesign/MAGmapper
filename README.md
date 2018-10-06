@@ -28,7 +28,7 @@ These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with t
 
 ## Next Steps:
 
-- Somehow RPi does not support EXT_texture_filter_anisotropic, it stutters on chromium, so try it with resin wpe.
+- Somehow RPi does not support EXT_texture_filter_anisotropic, it stutters on chromium, so try it with resin wpe or wpe only: https://wpewebkit.org/
 - Video does not autoplay why? Its because if the resolution of the screeen is too big, if resolution is smaller than fullHD it works...
 - Keyboard shortcut or menu button to show/hide handles.
 - Load custom [Textures], choose video (https://threejs.org/docs/#api/textures/VideoTexture) (images, image folders, videos, websites, ndi)
