@@ -10,9 +10,16 @@ If you are experinced on three and have some time to add one of the desired func
 
 
 ##### RPi support
-Runs only on Stretch with Chromium, but we dont have enough ressources yet to display it without stutters. 
-RPi does not support EXT_texture_filter_anisotropic, so I am currently trying it with WPE: https://wpewebkit.org/
+Runs on Stretch with newest Chromium, but we dont have enough ressources to display it without stutters. 
+RPi does not support EXT_texture_filter_anisotropic.
+After testing with WPE: https://wpewebkit.org, the https://mapper.jku.one/ does not run, following errors: 
+```CONSOLE WARN THREE.WebGLRenderer: EXT_texture_filter_anisotropic extension not supported.
+** (WPEWebProcess:21): CRITICAL **: gst_video_frame_map_id: assertion 'GST_IS_BUFFER (buffer)' failed
 
+** (WPEWebProcess:21): CRITICAL **: gst_video_frame_map_id: assertion 'GST_IS_BUFFER (buffer)' failed
+WARNING: WebProcess crashed: restarting it ...
+```
+ 
 
 We could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/  on the index page.</br>
 
