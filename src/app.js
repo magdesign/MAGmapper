@@ -14,6 +14,7 @@ import {
     LinearFilter,
     ClampToEdgeWrapping
 } from "three"
+
 import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
 import {Shift} from "./shift";
@@ -28,41 +29,40 @@ let config = {
     webSocketConnectionToggle: false,
 };
 
-let webSocket = null;
-let scene = new Scene();
-let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = config.cameraPosition;
+let mapper = {
+    scene: new Scene(),
+    camera: new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000),
+    renderer: new WebGLRenderer(),
+    webSocket: null
+};
+
+init(mapper, config);
+
+function init(mapper, config) {
+    const animate = () => {
+        requestAnimationFrame(animate);
+        mapper.renderer.render(mapper.scene, mapper.camera);
+    };
+
+    mapper.camera.position.z = config.cameraPosition;
+    mapper.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.body.appendChild(mapper.renderer.domElement);
+
+    prepareShapes(mapper, config);
+    animate();
+}
 
 
-let renderer = new WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-/**
- * Keylistener for enabling and disabling buttonbar
- */
-window.addEventListener("keydown", function (event) {
-    switch (event.key) {
-        case "Escape":
-            // dont judge me -> all the css stuff is dirty
-            const cssClass = document
-                .getElementById("buttonbar")
-                .getAttribute("class") === "show" ? "hide" : "show";
-
-            document.getElementById("buttonbar").setAttribute("class", cssClass);
-    }
-}, true);
-
-
-document.body.appendChild(renderer.domElement);
 
 // Button Wireframe
 document.getElementById("wireframe").addEventListener("click", () => {
     config.wireframe = !config.wireframe;
-    renderMappingWithWebSocket();
+    renderMappingWithWebSocket(mapper);
 });
 
 
-function setWebSocketToggle(toggle){
+function setWebSocketToggle(toggle) {
     config.webSocketConnectionToggle = toggle;
     const cssClass = toggle ? "active" : "inactive";
     document.getElementById("websocket-connection").setAttribute("class", cssClass);
@@ -73,86 +73,75 @@ function setWebSocketToggle(toggle){
 document.getElementById("websocket-toggle").addEventListener("click", () => {
     config.webSocketUrl = document.getElementById("websocket-connection").value;
 
-    if (webSocket !== null && webSocket !== undefined) {
-        webSocket.close();
+    if (mapper.webSocket !== null && mapper.webSocket !== undefined) {
+        mapper.webSocket.close();
     }
 
     try {
-        webSocket = new WebSocket(config.webSocketUrl);
+        mapper.webSocket = new WebSocket(config.webSocketUrl);
         setWebSocketToggle(!config.webSocketConnectionToggle);
 
 
-        webSocket.onmessage = e => {
+        mapper.webSocket.onmessage = e => {
             const data = JSON.parse(e.data);
             config = data.config;
 
-            scene.children[4].position.x = data.points.topRight.x;
-            scene.children[4].position.y = data.points.topRight.y;
+            mapper.scene.children[4].position.x = data.points.topRight.x;
+            mapper.scene.children[4].position.y = data.points.topRight.y;
 
-            scene.children[2].position.x = data.points.topLeft.x;
-            scene.children[2].position.y = data.points.topLeft.y;
+            mapper.scene.children[2].position.x = data.points.topLeft.x;
+            mapper.scene.children[2].position.y = data.points.topLeft.y;
 
-            scene.children[3].position.x = data.points.bottomRight.x;
-            scene.children[3].position.y = data.points.bottomRight.y;
+            mapper.scene.children[3].position.x = data.points.bottomRight.x;
+            mapper.scene.children[3].position.y = data.points.bottomRight.y;
 
-            scene.children[1].position.x = data.points.bottomLeft.x;
-            scene.children[1].position.y = data.points.bottomLeft.y;
-            renderMapping(data.points);
+            mapper.scene.children[1].position.x = data.points.bottomLeft.x;
+            mapper.scene.children[1].position.y = data.points.bottomLeft.y;
+            renderMapping(mapper ,data.points);
         };
 
-    }catch (e) {
+    } catch (e) {
         setWebSocketToggle(false);
     }
 });
 
-prepareShapes(camera, scene);
-animate();
 
 function getEdgePoints(scene) {
     return {
-        topRight: scene.children[4].position,
+        bottomLeft: scene.children[1].position,
         topLeft: scene.children[2].position,
         bottomRight: scene.children[3].position,
-        bottomLeft: scene.children[1].position
+        topRight: scene.children[4].position
     };
 }
 
-function renderMappingWithWebSocket() {
-    const points = getEdgePoints(scene);
-    renderMapping(points);
+function renderMappingWithWebSocket(mapper) {
+    const points = getEdgePoints(mapper.scene);
+    renderMapping(mapper, points);
 
     if (config.webSocketConnectionToggle) {
         const body = JSON.stringify({points, config});
 
-        webSocket.send(body);
+        mapper.webSocket.send(body);
     }
 }
 
-function prepareShapes(camera, scene) {
+function prepareShapes(mapper, config) {
 
-    let mapper = createMapper(config.size, config.length);
-    mapper.scene.forEach(item => scene.add(item));
+    let mapperParts = createMapper(config.size, config.length);
+    mapperParts.scene.forEach(item => mapper.scene.add(item));
 
-    let dragControls = new DragControls(mapper.handler, camera, renderer.domElement);
-
-
-    dragControls.addEventListener('drag', () => {
-        renderMappingWithWebSocket();
-    });
+    const drag = new DragControls(mapperParts.handler, mapper.camera, mapper.renderer.domElement);
+    drag.addEventListener('drag', () => renderMappingWithWebSocket(mapper));
 }
 
-function renderMapping(points) {
+function renderMapping(mapper ,points) {
     let mapping = calcMapping(config.size, config.length);
     let vert = Shift.shift(config.size, points.bottomLeft, points.topLeft, points.bottomRight, points.topRight);
     let geometry = buildBufferGeometry(vert, mapping.uvs, mapping.indices);
 
-    scene.children[0] = buildVideoMesh(geometry);
-    renderer.render(scene, camera);
-}
-
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+    mapper.scene.children[0] = buildVideoMesh(geometry);
+    mapper.renderer.render(mapper.scene, mapper.camera);
 }
 
 
@@ -180,7 +169,7 @@ function buildBufferGeometry(vertices, uvs, indices) {
 //buildMesh
 function buildVideoMesh(geometry) {
     let manager = new LoadingManager();
-    manager.onProgress = function (item, loaded, total) {
+    manager.onProgress = (item, loaded, total) => {
         console.log(item, loaded, total);
     };
 
