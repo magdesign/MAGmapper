@@ -18,6 +18,9 @@ import {
 import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
 import {Shift} from "./shift";
+import {ButtonBar} from "./buttonbar";
+
+ButtonBar();
 
 let config = {
     webSocketUrl: "ws://localhost:9030",
@@ -69,6 +72,21 @@ function setWebSocketToggle(toggle) {
 }
 
 
+function setDragHandleButtons(children, points){
+    children[4].position.x = points.topRight.x;
+    children[4].position.y = points.topRight.y;
+
+    children[2].position.x = points.topLeft.x;
+    children[2].position.y = points.topLeft.y;
+
+    children[3].position.x = points.bottomRight.x;
+    children[3].position.y = points.bottomRight.y;
+
+    children[1].position.x = points.bottomLeft.x;
+    children[1].position.y = points.bottomLeft.y;
+    return children
+}
+
 // Button websocket
 document.getElementById("websocket-toggle").addEventListener("click", () => {
     config.webSocketUrl = document.getElementById("websocket-connection").value;
@@ -80,26 +98,12 @@ document.getElementById("websocket-toggle").addEventListener("click", () => {
     try {
         mapper.webSocket = new WebSocket(config.webSocketUrl);
         setWebSocketToggle(!config.webSocketConnectionToggle);
-
-
         mapper.webSocket.onmessage = e => {
             const data = JSON.parse(e.data);
             config = data.config;
-
-            mapper.scene.children[4].position.x = data.points.topRight.x;
-            mapper.scene.children[4].position.y = data.points.topRight.y;
-
-            mapper.scene.children[2].position.x = data.points.topLeft.x;
-            mapper.scene.children[2].position.y = data.points.topLeft.y;
-
-            mapper.scene.children[3].position.x = data.points.bottomRight.x;
-            mapper.scene.children[3].position.y = data.points.bottomRight.y;
-
-            mapper.scene.children[1].position.x = data.points.bottomLeft.x;
-            mapper.scene.children[1].position.y = data.points.bottomLeft.y;
+            mapper.scene.children = setDragHandleButtons(mapper.scene.children, data.points);
             renderMapping(mapper ,data.points);
         };
-
     } catch (e) {
         setWebSocketToggle(false);
     }
