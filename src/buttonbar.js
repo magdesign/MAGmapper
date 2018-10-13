@@ -1,7 +1,7 @@
 
 const ID_BUTTON_BAR = "buttonbar";
 
-export function ButtonBar(){
+function init(){
 
     /**
      * Keylistener for enabling and disabling buttonbar
@@ -22,3 +22,6 @@ export function ButtonBar(){
             .getAttribute("class") === "show" ? "hide" : "show"
     }
 }
+export const ButtonBar = {
+    init
+};

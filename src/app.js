@@ -18,6 +18,7 @@ import {Shift} from "./shift";
 import {DragHandle} from "./draghandle";
 import {ButtonBar} from "./buttonbar";
 import {VideoBar} from "./videobar";
+import {Renderer} from "./renderer";
 
 let config = {
     webSocketUrl: "ws://localhost:9030",
@@ -35,12 +36,16 @@ let mapper = {
     webSocket: null
 };
 
+const EventType = {
+    video: "video",
+    drag: "drag"
+};
+
 init(mapper, config);
 
 function init(mapper, config) {
-
-    ButtonBar();
-    VideoBar();
+    ButtonBar.init();
+    VideoBar.init();
 
     mapper.camera.position.z = config.cameraPosition;
     mapper.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -59,14 +64,17 @@ function init(mapper, config) {
 // Button Wireframe
 document.getElementById("wireframe").addEventListener("click", () => {
     config.wireframe = !config.wireframe;
-    renderMappingWithWebSocket(mapper);
+    Renderer.renderMappingWithWebSocket(mapper, config, EventType.drag);
 });
+
+// Video buttons
 document.getElementById("video-stop")
-    .addEventListener("click", () => document.getElementById("video").pause());
+    .addEventListener("click",
+        () => Renderer.renderMappingWithWebSocket(mapper, config, EventType.video));
 
 document.getElementById("video-start")
-    .addEventListener("click", () => document.getElementById("video").play());
-
+    .addEventListener("click",
+        () => Renderer.renderMappingWithWebSocket(mapper, config, EventType.video));
 
 
 function setWebSocketToggle(toggle) {
@@ -89,99 +97,23 @@ document.getElementById("websocket-toggle").addEventListener("click", () => {
         mapper.webSocket.onmessage = e => {
             const data = JSON.parse(e.data);
             config = data.config;
+
             mapper.scene.children = DragHandle.setDragHandleButtons(mapper.scene.children, data.points);
-            renderMapping(mapper ,data.points);
+            if (data.eventType === EventType.video){
+                VideoBar.setSetting(data.video);
+            }
+
+            Renderer.renderMapping(mapper, data.points, config);
         };
     } catch (e) {
         setWebSocketToggle(false);
     }
 });
 
-
-function getEdgePoints(scene) {
-    return {
-        bottomLeft: scene.children[1].position,
-        topLeft: scene.children[2].position,
-        bottomRight: scene.children[3].position,
-        topRight: scene.children[4].position
-    };
-}
-
-function renderMappingWithWebSocket(mapper) {
-    const points = getEdgePoints(mapper.scene);
-    renderMapping(mapper, points);
-
-    if (config.webSocketConnectionToggle) {
-        const body = JSON.stringify({points, config});
-        mapper.webSocket.send(body);
-    }
-}
-
 function prepareShapes(mapper, config) {
-    let mapperParts = createMapper(config.size, config.length);
+    let mapperParts = Renderer.createMapper(config);
     mapperParts.scene.forEach(item => mapper.scene.add(item));
 
     const drag = new DragControls(mapperParts.handler, mapper.camera, mapper.renderer.domElement);
-    drag.addEventListener('drag', () => renderMappingWithWebSocket(mapper));
-}
-
-function renderMapping(mapper ,points) {
-    let mapping = calcMapping(config.size, config.length);
-    let vert = Shift.shift(config.size, points.bottomLeft, points.topLeft, points.bottomRight, points.topRight);
-    let geometry = buildBufferGeometry(vert, mapping.uvs, mapping.indices);
-
-    mapper.scene.children[0] = buildVideoMesh(geometry);
-    mapper.renderer.render(mapper.scene, mapper.camera);
-}
-
-function buildBufferGeometry(vertices, uvs, indices) {
-    let geometry = new BufferGeometry();
-    geometry.setIndex(indices);
-    geometry.addAttribute('position', new BufferAttribute(Mapper.transform(vertices), 3));
-    geometry.addAttribute('uv', new BufferAttribute(Mapper.transform(uvs), 3));
-    return geometry;
-}
-
-//buildMesh
-function buildVideoMesh(geometry) {
-    let manager = new LoadingManager();
-    manager.onProgress = (item, loaded, total) => {
-        console.log(item, loaded, total);
-    };
-
-    let video = document.getElementById('video');
-
-    const texture = new VideoTexture(video);
-
-    texture.generateMipmaps = false;
-    texture.wrapS = texture.wrapT = ClampToEdgeWrapping;
-    texture.minFilter = LinearFilter;
-
-    return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: config.wireframe}))
-}
-
-function calcMapping(size, length) {
-    return {
-        vertices: Mapper.vertices(size, length),
-        uvs: Mapper.uv(size),
-        indices: Mapper.calcIndices(size)
-    }
-}
-
-function createMapper(size, length) {
-    const mapping = calcMapping(size, length);
-
-    let geometry = buildBufferGeometry(mapping.vertices, mapping.uvs, mapping.indices);
-    let mapperMesh = buildVideoMesh(geometry);
-
-    const handler = Mapper
-        .edges(mapping.vertices)
-        .map(coordinates => DragHandle.makeSprite(coordinates.x, coordinates.y));
-
-    const scene = Array.concat([mapperMesh], handler);
-
-    return {
-        handler,
-        scene
-    };
+    drag.addEventListener('drag', () => Renderer.renderMappingWithWebSocket(mapper, config, EventType.drag));
 }
