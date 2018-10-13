@@ -5,49 +5,21 @@
 		<title>Mapper</title>
 
 	    <style>
-	        body {
-	        	margin: 0;
-				background-color: black;
-
-			}
 	        canvas { 
 	        	width: 100%; 
 	        	height: 100% 
 	        }
-
-			.show{
-				display:inline;
-			}
-
-			.hide{
-				display:none;
-
-			}
-
-			.active{
-				border: 2px solid lawngreen;
-				background-color: black;
-				color: #ffffff;
-			}
-
-			.inactive{
-				border: 2px solid red;
-				background-color: black;
-				color: #ffffff;
-			}
-
 		</style>
+
+		<link rel="stylesheet" type="text/css" href="style/buttonbar.css">
+		<link rel="stylesheet" type="text/css" href="style/videobar.css">
 	</head>
 	<body>
 		<div id="buttonbar" class="hide">
-
-
 			<button id="wireframe" >Wireframe</button>
 
 			<input id="websocket-connection" class="inactive" value="ws://localhost:9030">
 			<button id="websocket-toggle">websocket-toggle</button>
-
-
 		</div>
 
 
@@ -59,5 +31,13 @@
 
 
 	    <script src="build/app.bundle.js"></script>
+
+        <div id="videobar" class="hide">
+            <button id="video-stop" >stop</button>
+            <button id="video-start" >stop</button>
+            <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+
+
+        </div>
 	</body>
 </html>

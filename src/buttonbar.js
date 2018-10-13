@@ -1,8 +1,6 @@
 
 const ID_BUTTON_BAR = "buttonbar";
 
-
-
 export function ButtonBar(){
 
     /**
@@ -22,6 +20,5 @@ export function ButtonBar(){
         return document
             .getElementById(ID_BUTTON_BAR)
             .getAttribute("class") === "show" ? "hide" : "show"
-
     }
 }

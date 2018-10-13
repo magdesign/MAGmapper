@@ -4,13 +4,10 @@ import {
     WebGLRenderer,
     BufferGeometry,
     BufferAttribute,
-    TextureLoader,
     LoadingManager,
     MeshBasicMaterial,
     Mesh,
     VideoTexture,
-    Sprite,
-    SpriteMaterial,
     LinearFilter,
     ClampToEdgeWrapping
 } from "three"
@@ -18,6 +15,7 @@ import {
 import DragControls from "three-dragcontrols"
 import {Mapper} from './mapper.js'
 import {Shift} from "./shift";
+import {DragHandle} from "./draghandle";
 import {ButtonBar} from "./buttonbar";
 
 ButtonBar();
@@ -28,7 +26,6 @@ let config = {
     wireframe: false,
     size: 30,
     length: 5,
-    dragHandleSprite: "textures/sprite0.png",
     webSocketConnectionToggle: false,
 };
 
@@ -56,8 +53,6 @@ function init(mapper, config) {
     animate();
 }
 
-
-
 // Button Wireframe
 document.getElementById("wireframe").addEventListener("click", () => {
     config.wireframe = !config.wireframe;
@@ -69,22 +64,6 @@ function setWebSocketToggle(toggle) {
     config.webSocketConnectionToggle = toggle;
     const cssClass = toggle ? "active" : "inactive";
     document.getElementById("websocket-connection").setAttribute("class", cssClass);
-}
-
-
-function setDragHandleButtons(children, points){
-    children[4].position.x = points.topRight.x;
-    children[4].position.y = points.topRight.y;
-
-    children[2].position.x = points.topLeft.x;
-    children[2].position.y = points.topLeft.y;
-
-    children[3].position.x = points.bottomRight.x;
-    children[3].position.y = points.bottomRight.y;
-
-    children[1].position.x = points.bottomLeft.x;
-    children[1].position.y = points.bottomLeft.y;
-    return children
 }
 
 // Button websocket
@@ -101,7 +80,7 @@ document.getElementById("websocket-toggle").addEventListener("click", () => {
         mapper.webSocket.onmessage = e => {
             const data = JSON.parse(e.data);
             config = data.config;
-            mapper.scene.children = setDragHandleButtons(mapper.scene.children, data.points);
+            mapper.scene.children = DragHandle.setDragHandleButtons(mapper.scene.children, data.points);
             renderMapping(mapper ,data.points);
         };
     } catch (e) {
@@ -125,13 +104,11 @@ function renderMappingWithWebSocket(mapper) {
 
     if (config.webSocketConnectionToggle) {
         const body = JSON.stringify({points, config});
-
         mapper.webSocket.send(body);
     }
 }
 
 function prepareShapes(mapper, config) {
-
     let mapperParts = createMapper(config.size, config.length);
     mapperParts.scene.forEach(item => mapper.scene.add(item));
 
@@ -147,20 +124,6 @@ function renderMapping(mapper ,points) {
     mapper.scene.children[0] = buildVideoMesh(geometry);
     mapper.renderer.render(mapper.scene, mapper.camera);
 }
-
-
-function makeDragHandleSprite(x, y) {
-    const texture = new TextureLoader()
-        .load(config.dragHandleSprite);
-
-    const material = new SpriteMaterial({map: texture});
-
-    let sprite = new Sprite(material);
-    sprite.position.set(x, y, 0);
-    sprite.scale.set(0.3, 0.3, 1);
-    return sprite;
-}
-
 
 function buildBufferGeometry(vertices, uvs, indices) {
     let geometry = new BufferGeometry();
@@ -188,7 +151,6 @@ function buildVideoMesh(geometry) {
     return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: config.wireframe}))
 }
 
-
 function calcMapping(size, length) {
     return {
         vertices: Mapper.vertices(size, length),
@@ -205,7 +167,7 @@ function createMapper(size, length) {
 
     const handler = Mapper
         .edges(mapping.vertices)
-        .map(coordinates => makeDragHandleSprite(coordinates.x, coordinates.y));
+        .map(coordinates => DragHandle.makeSprite(coordinates.x, coordinates.y));
 
     const scene = Array.concat([mapperMesh], handler);
 
@@ -214,4 +176,3 @@ function createMapper(size, length) {
         scene
     };
 }
-
