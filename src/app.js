@@ -17,8 +17,7 @@ import {Mapper} from './mapper.js'
 import {Shift} from "./shift";
 import {DragHandle} from "./draghandle";
 import {ButtonBar} from "./buttonbar";
-
-ButtonBar();
+import {VideoBar} from "./videobar";
 
 let config = {
     webSocketUrl: "ws://localhost:9030",
@@ -39,10 +38,9 @@ let mapper = {
 init(mapper, config);
 
 function init(mapper, config) {
-    const animate = () => {
-        requestAnimationFrame(animate);
-        mapper.renderer.render(mapper.scene, mapper.camera);
-    };
+
+    ButtonBar();
+    VideoBar();
 
     mapper.camera.position.z = config.cameraPosition;
     mapper.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -50,6 +48,11 @@ function init(mapper, config) {
     document.body.appendChild(mapper.renderer.domElement);
 
     prepareShapes(mapper, config);
+
+    const animate = () => {
+        requestAnimationFrame(animate);
+        mapper.renderer.render(mapper.scene, mapper.camera);
+    };
     animate();
 }
 
@@ -58,6 +61,12 @@ document.getElementById("wireframe").addEventListener("click", () => {
     config.wireframe = !config.wireframe;
     renderMappingWithWebSocket(mapper);
 });
+document.getElementById("video-stop")
+    .addEventListener("click", () => document.getElementById("video").pause());
+
+document.getElementById("video-start")
+    .addEventListener("click", () => document.getElementById("video").play());
+
 
 
 function setWebSocketToggle(toggle) {

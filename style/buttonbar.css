@@ -1,7 +1,6 @@
 body {
     margin: 0;
     background-color: black;
-
 }
 
 .show{
@@ -10,7 +9,6 @@ body {
 
 .hide{
     display:none;
-
 }
 
 .active{
