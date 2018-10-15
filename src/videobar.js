@@ -1,27 +1,40 @@
+import {Renderer, EventType} from "./renderer";
 
-export function init() {
+export function init(mapper, config) {
     // set length of video in slider
+    let video = document.getElementById("video");
+
     document.getElementById("video-slider").max = document.getElementById("video").duration;
 
     document.getElementById("video-stop")
         .addEventListener("click",
-            () => document.getElementById("video").pause());
+            () => {
+                video.pause();
+                Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
+            });
 
     document.getElementById("video-start")
         .addEventListener("click",
-            () => document.getElementById("video").play());
+            () => {
+                video.play();
+                Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
+            });
 
     document.getElementById("video").ontimeupdate =
-        () => document.getElementById("video-slider").value = document.getElementById("video").currentTime;
+        () => {
+            document.getElementById("video-slider").value = video.currentTime;
+        };
 
-    document.getElementById("video-slider").oninput =
-        () => document.getElementById("video").currentTime = document.getElementById("video-slider").value;
+    document.getElementById("video-slider").oninput = () => {
+        video.currentTime = document.getElementById("video-slider").value;
+        Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
+    }
 }
 
 
-function loadSetting(){
+function loadSetting() {
     const video = document.getElementById("video");
-    return{
+    return {
         paused: video.paused,
         currentTime: video.currentTime
     }
@@ -29,9 +42,9 @@ function loadSetting(){
 
 function setSetting(state) {
     const video = document.getElementById("video");
-    if (state.paused){
+    if (state.paused) {
         video.pause()
-    } else{
+    } else {
         video.play()
     }
     video.currentTime = state.currentTime;

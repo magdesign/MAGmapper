@@ -1,24 +1,10 @@
-import {
-    Scene,
-    PerspectiveCamera,
-    WebGLRenderer,
-    BufferGeometry,
-    BufferAttribute,
-    LoadingManager,
-    MeshBasicMaterial,
-    Mesh,
-    VideoTexture,
-    LinearFilter,
-    ClampToEdgeWrapping
-} from "three"
+import {PerspectiveCamera, Scene, WebGLRenderer} from "three"
 
 import DragControls from "three-dragcontrols"
-import {Mapper} from './mapper.js'
-import {Shift} from "./shift";
 import {DragHandle} from "./draghandle";
 import {ButtonBar} from "./buttonbar";
 import {VideoBar} from "./videobar";
-import {Renderer} from "./renderer";
+import {Renderer, EventType} from "./renderer";
 
 let config = {
     webSocketUrl: "ws://localhost:9030",
@@ -36,16 +22,12 @@ let mapper = {
     webSocket: null
 };
 
-const EventType = {
-    video: "video",
-    drag: "drag"
-};
 
 init(mapper, config);
 
 function init(mapper, config) {
     ButtonBar.init();
-    VideoBar.init();
+    VideoBar.init(mapper, config);
 
     mapper.camera.position.z = config.cameraPosition;
     mapper.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -67,14 +49,6 @@ document.getElementById("wireframe").addEventListener("click", () => {
     Renderer.renderMappingWithWebSocket(mapper, config, EventType.drag);
 });
 
-// Video buttons
-document.getElementById("video-stop")
-    .addEventListener("click",
-        () => Renderer.renderMappingWithWebSocket(mapper, config, EventType.video));
-
-document.getElementById("video-start")
-    .addEventListener("click",
-        () => Renderer.renderMappingWithWebSocket(mapper, config, EventType.video));
 
 
 function setWebSocketToggle(toggle) {

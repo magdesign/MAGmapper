@@ -14,6 +14,12 @@ import {
 } from "three"
 
 
+export const EventType = {
+    video: "video",
+    drag: "drag"
+};
+
+
 function renderMappingWithWebSocket(mapper, config, eventType) {
     const points = getEdgePoints(mapper.scene);
     renderMapping(mapper, points, config);
