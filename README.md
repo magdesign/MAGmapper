@@ -6,7 +6,7 @@ Should run on any plattform using Chrome or Firefox.
 See example here: https://mapper.jku.one/
 
 Feel free to contribute or donate :-)
-If you are experinced on three and have some time to add one of the desired functions, please contact us: info_at_magdesign.ch
+If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
 
 
 ## Progress Update
