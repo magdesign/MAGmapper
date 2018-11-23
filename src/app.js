@@ -10,7 +10,7 @@ let config = {
     webSocketUrl: "ws://localhost:9030",
     cameraPosition: 10,
     wireframe: false,
-    size: 30,
+    size: 5,
     length: 5,
     webSocketConnectionToggle: false,
 };
