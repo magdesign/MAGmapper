@@ -12,15 +12,20 @@ If you are experinced on three and have some time to add one of the desired func
 ## Progress Update
 We tried:</br>
 </br>
+
 - to reduce the resolution of our three.js mapper to 5x5 triangles, but video still stutters</br>
 => three.js will never work without stutters since we have no HW acceleration in Chromium
 </br>
+
 - to make mapping distortion with processing, this works up to a resolution of 5x5 quads, but is very laggy to handle, still requires X window and when video is distorted with "stairs". 
 </br>
+
 - to run mapper with python and openCV, cv2, it runs, but we get some artefacts in playing video.
 </br>
+
 - pi3d runs, but does it support video?
 </br>
+
 - tested gstreamer since we thought it supports the hw acceleration, but gst-launch is crap.
 </br>
 
