@@ -14,24 +14,19 @@ We tried:</br>
 </br>
 - to reduce the resolution of our three.js mapper to 5x5 triangles, but video still stutters</br>
 => three.js will never work without stutters since we have no HW acceleration in Chromium
-
 </br>
-
 - to make mapping distortion with processing, this works up to a resolution of 5x5 quads, but is very laggy to handle, still requires X window and when video is distorted with "stairs". 
-
 </br>
-
 - to run mapper with python and openCV, cv2, it runs, but we get some artefacts in playing video.
-
 </br>
-
 - pi3d runs, but does it support video?
-
+</br>
+- tested gstreamer since we thought it supports the hw acceleration, but gst-launch is crap.
 </br>
 
 The thing is that we need hardware acceleration to decode a video, then we need opnGL or better something performant which does not require X to warp/distort the video texture.
 
-##### RPi support
+#### RPi support
 Runs on Stretch with newest Chromium, but we dont have enough ressources to display it without stutters. 
 RPi does not support EXT_texture_filter_anisotropic.
 After testing with WPE: https://wpewebkit.org, the https://mapper.jku.one/ does not run, following errors: 
