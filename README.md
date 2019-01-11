@@ -2,7 +2,7 @@
 ## Basic Idea
 A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
-See example here: https://mapper.jku.one/
+See [example](https://mapper.jku.one/)
 
 Feel free to contribute or donate :-)
 If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
@@ -23,7 +23,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] Add more quads, delete selected quad
 - [ ] Define uvw read input for texture coverage
 - [ ] Define UI/UX, when calling it must be an overlay
-- [ ] Function to select sources (https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
+- [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
 - [ ] Shortcuts
 - [ ] Define Shortcut List
 - [ ] Save and load files
@@ -35,7 +35,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] List in UI to show all connected slaves
 - [ ] Switch UI to control a defined client (mark them with colors)
 - [ ] Grid warp
-- [ ] Adjust brightness, contrast, rgb of output texture with filters (https://threejs.org/examples/?q=filt#webgl_materials_texture_filters)
+- [ ] Adjust brightness, contrast, rgb of output texture with [filters](https://threejs.org/examples/?q=filt#webgl_materials_texture_filters)
 - [ ] Softedge blending on each surface.
 - [ ] Audio reactive FX.
 
@@ -45,9 +45,9 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 ## Progress Update
 
-We could also choose to load the video files from storge with the input type="file" tag, as seen here: http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/  on the index page.</br>
+We could also choose to load the video files from storge with the input type="file" tag, as seen [here](http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/)  on the index page.</br>
 
-For syncing multiple players with the same source, we would have to check this approach: https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos or dig for other solutions.
+For syncing multiple players with the same source, we would have to check this [approach](https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos) or dig for other solutions.
 
 These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
 
