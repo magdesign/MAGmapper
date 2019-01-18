@@ -1,5 +1,5 @@
 # MAGmapper Keymap
-# ****************
+****************
 
 
 ## There are 3 main modes:
