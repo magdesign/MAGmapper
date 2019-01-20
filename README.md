@@ -28,7 +28,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] Define UI/UX, when calling it must be an overlay
 - [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
 - [ ] Shortcuts
-- [ ] Define Shortcut List
+- [x] Define Shortcut List, [see here](https://github.com/magdesign/MAGmapper/blob/master/doc/Keymap.md)
 - [ ] Save and load files
 - [ ] Other surfaces triangles, spheres, hexagons
 
