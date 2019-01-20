@@ -6,11 +6,11 @@
 ************************
 
 ### PLAY MODE       (p)
-In this mode, everything is hidden, only mapping only the masks are visible.
+Only the mapped masks are visible (some kind of presentation mode).
 
 
 ### MAPPING MODE    (m)
-In this mode, the drag handles are visible.
+The drag handles are visible and you can select them to move the mapping masks and you are able to display the menu.
 
 ### EDITING MODE    (e)
 In this mode you can define the area of the input to map out to the mask.
@@ -18,7 +18,7 @@ In this mode you can define the area of the input to map out to the mask.
 ****************************
 
 ### MENU (ESC)
-This shows the onscreen menu.
+This shows the onscreen menu, when clicking it also switches automatically to "Mapping Mode".
 
 ****************************
 
