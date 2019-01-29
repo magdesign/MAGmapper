@@ -24,10 +24,9 @@ export function init(mapper, config) {
                 Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
             });
 
-    document.getElementById("video").ontimeupdate =
-        () => {
-            document.getElementById("video-slider").value = getVideoElement().currentTime;
-        };
+    document
+        .getElementById("video")
+        .ontimeupdate = () => document.getElementById("video-slider").value = getVideoElement().currentTime;
 
     document.getElementById("video-slider").oninput = () => {
         getVideoElement().currentTime = document.getElementById("video-slider").value;

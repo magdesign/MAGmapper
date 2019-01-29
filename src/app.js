@@ -10,8 +10,8 @@ let config = {
     webSocketUrl: "ws://localhost:9030",
     cameraPosition: 10,
     wireframe: false,
-    size: 5,
-    length: 5,
+    size: 2,
+    length: 2,
     webSocketConnectionToggle: false,
 };
 
@@ -44,45 +44,50 @@ function init(mapper, config) {
 }
 
 // Button Wireframe
-document.getElementById("wireframe").addEventListener("click", () => {
-    config.wireframe = !config.wireframe;
-    Renderer.renderMappingWithWebSocket(mapper, config, EventType.drag);
-});
-
+document
+    .getElementById("wireframe")
+    .addEventListener("click", () => {
+        config.wireframe = !config.wireframe;
+        Renderer.renderMappingWithWebSocket(mapper, config, EventType.drag);
+    });
 
 
 function setWebSocketToggle(toggle) {
     config.webSocketConnectionToggle = toggle;
     const cssClass = toggle ? "active" : "inactive";
-    document.getElementById("websocket-connection").setAttribute("class", cssClass);
+    document
+        .getElementById("websocket-connection")
+        .setAttribute("class", cssClass);
 }
 
 // Button websocket
-document.getElementById("websocket-toggle").addEventListener("click", () => {
-    config.webSocketUrl = document.getElementById("websocket-connection").value;
+document
+    .getElementById("websocket-toggle")
+    .addEventListener("click", () => {
+        config.webSocketUrl = document.getElementById("websocket-connection").value;
 
-    if (mapper.webSocket !== null && mapper.webSocket !== undefined) {
-        mapper.webSocket.close();
-    }
+        if (mapper.webSocket !== null && mapper.webSocket !== undefined) {
+            mapper.webSocket.close();
+        }
 
-    try {
-        mapper.webSocket = new WebSocket(config.webSocketUrl);
-        setWebSocketToggle(!config.webSocketConnectionToggle);
-        mapper.webSocket.onmessage = e => {
-            const data = JSON.parse(e.data);
-            config = data.config;
+        try {
+            mapper.webSocket = new WebSocket(config.webSocketUrl);
+            setWebSocketToggle(!config.webSocketConnectionToggle);
+            mapper.webSocket.onmessage = e => {
+                const data = JSON.parse(e.data);
+                config = data.config;
 
-            mapper.scene.children = DragHandle.setDragHandleButtons(mapper.scene.children, data.points);
-            if (data.eventType === EventType.video){
-                VideoBar.setSetting(data.video);
-            }
+                mapper.scene.children = DragHandle.setDragHandleButtons(mapper.scene.children, data.points);
+                if (data.eventType === EventType.video) {
+                    VideoBar.setSetting(data.video);
+                }
 
-            Renderer.renderMapping(mapper, data.points, config);
-        };
-    } catch (e) {
-        setWebSocketToggle(false);
-    }
-});
+                Renderer.renderMapping(mapper, data.points, config);
+            };
+        } catch (e) {
+            setWebSocketToggle(false);
+        }
+    });
 
 function prepareShapes(mapper, config) {
     let mapperParts = Renderer.createMapper(config);

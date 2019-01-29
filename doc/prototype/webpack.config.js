@@ -36,7 +36,8 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: 'awesome-typescript-loader'
-            }, {
+            },
+            {
                 test: /\.css$/,
                 exclude: /[\/\\]src[\/\\]/,
                 use: [
@@ -46,9 +47,12 @@ module.exports = {
                             sourceMap: true
                         }
                     },
-                    {loader: 'css-loader'}
+                    {
+                        loader: 'css-loader'
+                    }
                 ]
-            }, {
+            },
+            {
                 test: /\.css$/,
                 exclude: /[\/\\](node_modules|bower_components|public)[\/\\]/,
                 use: [
@@ -67,9 +71,21 @@ module.exports = {
                         }
                     }
                 ]
-            }
+            },
+            {
+                test: /\.(mov|mp4)$/,
+                use: [
+                    'file-loader'
+                ]
+            },
         ]
     },
-    resolve: { extensions: [".web.ts", ".web.js", ".ts", ".js"] },
-    plugins: [HTMLWebpackPluginConfig, BrowserSyncPluginConfig, ProgressBarPluginConfig]
+    resolve: {
+        extensions: [".web.ts", ".web.js", ".ts", ".js"]
+    },
+    plugins: [
+        HTMLWebpackPluginConfig,
+        BrowserSyncPluginConfig,
+        ProgressBarPluginConfig
+    ]
 }
