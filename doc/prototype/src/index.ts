@@ -15,7 +15,7 @@ import {
 let scene: Scene = new Scene();
 
 // create the camera
-let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+let camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
 
 let renderer: WebGLRenderer = new WebGLRenderer();
 
@@ -27,11 +27,6 @@ document.body.appendChild(renderer.domElement);
 
 // add axis to the scene
 
-// add lights
-let light = new DirectionalLight(0xffffff, 1.0);
-
-light.position.set(10, 10, 10);
-scene.add(light);
 
 
 let material = new MeshBasicMaterial({
@@ -67,18 +62,20 @@ let vid = document.getElementsByTagName("video")[0];
 
 let geometry = new BufferGeometry();
 
-const indices: number[] = [0, 2, 1, 1, 2, 3];
+
+const indices: number[] = [0, 2, 1,1, 2, 3];
+
 const pos = new Float32Array([
     0, 0, 0,
     0, 2, 0,
     2, 0, 0,
-    2, 2, 0
+    2, 3, 0
 ]);
 const uv= new Float32Array([
     0, 0, 0,
     0, 1, 0,
     1, 0, 0,
-    1, 0, 0
+    1, 1, 0
 ]);
 
 geometry.setIndex(indices);
@@ -102,14 +99,14 @@ texture.minFilter = LinearFilter;
 
 
 
-let mesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: true}))
+let mesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}))
+
 scene.children[0] = mesh;
 
 
 
-camera.position.x = 2
-camera.position.y = 2
-camera.position.z = 2
+
+camera.position.z = 5
 
 camera.lookAt(scene.position)
 
