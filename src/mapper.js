@@ -12,12 +12,6 @@ const edges = vertices => vertices.filter((_, i) =>
     i === vertices.length - 1
 );
 
-const top = vertices => lineFilter(vertices)((index, part, length) => index === length * (part + 1) - 1);
-const bottom = vertices => lineFilter(vertices)((index, part, length) => index === length * part);
-const left = vertices => lineFilter(vertices)((index, part, length) => index === part);
-const right = vertices => lineFilter(vertices)((index, part, length) => index === length * (length - 1) + part);
-
-const start = vertices => vertices[0];
 
 const row = (vertices, pos)=> lineFilter(vertices)((index, part, length) => index === length * pos  + part);
 
