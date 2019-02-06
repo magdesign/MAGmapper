@@ -4,37 +4,31 @@ export interface Dimension {
     z: number;
 }
 
-const Dimension =
-    (x: number, y: number, z: number): Dimension => <Dimension>{x, y, z};
-
-export const transformDimensionToFloatArray =
-    (vertices: Dimension[]): Float32Array =>
-        new Float32Array(vertices
-            .map((cube: Dimension): number[] => [cube.x, cube.y, cube.z])
-            .reduce((p: number[], c: number[]): number[] => p.concat(c)));
-
-
-export class Edge {
-    /**
-     * checks if the given index is an edge or not
-     * @param index
-     * @param length
-     */
-    private static validateEdge =
-        (index: number, length: number): boolean =>
-            index === 0 ||
-            index === Math.sqrt(length) - 1 ||
-            index === length - Math.sqrt(length) ||
-            index === length - 1;
-
-
-    public static isEdge =
-        (vertices: number[]): number[] =>
-            vertices
-                .filter((_, i: number): boolean =>
-                    Edge.validateEdge(i, vertices.length));
-}
 
 export class Mapper {
 
+    public static calcIndices(items) {
+        items--;
+        let indices = [];
+        const size = Math.pow(items, 2) + items - 1; 
+    
+        for (let i = 0; i < size; i++) {
+            indices = this.calcCube(indices, i, items + 1);
+        }
+        return indices;
+    }
+    
+    private static calcCube(values, start, width) {
+        if (start !== width - 1) {
+            values.push(
+                start,
+                start + width,
+                start + 1,
+                start + 1,
+                start + width,
+                start + width + 1,
+            );
+        }
+        return values;
+    }
 }

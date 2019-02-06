@@ -1,13 +1,18 @@
 import {
-    BoxGeometry, BufferAttribute, BufferGeometry, ClampToEdgeWrapping,
-    DirectionalLight, LinearFilter, LoadingManager,
+    BoxGeometry, 
+    BufferAttribute, 
+    BufferGeometry, 
+    ClampToEdgeWrapping,
+    DirectionalLight, 
+    LinearFilter,
+    LoadingManager,
     Mesh,
     MeshBasicMaterial,
     PerspectiveCamera,
     Scene, TypedArray,
     VideoTexture,
     WebGLRenderer
-} from 'three'
+} from 'three';
 import {VideoMaterial} from "./VideoMaterial";
 import {Mapper} from "./Mapper";
 
@@ -19,10 +24,10 @@ class Graphic {
 
         let geometry = new BufferGeometry();
 
-        const indices: number[] = Mapper.calcIndices(2);
+        const indices: number[] = Mapper.calcIndices(4);
 
-        const pos = new Float32Array(Mapper.vertices(2,4))
-        const uv =  new Float32Array(Mapper.uv(2));
+        const pos = new Float32Array(Mapper.vertices(4,4))
+        const uv =  new Float32Array(Mapper.uv(4));
 
         geometry.setIndex(indices);
         geometry.addAttribute('position', new BufferAttribute(pos, 3));
@@ -67,5 +72,6 @@ class Graphic {
         }
         animate();
     }
+
 }
 Graphic.init();
