@@ -4,9 +4,8 @@
   "description": "Videomapper",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --inline --open",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "start": "webpack-dev-server --inline --open",
     "build": "webpack"
   },
   "keywords": [],
@@ -33,7 +32,9 @@
   },
   "dependencies": {
     "@types/three": "latest",
+    "@types/uuid": "^3.4.4",
     "three": "latest",
-    "three-dragcontrols": "^0.88.2"
+    "three-dragcontrols": "^0.88.2",
+    "uuid": "^3.3.2"
   }
 }

@@ -1,9 +1,20 @@
+import { Vector3 } from "three";
+
 export interface Dimension {
     x: number;
     y: number;
     z: number;
 }
 
+export class DimensionTransformer{
+    public static fromVector3D(value: Vector3): Dimension{
+        return <Dimension>{
+            x: value.x,
+            y: value.y,
+            z: value.z
+        }
+    }
+}
 
 export class Edges {
     public static isEdge(length: number, index: number): boolean {

@@ -5,8 +5,6 @@ interface Attribute {
 
 export class VideoMaterial {
 
-
-
     // todo set loop
     private static attributes: Attribute[] = [
         {qualifiedName: "id", value: "video"},
@@ -23,7 +21,7 @@ export class VideoMaterial {
     }
 
     
-    static loadVideo(): HTMLVideoElement {
+    public static loadVideo(): HTMLVideoElement {
         let video = this.init();
         document
             .getElementsByTagName("body")[0]
