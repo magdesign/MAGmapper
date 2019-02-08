@@ -1,7 +1,29 @@
-import { Mapper, Indices } from './Mapper';
+import { Mapper, Indices, Edges } from './Mapper';
 
 import { expect } from 'chai';
 import 'mocha';
+
+
+describe('Edges', () => {
+    describe('getEdges()', () => {
+
+        it('should generate edges ', () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Edges.getEdges(vert);
+
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 3, z: 0},
+                {x: 3, y: 0, z: 0},
+                {x: 3, y: 3, z: 0}
+            ];
+            console.log(result);
+            expect(expected).to.be.deep.equal(result);
+        });
+    });
+});
+
 
 
 describe('Indices', () => {

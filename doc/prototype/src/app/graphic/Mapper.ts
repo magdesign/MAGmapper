@@ -4,10 +4,25 @@ export interface Dimension {
     z: number;
 }
 
+
+export class Edges {
+    public static isEdge(length: number, index: number): boolean {
+        return index === 0 || 
+               index === length - Math.sqrt(length) || 
+               index === Math.sqrt(length) - 1 ||
+               index === length - 1;
+    }
+     
+    public static getEdges(vertices: Dimension[]): Dimension[] {
+        return vertices.filter((_, i): boolean => this.isEdge(vertices.length, i));
+    }
+}
+
 export class Indices {
     public static calcIndices(items: number): number[] {
         items--;
         let indices = [];
+
         const size = Math.pow(items, 2) + items - 1; 
     
         for (let i = 0; i < size; i++) {
@@ -32,8 +47,6 @@ export class Indices {
 }
 
 export class Mapper {
-    
-    
     public static transform(vertices: Dimension[]): Float32Array{
         return new Float32Array(
             vertices
@@ -48,10 +61,10 @@ export class Mapper {
     public static uv(size: number): Dimension[]{
         return this.map(
             size,
-            {x:0,y:0,z:0},
-            {x:0,y:1,z:0},
-            {x:1,y:0,z:0},
-            {x:1,y:1,z:0},
+            {x:0, y:0, z:0},
+            {x:0, y:1, z:0},
+            {x:1, y:0, z:0},
+            {x:1, y:1, z:0},
         ) 
     }
 

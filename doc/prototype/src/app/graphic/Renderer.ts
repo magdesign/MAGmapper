@@ -16,6 +16,8 @@ import {
 import {VideoMaterial} from "./VideoMaterial";
 import {Mapper, Indices} from "./Mapper";
 
+const size = 10;
+
 class Graphic {
     public static init(){
         let scene: Scene = new Scene();
@@ -23,9 +25,9 @@ class Graphic {
 
         let geometry = new BufferGeometry();
 
-        const indices: number[] = Indices.calcIndices(4);
-        const pos = Mapper.transform(Mapper.vertices(4,4))
-        const uv =  Mapper.transform(Mapper.uv(4));
+        const indices: number[] = Indices.calcIndices(size);
+        const pos = Mapper.transform(Mapper.vertices(size,4))
+        const uv =  Mapper.transform(Mapper.uv(size));
 
         geometry.setIndex(indices);
         geometry.addAttribute('position', new BufferAttribute(pos, 3));
@@ -41,7 +43,9 @@ class Graphic {
         let mesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
         scene.add(mesh);
 
-        this.rendermagic(this.loadRenderer(), this.loadCamera(scene), scene)
+        
+
+        this.rendermagic(this.loadRenderer(), this.loadCamera(scene), scene);
     }
 
     private static loadRenderer(): WebGLRenderer {
@@ -62,7 +66,6 @@ class Graphic {
     private static rendermagic (renderer: WebGLRenderer , camera: PerspectiveCamera, scene: Scene) {
         function animate(): void {
             requestAnimationFrame(animate);
-
             render()
         }
 
