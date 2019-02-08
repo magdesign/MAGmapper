@@ -45,13 +45,12 @@ export class Mapper {
                 .reduce((p, c) => p.concat(c)));
     }
 
-
     public static uv(size: number): Dimension[]{
         return this.map(
             size,
             {x:0,y:0,z:0},
-            {x:1,y:0,z:0},
             {x:0,y:1,z:0},
+            {x:1,y:0,z:0},
             {x:1,y:1,z:0},
         ) 
     }
@@ -60,8 +59,8 @@ export class Mapper {
         return this.map(
             size,
             {x: 0, y: 0, z: 0},
-            {x: length , y: 0, z: 0},
             {x: 0, y: length, z: 0},
+            {x: length , y: 0, z: 0},
             {x: length, y: length, z: 0},
         ) 
     }
@@ -87,8 +86,8 @@ export class Mapper {
         const result: Dimension[] = [];
         for (let i = 0; i < resultX.length; i++) {
             result.push({
-                x: resultY[i], 
-                y: resultX[i], 
+                x: resultX[i], 
+                y: resultY[i], 
                 z: 0
             })
         }
