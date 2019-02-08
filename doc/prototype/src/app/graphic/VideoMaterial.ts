@@ -19,7 +19,7 @@ export class VideoMaterial {
         return video;
     }
 
-
+    
     static loadVideo(): HTMLVideoElement {
         let video = this.init();
         document

@@ -14,8 +14,7 @@ import {
     WebGLRenderer
 } from 'three';
 import {VideoMaterial} from "./VideoMaterial";
-import {Mapper} from "./Mapper";
-
+import {Mapper, Indices} from "./Mapper";
 
 class Graphic {
     public static init(){
@@ -24,10 +23,9 @@ class Graphic {
 
         let geometry = new BufferGeometry();
 
-        const indices: number[] = Mapper.calcIndices(4);
-
-        const pos = new Float32Array(Mapper.vertices(4,4))
-        const uv =  new Float32Array(Mapper.uv(4));
+        const indices: number[] = Indices.calcIndices(4);
+        const pos = Mapper.transform(Mapper.vertices(4,4))
+        const uv =  Mapper.transform(Mapper.uv(4));
 
         geometry.setIndex(indices);
         geometry.addAttribute('position', new BufferAttribute(pos, 3));
@@ -64,6 +62,7 @@ class Graphic {
     private static rendermagic (renderer: WebGLRenderer , camera: PerspectiveCamera, scene: Scene) {
         function animate(): void {
             requestAnimationFrame(animate);
+
             render()
         }
 
