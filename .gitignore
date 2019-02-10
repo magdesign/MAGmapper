@@ -1,4 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
+.awcache
 node_modules
-.idea/
-*.iml
+dist
+package-lock.json

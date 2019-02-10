@@ -73,8 +73,8 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(mov|mp4|png)$/,
-                exclude: /[\/\\](node_modules|bower_components|public)[\/\\]/,
+                test: /\.(mov|mp4|png|svg)$/,
+                exclude: /[\/\\](node_modules|bower_components|public|doc)[\/\\]/,
                 use: [
                     'file-loader'
                 ]
