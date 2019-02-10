@@ -1,34 +1,40 @@
 {
-  "name": "babel_webpack_starter",
+  "name": "MagMapper",
   "version": "1.0.0",
-  "description": "Starter pack for compiling ES6+ apps to ES5",
-  "main": "app.js",
+  "description": "Videomapper",
+  "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --output-public-path=/build/  --mode development --progress --hot",
-    "build": "webpack --mode production --progress",
-    "test": "mocha --require babel-core/register",
-    "ws": "node Socket.js"
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "start": "webpack-dev-server --inline --open",
+    "build": "webpack"
   },
-  "author": "Brad Traversy",
+  "keywords": [],
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.5",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-register": "^6.26.0",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "awesome-typescript-loader": "latest",
+    "browser-sync": "latest",
+    "browser-sync-webpack-plugin": "latest",
+    "chai": "^4.2.0",
+    "css-loader": "latest",
+    "extract-text-webpack-plugin": "latest",
+    "html-webpack-plugin": "latest",
+    "json-loader": "latest",
     "mocha": "^5.2.0",
-    "ts-loader": "^4.5.0",
-    "typescript": "^3.0.1",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.14"
+    "progress-bar-webpack-plugin": "latest",
+    "style-loader": "latest",
+    "ts-node": "^8.0.2",
+    "typescript": "latest",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1",
+    "webpack-dev-server": "latest"
   },
   "dependencies": {
-    "three": "^0.94.0",
+    "@types/three": "latest",
+    "@types/uuid": "^3.4.4",
+    "three": "latest",
     "three-dragcontrols": "^0.88.2",
-    "log4js": "^3.0.5",
-    "ws": "^6.0.0"
+    "uuid": "^3.3.2"
   }
 }
