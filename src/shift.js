@@ -17,7 +17,11 @@ function shift(size, bottomLeft, topLeft, bottomRight, topRight) {
     resultX = parse(size, resultX);
     const result = [];
     for (let i = 0; i < resultX.length; i++) {
-        result.push(Object({x: resultX[i], y: resultY[i], z: 0}))
+        result.push(Object({
+            x: resultX[i], 
+            y: resultY[i], 
+            z: 0
+        }))
     }
     return result
 }

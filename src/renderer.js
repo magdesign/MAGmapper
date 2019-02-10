@@ -13,12 +13,10 @@ import {
     ClampToEdgeWrapping
 } from "three"
 
-
 export const EventType = {
     video: "video",
     drag: "drag"
 };
-
 
 function renderMappingWithWebSocket(mapper, config, eventType) {
     const points = getEdgePoints(mapper.scene);
@@ -95,7 +93,10 @@ function buildVideoMesh(geometry, config) {
     texture.wrapS = texture.wrapT = ClampToEdgeWrapping;
     texture.minFilter = LinearFilter;
 
-    return new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: config.wireframe}))
+    return new Mesh(geometry, new MeshBasicMaterial({
+        map: texture, 
+        wireframe: config.wireframe
+    }))
 }
 
 function calcMapping(size, length) {

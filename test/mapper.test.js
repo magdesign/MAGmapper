@@ -112,7 +112,6 @@ describe('Mapper', () => {
                 {x: 3, y: 3, z: 0}
             ];
             Assert.deepEqual(expected, result);
-
         });
     })
 

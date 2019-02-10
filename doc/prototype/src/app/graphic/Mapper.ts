@@ -14,6 +14,17 @@ export class DimensionTransformer{
             z: value.z
         }
     }
+
+    public static toFloatArray(vertices: Dimension[]): Float32Array{
+        return new Float32Array(
+            vertices
+                .map((cube: Dimension): number[] => [
+                    cube.x, 
+                    cube.y,
+                    cube.z
+                ])
+                .reduce((p, c) => p.concat(c)));
+    }
 }
 
 export class Edges {
@@ -58,16 +69,7 @@ export class Indices {
 }
 
 export class Mapper {
-    public static transform(vertices: Dimension[]): Float32Array{
-        return new Float32Array(
-            vertices
-                .map((cube: Dimension): number[] => [
-                    cube.x, 
-                    cube.y,
-                    cube.z
-                ])
-                .reduce((p, c) => p.concat(c)));
-    }
+
 
     public static uv(size: number): Dimension[]{
         return this.map(

@@ -74,7 +74,8 @@ describe('Shift', () => {
 
 
             const result2 = Shift.shift(4,points[0],points[1],points[2],points[3]);
-            const exp = [ { x: 0, y: 0, z: 0 },
+            const exp = [ 
+                { x: 0, y: 0, z: 0 },
                 { x: 0, y: 1, z: 0 },
                 { x: 0, y: 2, z: 0 },
                 { x: 0, y: 3, z: 0 },
@@ -89,8 +90,8 @@ describe('Shift', () => {
                 { x: 3, y: 0, z: 0 },
                 { x: 3.3333333333333335, y: 1.3333333333333333, z: 0 },
                 { x: 3.6666666666666665, y: 2.6666666666666665, z: 0 },
-                { x: 4, y: 4, z: 0 } ]
-
+                { x: 4, y: 4, z: 0 } 
+            ]
             Assert.deepEqual(result2, exp);
         });
     });

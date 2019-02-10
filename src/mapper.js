@@ -12,27 +12,17 @@ const edges = vertices => vertices.filter((_, i) =>
     i === vertices.length - 1
 );
 
+const row = (vertices, pos) => 
+    lineFilter(vertices)((index, part, length) => 
+        index === length * pos  + part);
 
-const row = (vertices, pos)=> lineFilter(vertices)((index, part, length) => index === length * pos  + part);
-
-const lineFilter = vertices => func => vertices
-    .filter((_, index) => rowCheckup(index, vertices.length, func));
+const lineFilter = vertices => func => 
+    vertices.filter((_, index) => rowCheckup(index, vertices.length, func));
 
 const rowCheckup = (index, length, func) =>
     range(Math.sqrt(length))()
         .map(part => func(index, part, Math.sqrt(length)))
         .reduce((a, b) => a || b);
-
-
-export const Row = {
-    top,
-    bottom,
-    left,
-    right,
-    row,
-    start,
-
-};
 
 const cartesis = length => fSize => range(length)()
     .map(x => cube(fSize(x)))

@@ -17,12 +17,13 @@ import {
     Renderer
 } from 'three';
 import {VideoMaterial} from "./VideoMaterial";
-import {Mapper, Indices, Edges} from "./Mapper";
+import {Mapper, Indices, Edges, DimensionTransformer} from "./Mapper";
 import { DragHandler } from './DragHandler';
 
 import { v4 as uuid } from 'uuid';
+import { DataService } from '../service/DataService';
 
-const size = 10;
+const size = 30;
 
 class Graphic {
     public static init(){
@@ -33,10 +34,10 @@ class Graphic {
 
         const indices: number[] = Indices.calcIndices(size);
         const pos = Mapper.vertices(size, 2);
-        const uv =  Mapper.transform(Mapper.uv(size));
+        const uv =  DimensionTransformer.toFloatArray(Mapper.uv(size));
 
         geometry.setIndex(indices);
-        geometry.addAttribute('position', new BufferAttribute(Mapper.transform(pos), 3));
+        geometry.addAttribute('position', new BufferAttribute(DimensionTransformer.toFloatArray(pos), 3));
         geometry.addAttribute('uv', new BufferAttribute(uv, 3));
 
         const texture = new VideoTexture(video);
@@ -45,14 +46,16 @@ class Graphic {
         texture.minFilter = LinearFilter;
 
         let mesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
-        mesh.name = uuid();
-        scene.add(mesh);
 
+        const id  = uuid();
+        mesh.name = id;
+        
+        scene.add(mesh)
 
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        DragHandler.generateEgdeSprites(mesh.name, scene, renderer.domElement, camera, pos);
+        DragHandler.generateEgdeSprites(id, scene, renderer, camera, pos);
 
         this.rendermagic(renderer, camera, scene);
     }
@@ -72,9 +75,13 @@ class Graphic {
     }
 
 
-    private static rendermagic (renderer: WebGLRenderer , camera: PerspectiveCamera, scene: Scene) {
+    private static rendermagic (renderer: WebGLRenderer , camera: PerspectiveCamera, scene: any) {
         function animate(): void {
             requestAnimationFrame(animate);
+            if(DataService.Service.update){
+                scene.children[0].geometry.attributes.position.needsUpdate = DataService.Service.update
+                scene.children[0].geometry.attributes.position.array = DataService.Service.positions
+            }
             render()
         }
 

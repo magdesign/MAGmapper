@@ -1,27 +1,27 @@
 import {
-    TextureLoader,
-    Sprite,
-    SpriteMaterial,
-    Scene,
-    PerspectiveCamera,
-    Vector3,
+    Mesh, 
     MeshStandardMaterial,
-    Mesh,
-} from "three"
+     PerspectiveCamera, 
+     Scene, 
+     Sprite, 
+     SpriteMaterial, 
+     TextureLoader,
+     WebGLRenderer,
+    Vector3
+} from 'three';
+import DragControls from 'three-dragcontrols';
 
+import { Dimension, DimensionTransformer, Edges, Mapper } from './Mapper';
 
-import DragControls from "three-dragcontrols";
-import { Dimension, Edges, DimensionTransformer, Mapper } from "./Mapper";
+import { DataService } from "../service/DataService";
 
 const source = "../assets/draghandle.png";
 const scale = 0.3;
-const size = 10;
-
+const size = 30;
 
 export class DragHandler{
 
-
-    public static generateDragHanldes(edges: Dimension[]): Sprite[]{
+    private static generateDragHanldes(edges: Dimension[]): Sprite[]{
         return edges.map(this.makeSprite);
     }
 
@@ -40,8 +40,7 @@ export class DragHandler{
     }
 
 
-    public static generateEgdeSprites(id: string, scene: Scene, dom: HTMLCanvasElement, camera: PerspectiveCamera, points: Dimension[]): Scene{
-    
+    public static generateEgdeSprites(id: string, scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, points: Dimension[]): Scene {
 
         const sprites: Sprite[] = this.generateDragHanldes(Edges.getEdges(points))
             .map((sprite: Sprite) => {
@@ -51,39 +50,21 @@ export class DragHandler{
             });      
 
 
-        new DragControls(sprites, camera, dom)
+        new DragControls(sprites, camera, renderer.domElement)
             .addEventListener('drag', () => {
-                this.loadPositions(id, scene);
+                this.loadPositions(id, scene, renderer, camera);
             });
 
         return scene
     }
 
-
-
-
-    public static loadPositions(id: string, scene:Scene){
-
-
+    public static loadPositions(id: string, scene: Scene, renderer: WebGLRenderer, camera) {
         const spriteEdges = scene.children
             .filter((obj) => obj.type === "Sprite" && obj.name == id )
-            .map((obj)=> DimensionTransformer.fromVector3D(obj.position)) 
+            .map((obj)=> DimensionTransformer.fromVector3D(obj.position))
 
-
-        const mesh = scene.children
-            .filter((obj) => {
-                return obj.type === "Mesh" && obj.name === id
-            });
-
-        Mapper.map(size, spriteEdges[0], spriteEdges[2], spriteEdges[1], spriteEdges[3])
-        
-        console.log(spriteEdges)
-
-
-
+        DataService.Service.positions = DimensionTransformer
+                    .toFloatArray(Mapper
+                                .map(size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]));
     }
-
-
-
-
-}
+}   

@@ -11,11 +11,10 @@ export function init(mapper, config) {
     document.getElementById("video-slider").max = document.getElementById("video").duration;
 
     document.getElementById("video-stop")
-        .addEventListener("click",
-            () => {
-                getVideoElement().pause();
-                Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
-            });
+        .addEventListener("click", () => {
+            getVideoElement().pause();
+            Renderer.renderMappingWithWebSocket(mapper, config, EventType.video);
+        });
 
     document.getElementById("video-start")
         .addEventListener("click",
