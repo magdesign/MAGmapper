@@ -1,4 +1,11 @@
 
+
+export enum RenderTypes{
+    Edges,
+    Uv,
+    None
+}
+
 /** Singleton 
  * 
  */
