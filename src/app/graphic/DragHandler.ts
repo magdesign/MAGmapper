@@ -36,7 +36,7 @@ class LineBuilder{
     public static addLines(scene: Scene, id: string, edges: Dimension[]){
 
         const material = new LineBasicMaterial({color: 255255255255255255, linewidth: 5}); 
-        let geometry = new Geometry();
+        let geometry: Geometry = new Geometry();
 
         geometry.vertices = this.prepareEdges(edges);
 
@@ -52,9 +52,8 @@ class LineBuilder{
             .filter((child:any) => child.name === "line_" + id)
             .forEach((child:any) => {
                 child.geometry.vertices = this.prepareEdges(edges)
-                child.geometry.vertices.needsUpdate = true; 
+                child.geometry.verticesNeedUpdate = true; 
             })
-        console.log(scene)
     }
 }
 
@@ -81,11 +80,12 @@ class SpriteBuilder{
 
 export class DragHandler{
 
-    public static generateEgdeSprites(scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial): Scene {
+    public static initVertices(scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial): Scene {
 
         const edges: Dimension[] = Edges.getEdges(video.positions);
 
-        const sprites: Sprite[] = SpriteBuilder.generateDragHanldes(edges)
+        const sprites: Sprite[] = SpriteBuilder
+            .generateDragHanldes(edges)
             .map((sprite: Sprite) => {
                 scene.add(sprite);
                 sprite.name = video.id;
@@ -96,19 +96,18 @@ export class DragHandler{
 
         new DragControls(sprites, camera, renderer.domElement)
             .addEventListener('drag', () => {
-                
-                this.loadPositions(video, scene, renderer, camera);
+                this.loadPositions(video.id, scene, renderer, camera);
             });
 
         return scene;
     }
 
-    public static loadPositions(video: VideoMaterial, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera) {
+    public static loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera) {
         const spriteEdges: Dimension[] = scene.children
-            .filter((obj) => obj.type === "Sprite" && obj.name == video.id )
+            .filter((obj) => obj.type === "Sprite" && obj.name == id )
             .map((obj) => DimensionTransformer.fromVector3D(obj.position));
 
-        LineBuilder.reorderLines(scene, video.id, spriteEdges);
+        LineBuilder.reorderLines(scene, id, spriteEdges);
 
         const vertices = Mapper.map(Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3])
 

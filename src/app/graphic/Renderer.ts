@@ -35,7 +35,7 @@ class Graphic {
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        DragHandler.generateEgdeSprites(scene, renderer, camera, videoMaterial);
+        DragHandler.initVertices(scene, renderer, camera, videoMaterial);
 
         this.rendermagic(renderer, camera, scene);
     }
