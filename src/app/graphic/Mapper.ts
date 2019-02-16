@@ -15,6 +15,16 @@ export class DimensionTransformer{
         }
     }
 
+
+    public static fromFloatArrayToDimension(vertices: Float32Array): Dimension[]{
+        const values = Array.from(vertices)
+        let dimensions = []
+        for (let index = 0; index < values.length; index += 3) {
+            dimensions.push({x: values[index], y: values[index + 1], z:  values[index + 2]})            
+        }
+        return dimensions;
+    }
+
     public static toFloatArray(vertices: Dimension[]): Float32Array{
         return new Float32Array(
             vertices
@@ -139,5 +149,54 @@ export class Mapper {
             }
         }
         return result;
+    }
+}
+
+
+interface UvEdgeValues{
+    x: UvMappingCalculation,
+    y: UvMappingCalculation
+}
+
+interface UvMappingCalculation{
+    startPos: number;
+    endPos: number;
+    uvPos: number;
+    fn: (x: number) => number;
+}
+
+export class UvMapper {
+    public static reorderUvMapping(uvEdges: Dimension[], videoEdges: Dimension[]){
+        const fnEdge = (val:number): number => - (val - 1);
+        const fnNoop = (val: number): number => val;
+
+        const calcUvEdgePoint = 
+            (start: number, end: number, uv: number, fn:(x: number) => number) =>
+                fn(((end - start) + (start - uv)) /  (end - start));
+
+
+        const values = [
+            {
+                x: {startPos: videoEdges[0].x, endPos: videoEdges[2].x, uvPos: uvEdges[0].x, fn: fnEdge },
+                y: {startPos: videoEdges[0].y, endPos: videoEdges[1].y, uvPos: uvEdges[0].y, fn: fnEdge },
+            },
+            {
+                x: {startPos: videoEdges[1].x, endPos: videoEdges[3].x, uvPos: uvEdges[1].x, fn: fnEdge },
+                y: {startPos: videoEdges[1].y, endPos: videoEdges[0].y, uvPos: uvEdges[1].y, fn: fnNoop },
+            },
+            {
+                x: {startPos: videoEdges[2].x, endPos: videoEdges[0].x, uvPos: uvEdges[2].x, fn: fnNoop },
+                y: {startPos: videoEdges[2].y, endPos: videoEdges[3].y, uvPos: uvEdges[2].y, fn: fnEdge },
+            },
+            {
+                x: {startPos: videoEdges[3].x, endPos: videoEdges[1].x, uvPos: uvEdges[3].x, fn: fnNoop },
+                y: {startPos: videoEdges[3].y, endPos: videoEdges[2].y, uvPos: uvEdges[3].y, fn: fnNoop },
+            }
+        ].map((val: UvEdgeValues) => <Dimension>{
+            x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
+            y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
+        });
+
+        return values;
     }
 }

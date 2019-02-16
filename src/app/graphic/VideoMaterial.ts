@@ -1,5 +1,5 @@
-import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial } from "three";
-import { Indices, Mapper, DimensionTransformer, Dimension } from "./Mapper";
+import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene } from "three";
+import { Indices, Mapper, DimensionTransformer, Dimension, Edges } from "./Mapper";
 import { Config } from "../../config";
 
 
@@ -10,20 +10,21 @@ export class VideoMaterial{private _id: string;
     private _videoMesh: Mesh;
     private _positions: Dimension[];
     private _uvs: Dimension[];
-
-
+    private _scene: Scene;
     
-    constructor(id: string, source: string){
+    constructor(id: string, source: string, scene: Scene){
         this._id = id;
+        this._scene = scene;
 
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo();
 
-        let geometry = new BufferGeometry();
+
 
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
         this._positions = Mapper.vertices(Config.Vertices.size, 2);
         this._uvs = Mapper.uv(Config.Vertices.size);
-
+        
+        let geometry = new BufferGeometry();
         geometry.setIndex(indices);
         geometry.addAttribute('position', new BufferAttribute(DimensionTransformer.toFloatArray(this._positions), 3));
         geometry.addAttribute('uv', new BufferAttribute(DimensionTransformer.toFloatArray(this._uvs), 3));
@@ -36,14 +37,21 @@ export class VideoMaterial{private _id: string;
 
         this._videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
         this._videoMesh.name = this._id;
+        this._scene.add(this._videoMesh);
     }
 
 
+    public getEdgesFromScene(): Dimension[]{
+        return this._scene.children
+            .filter((obj) => obj.type === "Mesh" && obj.name == this._id)
+            .map((video: any) => video.geometry.attributes.position.array)
+            .map(val => DimensionTransformer.fromFloatArrayToDimension(val))
+            .map(val => Edges.getEdges(val))[0];
+    }
 
     public get id(): string{
         return this._id;
     }
-
 
     public get videoMesh(): Mesh{
         return this._videoMesh;
@@ -52,6 +60,8 @@ export class VideoMaterial{private _id: string;
     public get positions(): Dimension[]{
         return this._positions;
     }
+
+
 }
 
 interface Attribute {
@@ -87,3 +97,4 @@ class HtmlVideoMaterial {
         return video;
     }    
 }
+

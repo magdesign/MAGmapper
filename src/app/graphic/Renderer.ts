@@ -18,24 +18,21 @@ import {
 } from 'three';
 import {VideoMaterial} from "./VideoMaterial";
 import {Mapper, Indices, Edges, DimensionTransformer} from "./Mapper";
-import { DragHandler } from './DragHandler';
+import { PositionDragHandler } from './DragHandler';
 
 import { v4 as uuid } from 'uuid';
 
 class Graphic {
     public static init(){
-
         const id  = uuid();
 
         let scene: Scene = new Scene();
-        let videoMaterial: VideoMaterial = new VideoMaterial(id, "");
-
-        scene.add(videoMaterial.videoMesh)
-
+        let videoMaterial: VideoMaterial = new VideoMaterial(id, "", scene);
+    
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        DragHandler.initVertices(scene, renderer, camera, videoMaterial);
+        PositionDragHandler.initVertices(scene, renderer, camera, videoMaterial);
 
         this.rendermagic(renderer, camera, scene);
     }
