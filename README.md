@@ -13,7 +13,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 ## To Do Tasklist
 
 - [ ] Basic working prototype to find contributers
-- [ ] Fundraising, make bountysources
+- [ ] Fundraising, make bountysources, promote on known vj channels
+- [ ] Open a domain :-)
 
 ### Basics
 - [ ] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
@@ -34,6 +35,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 
 ### Advanced
+- [ ] Bezier function [check this](https://computergraphics.stackexchange.com/questions/3764/apply-distortion-to-b%C3%A9zier-surface?answertab=votes#tab-top) ight be based on [this](https://pomax.github.io/bezierjs/) and needs again a shit load of mathematical braining....
 - [ ] Share timecode to sync multiple players
 - [ ] List in UI to show all connected slaves
 - [ ] Switch UI to control a defined client (mark them with colors)
