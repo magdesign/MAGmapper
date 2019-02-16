@@ -25,8 +25,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] Show mode: to hide handles
 - [ ] Controller to increase/decrease resolution
 - [ ] Add more quads, delete selected quad
-- [ ] Define uvw read input for texture coverage
-- [ ] Define UI/UX, when calling it must be an overlay
+- [x] Define uvw read input for texture coverage
+- [x] Define UI/UX, when calling it must be an overlay
 - [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
 - [ ] Shortcuts
 - [x] Define Shortcut List, [see here](https://github.com/magdesign/MAGmapper/blob/master/doc/Keymap.md)
