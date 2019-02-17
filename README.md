@@ -13,7 +13,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 ## To Do Tasklist
 
 - [ ] Basic working prototype to find contributers
-- [ ] Fundraising, make bountysources
+- [ ] Fundraising, make bountysources, promote on known vj channels
+- [ ] Open a domain :-)
 
 ### Basics
 - [ ] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
@@ -24,8 +25,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] Show mode: to hide handles
 - [ ] Controller to increase/decrease resolution
 - [ ] Add more quads, delete selected quad
-- [ ] Define uvw read input for texture coverage
-- [ ] Define UI/UX, when calling it must be an overlay
+- [x] Define uvw read input for texture coverage
+- [x] Define UI/UX, when calling it must be an overlay
 - [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
 - [ ] Shortcuts
 - [x] Define Shortcut List, [see here](https://github.com/magdesign/MAGmapper/blob/master/doc/Keymap.md)
@@ -34,6 +35,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 
 ### Advanced
+- [ ] Bezier function [check this](https://computergraphics.stackexchange.com/questions/3764/apply-distortion-to-b%C3%A9zier-surface?answertab=votes#tab-top) ight be based on [this](https://pomax.github.io/bezierjs/) and needs again a shit load of mathematical braining....
 - [ ] Share timecode to sync multiple players
 - [ ] List in UI to show all connected slaves
 - [ ] Switch UI to control a defined client (mark them with colors)
