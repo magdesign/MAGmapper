@@ -132,14 +132,8 @@ export class UvDragHandler{
     private _scene: Scene;
     private prefix: string = "uv";
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial, scale: number) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial, scale: number, targetId: string) {
         this._scene = scene;
-
-        function getRandomIntInclusive(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min +1)) + min; 
-          }
 
         const edges: Dimension[] = Edges.getEdges(video.positions);
         const sprites: Sprite[] = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, scale)
@@ -153,11 +147,11 @@ export class UvDragHandler{
 
         new DragControls(sprites, camera, renderer.domElement)
             .addEventListener('drag', () => {
-                this.loadPositions(video.id, scene, renderer, camera, VideoSceneHelper.getEdgesFromScene(scene, video.id));
+                this.loadPositions(video.id, scene, renderer, camera, VideoSceneHelper.getEdgesFromScene(scene, video.id), targetId);
             });
     }
 
-    public loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: Dimension[]) {
+    public loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: Dimension[], targetId: string) {
         const spriteEdges: Dimension[] = scene.children
             .filter((obj) => obj.type === "Sprite" && obj.name == this.prefix + id )
             .map((obj) => DimensionTransformer.fromVector3D(obj.position));
@@ -165,7 +159,7 @@ export class UvDragHandler{
         LineBuilder.reorderLines(scene, id, spriteEdges, this.prefix);
         
         const uve:Dimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
-        VideoSceneHelper.changeUv(uve, scene, id);
+        VideoSceneHelper.changeUv(uve, scene, targetId);
 
 
         renderer.render(scene, camera);
