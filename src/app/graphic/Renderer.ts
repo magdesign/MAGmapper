@@ -18,7 +18,7 @@ import {
 } from 'three';
 import {VideoMaterial} from "./VideoMaterial";
 import {Mapper, Indices, Edges, DimensionTransformer} from "./Mapper";
-import { PositionDragHandler } from './DragHandler';
+import { PositionDragHandler, UvDragHandler } from './DragHandler';
 
 import { v4 as uuid } from 'uuid';
 
@@ -27,12 +27,22 @@ class Graphic {
         const id  = uuid();
 
         let scene: Scene = new Scene();
-        let videoMaterial: VideoMaterial = new VideoMaterial(id, "", scene);
-    
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        PositionDragHandler.initVertices(scene, renderer, camera, videoMaterial);
+
+
+        let video1: VideoMaterial = new VideoMaterial(id, "", scene);
+        new PositionDragHandler(scene, renderer, camera, video1, 1);
+       
+        const id2  = uuid();
+       
+        let video2: VideoMaterial = new VideoMaterial(id2, "", scene);
+        new PositionDragHandler(scene, renderer, camera, video2, 1.4);
+        //PositionDragHandler.initVertices(scene, renderer, camera, video);
+
+        
+
 
         this.rendermagic(renderer, camera, scene);
     }

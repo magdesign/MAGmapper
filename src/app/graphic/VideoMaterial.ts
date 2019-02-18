@@ -1,16 +1,17 @@
 import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene } from "three";
 import { Indices, Mapper, DimensionTransformer, Dimension, Edges } from "./Mapper";
 import { Config } from "../../config";
+import { PositionDragHandler } from './DragHandler';
 
 
 
-export class VideoMaterial{private _id: string;
+export class VideoMaterial{
 
-
+    private _id: string;
     private _videoMesh: Mesh;
     private _positions: Dimension[];
     private _uvs: Dimension[];
-    private _scene: Scene;
+    private _scene: any;
     
     constructor(id: string, source: string, scene: Scene){
         this._id = id;
@@ -40,14 +41,10 @@ export class VideoMaterial{private _id: string;
         this._scene.add(this._videoMesh);
     }
 
-
-    public getEdgesFromScene(): Dimension[]{
-        return this._scene.children
-            .filter((obj) => obj.type === "Mesh" && obj.name == this._id)
-            .map((video: any) => video.geometry.attributes.position.array)
-            .map(val => DimensionTransformer.fromFloatArrayToDimension(val))
-            .map(val => Edges.getEdges(val))[0];
+    public get scene(){
+        return this._scene;
     }
+
 
     public get id(): string{
         return this._id;
@@ -60,9 +57,49 @@ export class VideoMaterial{private _id: string;
     public get positions(): Dimension[]{
         return this._positions;
     }
-
-
 }
+
+
+
+export class VideoMapperElement{
+
+    
+}
+
+export class VideoSceneHelper{
+
+    public static filterVideoScene(scene, id: string){
+        return scene.children
+            .filter((obj) => obj.type === "Mesh" && obj.name == id)
+    }
+
+    public static changeUv(uve: Dimension[], scene, id: string){
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+                elmt.geometry.attributes.uv.needsUpdate = true
+                elmt.geometry.attributes.uv.array = DimensionTransformer.toFloatArray(Mapper.map(Config.Vertices.size, uve[0],uve[1], uve[2],uve[3]));
+                return elmt;
+            }))
+    }
+
+    public static getEdgesFromScene(scene, id: string): Dimension[]{
+        return this.filterVideoScene(scene, id)
+            .map((video: any) => video.geometry.attributes.position.array)
+            .map(val => DimensionTransformer.fromFloatArrayToDimension(val))
+            .map(val => Edges.getEdges(val))[0];
+    }
+
+    public static changeVertices(vertices: Dimension[], scene, id: string){
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+                elmt.geometry.attributes.position.needsUpdate = true
+                elmt.geometry.attributes.position.array = DimensionTransformer.toFloatArray(vertices)
+                return elmt;
+            }))
+    }
+}
+
+
 
 interface Attribute {
     qualifiedName: string;

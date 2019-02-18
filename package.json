@@ -31,12 +31,13 @@
     "webpack-dev-server": "latest"
   },
   "dependencies": {
+    "@types/dat.gui": "^0.7.2",
     "@types/three": "latest",
     "@types/uuid": "^3.4.4",
-    "@types/dat.gui": "^0.7.2",
     "dat.gui": "^0.7.5",
     "three": "latest",
     "three-dragcontrols": "^0.88.2",
+    "tslint": "^5.12.1",
     "uuid": "^3.3.2"
   }
 }
