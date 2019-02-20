@@ -91,6 +91,18 @@ export class Mapper {
         ) 
     }
 
+
+
+    public static verticesWithStartPoint(size: number, length: number, startPoint: Dimension): Dimension[]{
+        return this.map(
+            size,
+            {x: startPoint.x, y: startPoint.y, z: 0},
+            {x: startPoint.x, y: startPoint.y + length, z: 0},
+            {x: startPoint.x + length , y: startPoint.y, z: 0},
+            {x: startPoint.x + length, y: startPoint.y + length, z: 0},
+        ) 
+    }
+
     public static vertices(size: number, length: number): Dimension[]{
         return this.map(
             size,

@@ -54,6 +54,15 @@ class LineBuilder{
                 return child;
             })
     }
+
+    public static disable(scene, id: string, enable: boolean, prefix: string){
+        scene.children
+            .filter((child: any) => child.name === prefix + id && child.type === "Line")
+            .map((child: any) => {
+                child.visible = enable; 
+                return child;
+            })
+    }
 }
 
 class SpriteBuilder{
@@ -81,20 +90,30 @@ class SpriteBuilder{
     
         return sprite;
     }
+
+
+    public static disable(scene, id: string, enable: boolean, prefix: string){
+        scene.children
+            .filter((child: any) => child.name === prefix + id && child.type === "Sprite")
+            .map((child: any) => {
+                child.visible = enable; 
+                return child;
+            })
+    }
 }
 
 export class PositionDragHandler{
 
     private prefix: string = "vert";
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial, scale: number) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial) {
 
 
         const edges: Dimension[] = Edges.getEdges(video.positions);
 
 
         const sprites: Sprite[] = SpriteBuilder
-            .generateDragHanldes(edges, Config.DragHandler.source, scale)
+            .generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
             .map((sprite: Sprite) => {
                 scene.add(sprite);
                 sprite.name = this.prefix + video.id;
@@ -132,11 +151,11 @@ export class UvDragHandler{
     private _scene: Scene;
     private prefix: string = "uv";
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial, scale: number, targetId: string) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial,  targetId: string) {
         this._scene = scene;
 
         const edges: Dimension[] = Edges.getEdges(video.positions);
-        const sprites: Sprite[] = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, scale)
+        const sprites: Sprite[] = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
             .map((sprite: Sprite) => {
                 scene.add(sprite);
                 sprite.name = this.prefix + video.id;
@@ -160,8 +179,6 @@ export class UvDragHandler{
         
         const uve:Dimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper.changeUv(uve, scene, targetId);
-
-
         renderer.render(scene, camera);
     }
 }   
