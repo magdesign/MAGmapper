@@ -16,6 +16,16 @@ export class DimensionTransformer{
     }
 
 
+    public static vectorizeFloatArray(vertices: Float32Array, vector: Dimension): Float32Array{
+        const values = Array.from(vertices)
+
+        for (let index = 0; index < values.length; index += 3) {
+            values[index] =values[index]+ vector.x;
+            values[index + 1] = values[index + 1] + vector.y
+        }
+        return new Float32Array(values);
+    }
+
     public static fromFloatArrayToDimension(vertices: Float32Array): Dimension[]{
         const values = Array.from(vertices)
         let dimensions = []
@@ -111,6 +121,14 @@ export class Mapper {
             {x: length , y: 0, z: 0},
             {x: length, y: length, z: 0},
         ) 
+    }
+
+    public static addVector(point: Dimension, vector: Dimension): Dimension{
+        return {
+            x: point.x + vector.x,
+            y: point.y + vector.y,
+            z: point.z + vector.z,
+        }
     }
 
     public static map(size: number, bottomLeft: Dimension, topLeft: Dimension, bottomRight: Dimension, topRight: Dimension): Dimension[] {

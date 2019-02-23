@@ -1,9 +1,8 @@
 import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene, PerspectiveCamera, WebGLRenderer } from "three";
 import { Indices, Mapper, DimensionTransformer, Dimension, Edges } from "./Mapper";
 import { Config } from "../../config";
-import { PositionDragHandler, UvDragHandler, DragHandler } from './DragHandler';
+import { PositionDragHandler, UvDragHandler, DragHandler, VideoMover } from './DragHandler';
 import { EventHandler, EventTypes } from '../ui/UiConfig';
-
 
 export class VideoMaterial{
 
@@ -47,14 +46,10 @@ export class VideoMaterial{
         EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
             VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
         });
-        
+
         EventHandler.addEventListener(EventTypes.Outlines, (e) => {
             this._draghanlder.visibility(e.detail.value)
         });
-    }
-
-
-    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
     }
 
     public get scene(){
@@ -82,11 +77,12 @@ export class VideoMaterial{
     }
 }
 
-
+//constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[], targetId: string){
 export class VideoMapper extends VideoMaterial{
     constructor(id: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
         super.draghanlder = new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
+        new VideoMover(super.scene, renderer, camera, super.id, super.positions, [super.draghanlder]);
     }
 }
 
@@ -106,26 +102,24 @@ export class VideoCutter extends VideoMaterial{
             super.draghanlder.visibility(e.detail.value)
         })
     }
-
 }
-
 
 /**
  * filters scene elements and changes properties
  */
 export class VideoSceneHelper{
+    
+    public static filterVideoScene(scene, id: string){
+        return scene.children
+            .filter((obj) => obj.type === "Mesh" && obj.name == id)
+    }
+
     public static getEdgesFromScene(scene, id: string): Dimension[]{
         return this.filterVideoScene(scene, id)
             .map((video: any) => video.geometry.attributes.position.array)
             .map(val => DimensionTransformer.fromFloatArrayToDimension(val))
             .map(val => Edges.getEdges(val))[0];
     }
-
-    public static filterVideoScene(scene, id: string){
-        return scene.children
-            .filter((obj) => obj.type === "Mesh" && obj.name == id)
-    }
-
     
     public static changeWireframe(wireframe: boolean, scene, id: string){
         this.filterVideoScene(scene, id)
@@ -151,6 +145,15 @@ export class VideoSceneHelper{
                 elmt.geometry.attributes.uv.array = DimensionTransformer.toFloatArray(Mapper.map(Config.Vertices.size, uve[0],uve[1], uve[2],uve[3]));
                 return elmt;
             }))
+    }
+
+    public static changeVerticesWithFloatArray(vertices: Float32Array, scene, id: string){
+        this.filterVideoScene(scene, id)
+        .map((elmt => {
+            elmt.geometry.attributes.position.needsUpdate = true;
+            elmt.geometry.attributes.position.array = vertices;
+            return elmt;
+        })) 
     }
 
     public static changeVertices(vertices: Dimension[], scene, id: string){
