@@ -180,4 +180,3 @@ export class UvDragHandler extends DragHandler {
         renderer.render(scene, camera);
     }
 }   
-

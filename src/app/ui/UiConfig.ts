@@ -40,8 +40,8 @@ const config = [
             },
             { 
                 key: 'Outlines',
-                value: false,      
-                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)
+                value: true,      
+                fn: (value) => EventHandler.throwEvent(EventTypes.Outlines, value)
             },
             { 
                 key: 'Cutter',    

@@ -12,6 +12,7 @@ export class VideoMaterial{
     private _positions: Dimension[];
     private _uvs: Dimension[];
     private _scene: any;
+    private _draghanlder: DragHandler;
 
     constructor(id: string, source: string, scene: Scene, startPoint: Dimension){
         this._id = id;
@@ -46,6 +47,10 @@ export class VideoMaterial{
         EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
             VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
         });
+        
+        EventHandler.addEventListener(EventTypes.Outlines, (e) => {
+            this._draghanlder.visibility(e.detail.value)
+        });
     }
 
 
@@ -67,35 +72,38 @@ export class VideoMaterial{
     public get positions(): Dimension[]{
         return this._positions;
     }
+
+    public set draghanlder(draghandler: DragHandler) {
+        this._draghanlder = draghandler;
+    }
+
+    public get draghanlder(){
+        return this._draghanlder;
+    }
 }
 
 
 export class VideoMapper extends VideoMaterial{
-    constructor(id: string, source: string, scene: Scene, startPoint: Dimension){
+    constructor(id: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
-
-    }
-
-    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
-        new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
+        super.draghanlder = new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
     }
 }
 
 
 export class VideoCutter extends VideoMaterial{
     private _targetId: string;
-    private draghanlder: DragHandler;
+
 
     constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
         this._targetId = targetId;
 
-        this.draghanlder = new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
-
+        super.draghanlder = new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
 
         EventHandler.addEventListener(EventTypes.Cutter, (e) => {
             VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
-            this.draghanlder.visibility(e.detail.value)
+            super.draghanlder.visibility(e.detail.value)
         })
     }
 

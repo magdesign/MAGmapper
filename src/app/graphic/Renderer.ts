@@ -31,20 +31,17 @@ class Graphic {
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        let video1: VideoMaterial = new VideoMapper(id, "", scene, {x:0, y:0, z:0});
-        video1.addDragHandler(renderer,camera);
+        let video1: VideoMaterial = new VideoMapper(id, "", scene, {x:0, y:0, z:0}, renderer,camera);
        
         const id2  = uuid();
        
-        let video2: VideoMaterial = new VideoCutter(id2, id, "", scene, {x:3, y:0, z:0},renderer,camera);
+        let video2: VideoMaterial = new VideoCutter(id2, id, "", scene, {x:3, y:0, z:0}, renderer,camera);
 
         // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
 
         this.rendermagic(renderer, camera, scene);
     }
-
-
 
     private static loadRenderer(): WebGLRenderer {
         let renderer: WebGLRenderer = new WebGLRenderer();
