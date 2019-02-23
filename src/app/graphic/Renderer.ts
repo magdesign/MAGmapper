@@ -16,7 +16,7 @@ import {
     Sprite,
     Renderer
 } from 'three';
-import { VideoMaterial, VideoType } from './VideoMaterial';
+import { VideoMaterial, VideoMapper, VideoCutter } from './VideoMaterial';
 import {Mapper, Indices, Edges, DimensionTransformer} from "./Mapper";
 import { PositionDragHandler, UvDragHandler } from './DragHandler';
 
@@ -31,20 +31,16 @@ class Graphic {
         let camera: PerspectiveCamera = this.loadCamera(scene);
         let renderer: WebGLRenderer = this.loadRenderer();
 
-        let video1: VideoMaterial = new VideoMaterial(id, "", scene, {x:0, y:0, z:0}, VideoType.Drag);
-        new PositionDragHandler(scene, renderer, camera, video1);
+        let video1: VideoMaterial = new VideoMapper(id, "", scene, {x:0, y:0, z:0});
+        video1.addDragHandler(renderer,camera);
        
         const id2  = uuid();
        
-        let video2: VideoMaterial = new VideoMaterial(id2, "", scene, {x:3, y:0, z:0}, VideoType.Cut);
-        let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
-        //PositionDragHandler.initVertices(scene, renderer, camera, video);
+        let video2: VideoMaterial = new VideoCutter(id2, id, "", scene, {x:3, y:0, z:0});
+        video2.addDragHandler(renderer,camera);
 
-
-
-
-    
-
+        // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
+        // PositionDragHandler.initVertices(scene, renderer, camera, video);
 
         this.rendermagic(renderer, camera, scene);
     }

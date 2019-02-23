@@ -16,11 +16,11 @@ export class EventHandler{
 
     public static addEventListener(type: EventTypes, fn: (val: any )=> void){
         this.getEventHandler()
-            .addEventListener(EventTypes.Wireframe, fn, false);;
+            .addEventListener(type, fn, false);;
     }
 
     public static throwEvent(type: EventTypes, value: any): void {
-            let event = new CustomEvent(EventTypes.Wireframe, { detail: {
+            let event = new CustomEvent(type, { detail: {
                 value: value,
                 type: type
             }});
@@ -30,7 +30,6 @@ export class EventHandler{
     }
 
 }
-
 
 const config = [
     {
@@ -46,8 +45,6 @@ const config = [
         ]
     }
 ]
-
-
 
 const controller = config
     .map(val => val.subitems)

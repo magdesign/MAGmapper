@@ -17,7 +17,6 @@ import DragControls from 'three-dragcontrols';
 
 import { DimensionTransformer, Dimension ,Edges, Mapper, UvMapper } from './Mapper';
 
-import { DataService } from "../service/DataService";
 import { Config } from '../../config';
 import { VideoMaterial, VideoSceneHelper } from './VideoMaterial';
 
@@ -33,7 +32,7 @@ class LineBuilder{
         ].map(edge => new Vector3(edge.x, edge.y, edge.z));
     }
 
-    public static addLines(scene: Scene, id: string, edges: Dimension[], prefix: string){
+    public static addLines(scene: Scene, id: string, edges: Dimension[]){
 
         const material = new LineBasicMaterial({color: 255255255255255255, linewidth: 5}); 
         let geometry: Geometry = new Geometry();
@@ -41,13 +40,18 @@ class LineBuilder{
         geometry.vertices = this.prepareEdges(edges);
 
         let line = new Line( geometry, material );
-        line.name = prefix + id;
+        line.name = id;
         scene.add(line);
     }
 
-    public static reorderLines(scene, id: string, edges: Dimension[],  prefix: string){
-        scene.children
-            .filter((child: any) => child.name === prefix + id && child.type === "Line")
+
+    public static filterLines(scene, id: string): any[]{
+        return scene.children
+            .filter((child: any) => child.name === id && child.type === "Line")
+    }
+
+    public static reorderLines(scene, id: string, edges: Dimension[]){
+        this.filterLines(scene, id)
             .map((child: any) => {
                 child.geometry.vertices = this.prepareEdges(edges)
                 child.geometry.verticesNeedUpdate = true; 
@@ -55,9 +59,8 @@ class LineBuilder{
             })
     }
 
-    public static disable(scene, id: string, enable: boolean, prefix: string){
-        scene.children
-            .filter((child: any) => child.name === prefix + id && child.type === "Line")
+    public static disable(scene, id: string, enable: boolean){
+        this.filterLines(scene, id)
             .map((child: any) => {
                 child.visible = enable; 
                 return child;
@@ -78,13 +81,6 @@ class SpriteBuilder{
         const material: SpriteMaterial = new SpriteMaterial({map: texture});
         let sprite: Sprite = new Sprite(material);
 
-
-        function getRandomIntInclusive(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min +1)) + min; 
-          }
-
         sprite.position.set(point.x, point.y, point.z);
         sprite.scale.set(scale, scale, 1);
     
@@ -102,29 +98,42 @@ class SpriteBuilder{
     }
 }
 
-export class PositionDragHandler{
 
-    private prefix: string = "vert";
-
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial) {
-
-
-        const edges: Dimension[] = Edges.getEdges(video.positions);
-
-
+class DragHandler{
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[]) {
+        const edges: Dimension[] = Edges.getEdges(positions);
         const sprites: Sprite[] = SpriteBuilder
             .generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
             .map((sprite: Sprite) => {
                 scene.add(sprite);
-                sprite.name = this.prefix + video.id;
+                sprite.name =  id;
                 return sprite;
             });
 
-        LineBuilder.addLines(scene, video.id, edges, this.prefix);
+        LineBuilder.addLines(scene, id, edges);
+    }
+
+}
+
+export class PositionDragHandler {
+
+
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[]) {
+        const edges: Dimension[] = Edges.getEdges(positions);
+        const sprites: Sprite[] = SpriteBuilder
+            .generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
+            .map((sprite: Sprite) => {
+                scene.add(sprite);
+                sprite.name =  id;
+                return sprite;
+            });
+
+        LineBuilder.addLines(scene, id, edges);
+
 
         new DragControls(sprites, camera, renderer.domElement)
             .addEventListener('drag', () => {
-                this.loadPositions(video.id, scene, renderer, camera);
+                this.loadPositions(id, scene, renderer, camera);
             });
 
     
@@ -132,10 +141,10 @@ export class PositionDragHandler{
 
     public loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera) {
         const spriteEdges: Dimension[] = scene.children
-            .filter((obj) => obj.type === "Sprite" && obj.name == this.prefix + id)
+            .filter((obj) => obj.type === "Sprite" && obj.name == id)
             .map((obj) => DimensionTransformer.fromVector3D(obj.position));
 
-        LineBuilder.reorderLines(scene, id, spriteEdges, this.prefix);
+        LineBuilder.reorderLines(scene, id, spriteEdges);
 
         const vertices = Mapper.map(Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3])
         VideoSceneHelper.changeVertices(vertices, scene, id);
@@ -146,36 +155,33 @@ export class PositionDragHandler{
 
 
 
-export class UvDragHandler{
+export class UvDragHandler {
 
-    private _scene: Scene;
-    private prefix: string = "uv";
-
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, video: VideoMaterial,  targetId: string) {
-        this._scene = scene;
-
-        const edges: Dimension[] = Edges.getEdges(video.positions);
-        const sprites: Sprite[] = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[], targetId: string) {
+        const edges: Dimension[] = Edges.getEdges(positions);
+        const sprites: Sprite[] = SpriteBuilder
+            .generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
             .map((sprite: Sprite) => {
                 scene.add(sprite);
-                sprite.name = this.prefix + video.id;
+                sprite.name =  id;
                 return sprite;
             });
 
-        LineBuilder.addLines(scene, video.id, edges, this.prefix);
+        LineBuilder.addLines(scene, id, edges);
+
 
         new DragControls(sprites, camera, renderer.domElement)
             .addEventListener('drag', () => {
-                this.loadPositions(video.id, scene, renderer, camera, VideoSceneHelper.getEdgesFromScene(scene, video.id), targetId);
+                this.loadPositions(id, scene, renderer, camera, edges, targetId);
             });
     }
 
     public loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: Dimension[], targetId: string) {
         const spriteEdges: Dimension[] = scene.children
-            .filter((obj) => obj.type === "Sprite" && obj.name == this.prefix + id )
+            .filter((obj) => obj.type === "Sprite" && obj.name == id )
             .map((obj) => DimensionTransformer.fromVector3D(obj.position));
 
-        LineBuilder.reorderLines(scene, id, spriteEdges, this.prefix);
+        LineBuilder.reorderLines(scene, id, spriteEdges);
         
         const uve:Dimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper.changeUv(uve, scene, targetId);

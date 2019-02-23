@@ -1,15 +1,9 @@
-import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene } from "three";
+import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene, PerspectiveCamera, WebGLRenderer } from "three";
 import { Indices, Mapper, DimensionTransformer, Dimension, Edges } from "./Mapper";
 import { Config } from "../../config";
-import { PositionDragHandler } from './DragHandler';
+import { PositionDragHandler, UvDragHandler } from './DragHandler';
 import { EventHandler, EventTypes } from '../ui/UiConfig';
 
-
-
-export enum VideoType{
-    Drag,
-    Cut
-}
 
 export class VideoMaterial{
 
@@ -18,22 +12,19 @@ export class VideoMaterial{
     private _positions: Dimension[];
     private _uvs: Dimension[];
     private _scene: any;
-    private _videoType: VideoType;
-    
-    constructor(id: string, source: string, scene: Scene, startPoint: Dimension, videoType: VideoType){
+
+    constructor(id: string, source: string, scene: Scene, startPoint: Dimension){
         this._id = id;
         this._scene = scene;
-        this._videoType = videoType;
 
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo();
-
-
-
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
+        
         this._positions = Mapper.verticesWithStartPoint(Config.Vertices.size, 2, startPoint);
         this._uvs = Mapper.uv(Config.Vertices.size);
         
         let geometry = new BufferGeometry();
+
         geometry.setIndex(indices);
         geometry.addAttribute('position', new BufferAttribute(DimensionTransformer.toFloatArray(this._positions), 3));
         geometry.addAttribute('uv', new BufferAttribute(DimensionTransformer.toFloatArray(this._uvs), 3));
@@ -51,28 +42,19 @@ export class VideoMaterial{
         this.events(scene);
     }
 
-    private events(scene: any){
-
+    private events(scene: any): void{
         EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
-            switch(e.detail.type){
-                case EventTypes.Cutter:
-                    if(VideoType.Cut === this._videoType){
-                        VideoSceneHelper.changeVisibility(e.detail.value, scene, this._id);
-                    }
-                    break;
-                case EventTypes.Wireframe:
-                    VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
-                    break;
-            }
-  
-     
+            VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
         });
+    }
+
+
+    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
     }
 
     public get scene(){
         return this._scene;
     }
-
 
     public get id(): string{
         return this._id;
@@ -88,10 +70,41 @@ export class VideoMaterial{
 }
 
 
+export class VideoMapper extends VideoMaterial{
+    constructor(id: string, source: string, scene: Scene, startPoint: Dimension){
+        super(id, source, scene, startPoint);
 
+    }
+
+    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
+        new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
+    }
+}
+
+
+export class VideoCutter extends VideoMaterial{
+    private _targetId: string;
+
+    constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: Dimension){
+        super(id, source, scene, startPoint);
+        this._targetId = targetId;
+
+        EventHandler.addEventListener(EventTypes.Cutter, (e) => {
+            VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
+        })
+    }
+
+    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
+        new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
+    }
+
+}
+
+
+/**
+ * filters scene elements and changes properties
+ */
 export class VideoSceneHelper{
-
-
     public static getEdgesFromScene(scene, id: string): Dimension[]{
         return this.filterVideoScene(scene, id)
             .map((video: any) => video.geometry.attributes.position.array)
@@ -107,18 +120,18 @@ export class VideoSceneHelper{
     
     public static changeWireframe(wireframe: boolean, scene, id: string){
         this.filterVideoScene(scene, id)
-        .map((elmt => {
-            elmt.material.wireframe = wireframe;
-            return elmt;
-        }))
+            .map((elmt => {
+                elmt.material.wireframe = wireframe;
+                return elmt;
+            }))
     }
 
     public static changeVisibility(wireframe: boolean, scene, id: string){
         this.filterVideoScene(scene, id)
-        .map((elmt => {
-            elmt.visible = wireframe;
-            return elmt;
-        }))
+            .map((elmt => {
+                elmt.visible = wireframe;
+                return elmt;
+            }))
     }
 
 
@@ -140,8 +153,6 @@ export class VideoSceneHelper{
             }))
     }
 }
-
-
 
 interface Attribute {
     qualifiedName: string;
