@@ -1,7 +1,7 @@
 import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene, PerspectiveCamera, WebGLRenderer } from "three";
 import { Indices, Mapper, DimensionTransformer, Dimension, Edges } from "./Mapper";
 import { Config } from "../../config";
-import { PositionDragHandler, UvDragHandler } from './DragHandler';
+import { PositionDragHandler, UvDragHandler, DragHandler } from './DragHandler';
 import { EventHandler, EventTypes } from '../ui/UiConfig';
 
 
@@ -84,18 +84,19 @@ export class VideoMapper extends VideoMaterial{
 
 export class VideoCutter extends VideoMaterial{
     private _targetId: string;
+    private draghanlder: DragHandler;
 
-    constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: Dimension){
+    constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
         this._targetId = targetId;
 
+        this.draghanlder = new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
+
+
         EventHandler.addEventListener(EventTypes.Cutter, (e) => {
             VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
+            this.draghanlder.visibility(e.detail.value)
         })
-    }
-
-    public addDragHandler(renderer: WebGLRenderer, camera:PerspectiveCamera ){
-        new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
     }
 
 }

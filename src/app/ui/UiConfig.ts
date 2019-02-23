@@ -21,12 +21,10 @@ export class EventHandler{
 
     public static throwEvent(type: EventTypes, value: any): void {
             let event = new CustomEvent(type, { detail: {
-                value: value,
-                type: type
+                value: value
             }});
             this.getEventHandler()
-                .dispatchEvent(event)
-        
+                .dispatchEvent(event);
     }
 
 }
@@ -40,8 +38,16 @@ const config = [
                 value: false,    
                 fn: (value) => EventHandler.throwEvent(EventTypes.Wireframe, value)
             },
-            { key: 'Outlines',      value: false,      fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)},
-            { key: 'Cutter',    value: true,    fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)}
+            { 
+                key: 'Outlines',
+                value: false,      
+                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)
+            },
+            { 
+                key: 'Cutter',    
+                value: true,    
+                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)
+            }
         ]
     }
 ]
@@ -58,7 +64,6 @@ const controller = config
 
 // create a gui element
 let gui: Dat.GUI = new Dat.GUI();
-
 
 config.map(value => {
     let subfolder = gui.addFolder(value.title);

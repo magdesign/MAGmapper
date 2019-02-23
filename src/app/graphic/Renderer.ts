@@ -36,8 +36,7 @@ class Graphic {
        
         const id2  = uuid();
        
-        let video2: VideoMaterial = new VideoCutter(id2, id, "", scene, {x:3, y:0, z:0});
-        video2.addDragHandler(renderer,camera);
+        let video2: VideoMaterial = new VideoCutter(id2, id, "", scene, {x:3, y:0, z:0},renderer,camera);
 
         // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
