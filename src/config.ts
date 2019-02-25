@@ -6,7 +6,8 @@ export const Config = {
     },
 
     DragHandler: {
-        scale: 0.3,
+        scale: 0.2,
+        line: 3,
         source: "../assets/draghandle.png"
     }
 }

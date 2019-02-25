@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Vector3 } from 'three';
 
 export interface Dimension {
     x: number;
@@ -8,29 +8,28 @@ export interface Dimension {
 
 export class DimensionTransformer{
     public static fromVector3D(value: Vector3): Dimension{
-        return <Dimension>{
+        return {
             x: value.x,
             y: value.y,
-            z: value.z
-        }
+            z: value.z,
+        } as Dimension;
     }
 
-
     public static vectorizeFloatArray(vertices: Float32Array, vector: Dimension): Float32Array{
-        const values = Array.from(vertices)
+        const values = Array.from(vertices);
 
         for (let index = 0; index < values.length; index += 3) {
-            values[index] =values[index]+ vector.x;
-            values[index + 1] = values[index + 1] + vector.y
+            values[index] = values[index] + vector.x;
+            values[index + 1] = values[index + 1] + vector.y;
         }
         return new Float32Array(values);
     }
 
     public static fromFloatArrayToDimension(vertices: Float32Array): Dimension[]{
-        const values = Array.from(vertices)
-        let dimensions = []
+        const values = Array.from(vertices);
+        const dimensions = [];
         for (let index = 0; index < values.length; index += 3) {
-            dimensions.push({x: values[index], y: values[index + 1], z:  values[index + 2]})            
+            dimensions.push({x: values[index], y: values[index + 1], z:  values[index + 2]});
         }
         return dimensions;
     }
@@ -39,9 +38,9 @@ export class DimensionTransformer{
         return new Float32Array(
             vertices
                 .map((cube: Dimension): number[] => [
-                    cube.x, 
+                    cube.x,
                     cube.y,
-                    cube.z
+                    cube.z,
                 ])
                 .reduce((p, c) => p.concat(c)));
     }
@@ -196,7 +195,7 @@ interface UvMappingCalculation{
 }
 
 export class UvMapper {
-    public static reorderUvMapping(uvEdges: Dimension[], videoEdges: Dimension[]){
+    public static reorderUvMapping(uvEdges: Dimension[], videoEdges: Dimension[]): Dimension[]{
         const fnEdge = (val:number): number => - (val - 1);
         const fnNoop = (val: number): number => val;
 
@@ -204,8 +203,7 @@ export class UvMapper {
             (start: number, end: number, uv: number, fn:(x: number) => number) =>
                 fn(((end - start) + (start - uv)) /  (end - start));
 
-
-        const values = [
+        return [
             {
                 x: {startPos: videoEdges[0].x, endPos: videoEdges[2].x, uvPos: uvEdges[0].x, fn: fnEdge },
                 y: {startPos: videoEdges[0].y, endPos: videoEdges[1].y, uvPos: uvEdges[0].y, fn: fnEdge },
@@ -226,7 +224,5 @@ export class UvMapper {
             x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
             y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
         });
-
-        return values;
     }
 }

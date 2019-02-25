@@ -19,15 +19,15 @@ export class VideoMaterial{
 
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo();
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
-        
+
         this._positions = Mapper.verticesWithStartPoint(Config.Vertices.size, 2, startPoint);
         this._uvs = Mapper.uv(Config.Vertices.size);
-        
-        let geometry = new BufferGeometry();
+
+        const geometry = new BufferGeometry();
 
         geometry.setIndex(indices);
-        geometry.addAttribute('position', new BufferAttribute(DimensionTransformer.toFloatArray(this._positions), 3));
-        geometry.addAttribute('uv', new BufferAttribute(DimensionTransformer.toFloatArray(this._uvs), 3));
+        geometry.addAttribute("position", new BufferAttribute(DimensionTransformer.toFloatArray(this._positions), 3));
+        geometry.addAttribute("uv", new BufferAttribute(DimensionTransformer.toFloatArray(this._uvs), 3));
 
         const texture = new VideoTexture(video);
 
@@ -48,7 +48,7 @@ export class VideoMaterial{
         });
 
         EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-            this._draghanlder.visibility(e.detail.value)
+            this._draghanlder.visibility(e.detail.value);
         });
     }
 
@@ -63,7 +63,7 @@ export class VideoMaterial{
     public get videoMesh(): Mesh{
         return this._videoMesh;
     }
-    
+
     public get positions(): Dimension[]{
         return this._positions;
     }
@@ -77,25 +77,27 @@ export class VideoMaterial{
     }
 }
 
-//constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[], targetId: string){
-export class VideoMapper extends VideoMaterial{
+export class VideoMapper extends VideoMaterial {
     constructor(id: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
         super.draghanlder = new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
-        new VideoMover(super.scene, renderer, camera, super.id, super.positions, [super.draghanlder]);
+        console.log(super.id)
+        new VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
     }
 }
 
 
-export class VideoCutter extends VideoMaterial{
-    private _targetId: string;
+export class VideoCutter extends VideoMaterial {
 
+    private _targetId: string;
 
     constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: Dimension, renderer: WebGLRenderer, camera:PerspectiveCamera){
         super(id, source, scene, startPoint);
         this._targetId = targetId;
-
+        console.log(super.id)
+        
         super.draghanlder = new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
+        new VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
 
         EventHandler.addEventListener(EventTypes.Cutter, (e) => {
             VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
@@ -166,15 +168,25 @@ export class VideoSceneHelper{
     }
 }
 
-interface Attribute {
+interface IAttribute {
     qualifiedName: string;
     value: string;
 }
 
 class HtmlVideoMaterial {
 
+    public static loadVideo(): HTMLVideoElement {
+        let video = this.init();
+        document
+            .getElementsByTagName("body")[0]
+            .appendChild(video);
+
+        video.play();
+        return video;
+    }  
+
     // todo set loop
-    private static attributes: Attribute[] = [
+    private static attributes: IAttribute[] = [
         {qualifiedName: "id", value: "video"},
         {qualifiedName: "controls", value: "true"},
         {qualifiedName: "src", value: "assets/testvideo.mp4"},
@@ -184,19 +196,7 @@ class HtmlVideoMaterial {
 
     private static init(): HTMLVideoElement {
         let video: HTMLVideoElement = document.createElement("video");
-        this.attributes.map((attr: Attribute) => video.setAttribute(attr.qualifiedName, attr.value));
+        this.attributes.map((attr: IAttribute) => video.setAttribute(attr.qualifiedName, attr.value));
         return video;
     }
-
-    
-    public static loadVideo(): HTMLVideoElement {
-        let video = this.init();
-        document
-            .getElementsByTagName("body")[0]
-            .appendChild(video);
-
-        video.play();
-        return video;
-    }    
 }
-

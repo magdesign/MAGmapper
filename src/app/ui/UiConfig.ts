@@ -1,52 +1,47 @@
 import * as Dat from 'dat.gui';
-import { Mapper } from '../graphic/Mapper';
+import { Mapper } from "../graphic/Mapper";
 
 export enum EventTypes{
     Wireframe = "wireframe",
     Cutter = "cutter",
-    Outlines = "outlines"
+    Outlines = "outlines",
 }
-
 
 export class EventHandler{
 
-    private static getEventHandler(): any{
-        return document.getElementsByTagName("body")[0];
-    }
-
-    public static addEventListener(type: EventTypes, fn: (val: any )=> void){
+    public static addEventListener(type: EventTypes, fn: (val: any ) => void): void {
         this.getEventHandler()
             .addEventListener(type, fn, false);;
     }
 
     public static throwEvent(type: EventTypes, value: any): void {
-            let event = new CustomEvent(type, { detail: {
-                value: value
-            }});
-            this.getEventHandler()
-                .dispatchEvent(event);
+            const event = new CustomEvent(type, { detail: {value}});
+            this.getEventHandler().dispatchEvent(event);
     }
 
+    private static getEventHandler(): any {
+        return document.getElementsByTagName("body")[0];
+    }
 }
 
 const config = [
     {
         title: "Sync",
         subitems: [
-            { 
-                key: 'Wireframe', 
-                value: false,    
-                fn: (value) => EventHandler.throwEvent(EventTypes.Wireframe, value)
+            {
+                key: "Wireframe",
+                value: false,
+                fn: (value) => EventHandler.throwEvent(EventTypes.Wireframe, value),
             },
-            { 
-                key: 'Outlines',
-                value: true,      
-                fn: (value) => EventHandler.throwEvent(EventTypes.Outlines, value)
+            {
+                key: "Outlines",
+                value: true,
+                fn: (value) => EventHandler.throwEvent(EventTypes.Outlines, value),
             },
-            { 
-                key: 'Cutter',    
-                value: true,    
-                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value)
+            {
+                key: "Cutter",
+                value: true,
+                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value),
             }
         ]
     }
@@ -65,9 +60,9 @@ const controller = config
 // create a gui element
 let gui: Dat.GUI = new Dat.GUI();
 
-config.map(value => {
-    let subfolder = gui.addFolder(value.title);
-    value.subitems.map(subitem => {
-        subfolder.add(controller, subitem.key).onChange(subitem.fn)
-    })
+config.map((value) => {
+    const subfolder = gui.addFolder(value.title);
+    value.subitems.map((subitem: any) => {
+        subfolder.add(controller, subitem.key).onChange(subitem.fn);
+    });
 })

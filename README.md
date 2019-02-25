@@ -17,12 +17,12 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] Open a domain :-)
 
 ### Basics
-- [ ] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
+- [x] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
 - [x] Play / Pause
 - [x] Enable/Disable Wireframe mode
-- [ ] Center Point to move entire surface
+- [x] Center Point to move entire surface
 - [ ] Handle to scale entire surface
-- [ ] Show mode: to hide handles
+- [x] Show mode: to hide handles
 - [ ] Controller to increase/decrease resolution
 - [ ] Add more quads, delete selected quad
 - [x] Define uvw read input for texture coverage

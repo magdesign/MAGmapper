@@ -1,7 +1,7 @@
 import {
     Mesh, 
     MeshStandardMaterial,
-     PerspectiveCamera, 
+    PerspectiveCamera, 
      Scene, 
      Sprite, 
      SpriteMaterial, 
@@ -34,7 +34,7 @@ class LineBuilder{
 
     public static addLines(scene: Scene, id: string, edges: Dimension[]): Line{
 
-        const material = new LineBasicMaterial({color: 255255255255255255, linewidth: 5}); 
+        const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line}); 
         let geometry: Geometry = new Geometry();
 
         geometry.vertices = this.prepareEdges(edges);
@@ -200,15 +200,22 @@ export class VideoMover {
     private startPoint: Dimension;
     private sprite: Sprite;
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[], dragHandles: DragHandler[]){
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, dragHandles: DragHandler[]){
+
+        const positions = VideoSceneHelper.getEdgesFromScene(scene,id);
+
         const edges = Edges.getEdges(positions);
+        
+        const calcDelta = 
+            (x1:number,x2: number): number =>
+                (x2 - x1) / 2 + x1;
+
         this.startPoint = {
-            x: (edges[3].x - edges[0].x) / 2,
-            y: (edges[3].y - edges[0].y) / 2,
+            x: calcDelta(edges[0].x ,edges[3].x),
+            y: calcDelta(edges[0].y ,edges[3].y),
             z: 0
         };
         
-
         this.sprite = SpriteBuilder.makeSprite(this.startPoint, Config.DragHandler.source, Config.DragHandler.scale);
         scene.add(this.sprite)
 
