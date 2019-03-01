@@ -3,15 +3,24 @@ language: node_js
 node_js:
   - "10.15.1"
 
-before_install:
+dist: trusty
+
+cache:
+  directories:
+    - node_modules
+
+install:
   - npm install
+
+script:
   - npm run test
   - npm run build
+  - git add dist
 
 deploy:
   provider: pages
   skip-cleanup: true
-  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  github-token: $GITHUB_TOKEN
   keep-history: true
   on:
     branch: master
