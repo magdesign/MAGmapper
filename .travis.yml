@@ -15,7 +15,7 @@ install:
 script:
   - npm run test
   - npm run build
-  - git add dist
+  - git add dist -f
 
 deploy:
   provider: pages
