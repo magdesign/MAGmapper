@@ -52192,6 +52192,41 @@ module.exports = v4;
 
 /***/ }),
 
+/***/ "./src/app/event/EventHandler.ts":
+/*!***************************************!*\
+  !*** ./src/app/event/EventHandler.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EventTypes;
+(function (EventTypes) {
+    EventTypes["Wireframe"] = "wireframe";
+    EventTypes["Cutter"] = "cutter";
+    EventTypes["Outlines"] = "outlines";
+})(EventTypes = exports.EventTypes || (exports.EventTypes = {}));
+class EventHandler {
+    static addEventListener(type, fn) {
+        this.getEventHandler()
+            .addEventListener(type, fn, false);
+        ;
+    }
+    static throwEvent(type, value) {
+        const event = new CustomEvent(type, { detail: { value } });
+        this.getEventHandler().dispatchEvent(event);
+    }
+    static getEventHandler() {
+        return document.getElementsByTagName("body")[0];
+    }
+}
+exports.EventHandler = EventHandler;
+
+
+/***/ }),
+
 /***/ "./src/app/graphic/DragHandler.ts":
 /*!****************************************!*\
   !*** ./src/app/graphic/DragHandler.ts ***!
@@ -52208,6 +52243,8 @@ const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mappe
 const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
+const UvMapper_1 = __webpack_require__(/*! ../math/UvMapper */ "./src/app/math/UvMapper.ts");
 class LineBuilder {
     static prepareEdges(edges) {
         return [
@@ -52271,7 +52308,7 @@ class SpriteBuilder {
 class DragHandler {
     constructor(scene, renderer, camera, id, positions) {
         this._id = id;
-        this._edges = Mapper_1.Edges.getEdges(positions);
+        this._edges = Edges_1.Edges.getEdges(positions);
         this._sprites = SpriteBuilder
             .generateDragHanldes(this._edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale)
             .map((sprite) => {
@@ -52336,7 +52373,7 @@ class UvDragHandler extends DragHandler {
     loadPositions(id, scene, renderer, camera, edges, targetId) {
         const spriteEdges = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
-        const uve = Mapper_1.UvMapper.reorderUvMapping(spriteEdges, edges);
+        const uve = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper_1.VideoSceneHelper.changeUv(uve, scene, targetId);
         renderer.render(scene, camera);
     }
@@ -52345,7 +52382,7 @@ exports.UvDragHandler = UvDragHandler;
 class VideoMover {
     constructor(scene, renderer, camera, id, dragHandles) {
         const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(scene, id);
-        const edges = Mapper_1.Edges.getEdges(positions);
+        const edges = Edges_1.Edges.getEdges(positions);
         const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
         this.startPoint = {
             x: calcDelta(edges[0].x, edges[3].x),
@@ -52488,6 +52525,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
 const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
 /**
  * filters scene elements and changes properties
  */
@@ -52500,7 +52538,7 @@ class VideoSceneHelper {
         return this.filterVideoScene(scene, id)
             .map((video) => video.geometry.attributes.position.array)
             .map(val => DimensionTransformer_1.DimensionTransformer.fromFloatArrayToDimension(val))
-            .map(val => Mapper_1.Edges.getEdges(val))[0];
+            .map(val => Edges_1.Edges.getEdges(val))[0];
     }
     static changeWireframe(wireframe, scene, id) {
         this.filterVideoScene(scene, id)
@@ -52558,7 +52596,7 @@ exports.VideoSceneHelper = VideoSceneHelper;
 Object.defineProperty(exports, "__esModule", { value: true });
 const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
 const DragHandler_1 = __webpack_require__(/*! ../../graphic/DragHandler */ "./src/app/graphic/DragHandler.ts");
-const UiConfig_1 = __webpack_require__(/*! ../../ui/UiConfig */ "./src/app/ui/UiConfig.ts");
+const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 class VideoCutter extends VideoMaterial_1.VideoMaterial {
     constructor(id, targetId, source, scene, startPoint, renderer, camera) {
@@ -52566,7 +52604,7 @@ class VideoCutter extends VideoMaterial_1.VideoMaterial {
         this._targetId = targetId;
         super.draghanlder = new DragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
         const videoMover = new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Cutter, (e) => {
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (e) => {
             VideoSceneHelper_1.VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
             super.draghanlder.visibility(e.detail.value);
         });
@@ -52613,18 +52651,19 @@ exports.VideoMapper = VideoMapper;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const Mapper_1 = __webpack_require__(/*! ../../math/Mapper */ "./src/app/math/Mapper.ts");
 const config_1 = __webpack_require__(/*! ../../../config */ "./src/config.ts");
-const UiConfig_1 = __webpack_require__(/*! ../../ui/UiConfig */ "./src/app/ui/UiConfig.ts");
+const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 const HtmlVideoMaterial_1 = __webpack_require__(/*! ../HtmlVideoMaterial */ "./src/app/material/HtmlVideoMaterial.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const DimensionTransformer_1 = __webpack_require__(/*! ../../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+const Indices_1 = __webpack_require__(/*! ../../math/Indices */ "./src/app/math/Indices.ts");
+const Mapper_1 = __webpack_require__(/*! ../../math/Mapper */ "./src/app/math/Mapper.ts");
 class VideoMaterial {
     constructor(id, source, scene, startPoint) {
         this._id = id;
         this._scene = scene;
         const video = HtmlVideoMaterial_1.HtmlVideoMaterial.loadVideo();
-        const indices = Mapper_1.Indices.calcIndices(config_1.Config.Vertices.size);
+        const indices = Indices_1.Indices.calcIndices(config_1.Config.Vertices.size);
         this._positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
         this._uvs = Mapper_1.Mapper.uv(config_1.Config.Vertices.size);
         const geometry = new three_1.BufferGeometry();
@@ -52641,10 +52680,10 @@ class VideoMaterial {
         this.events(scene);
     }
     events(scene) {
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Wireframe, (e) => {
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Wireframe, (e) => {
             VideoSceneHelper_1.VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
         });
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Outlines, (e) => {
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Outlines, (e) => {
             this._draghanlder.visibility(e.detail.value);
         });
     }
@@ -52721,10 +52760,10 @@ exports.DimensionTransformer = DimensionTransformer;
 
 /***/ }),
 
-/***/ "./src/app/math/Mapper.ts":
-/*!********************************!*\
-  !*** ./src/app/math/Mapper.ts ***!
-  \********************************/
+/***/ "./src/app/math/Edges.ts":
+/*!*******************************!*\
+  !*** ./src/app/math/Edges.ts ***!
+  \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -52743,6 +52782,20 @@ class Edges {
     }
 }
 exports.Edges = Edges;
+
+
+/***/ }),
+
+/***/ "./src/app/math/Indices.ts":
+/*!*********************************!*\
+  !*** ./src/app/math/Indices.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Indices {
     static calcIndices(items) {
         items--;
@@ -52761,6 +52814,20 @@ class Indices {
     }
 }
 exports.Indices = Indices;
+
+
+/***/ }),
+
+/***/ "./src/app/math/Mapper.ts":
+/*!********************************!*\
+  !*** ./src/app/math/Mapper.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Mapper {
     static uv(size) {
         return this.map(size, { x: 0, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, { x: 1, y: 0, z: 0 }, { x: 1, y: 1, z: 0 });
@@ -52796,13 +52863,13 @@ class Mapper {
             result.push({
                 x: resultX[i],
                 y: resultY[i],
-                z: 0
+                z: 0,
             });
         }
         return result;
     }
     static getDeltaSide(size, start, end) {
-        let result = [];
+        const result = [];
         const part = end - start;
         for (let i = 0; i < size; i++) {
             result.push(part * i / (size - 1) + start);
@@ -52820,6 +52887,20 @@ class Mapper {
     }
 }
 exports.Mapper = Mapper;
+
+
+/***/ }),
+
+/***/ "./src/app/math/UvMapper.ts":
+/*!**********************************!*\
+  !*** ./src/app/math/UvMapper.ts ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class UvMapper {
     static reorderUvMapping(uvEdges, videoEdges) {
         const fnEdge = (val) => -(val - 1);
@@ -52864,27 +52945,7 @@ exports.UvMapper = UvMapper;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Dat = __webpack_require__(/*! dat.gui */ "./node_modules/dat.gui/build/dat.gui.module.js");
-var EventTypes;
-(function (EventTypes) {
-    EventTypes["Wireframe"] = "wireframe";
-    EventTypes["Cutter"] = "cutter";
-    EventTypes["Outlines"] = "outlines";
-})(EventTypes = exports.EventTypes || (exports.EventTypes = {}));
-class EventHandler {
-    static addEventListener(type, fn) {
-        this.getEventHandler()
-            .addEventListener(type, fn, false);
-        ;
-    }
-    static throwEvent(type, value) {
-        const event = new CustomEvent(type, { detail: { value } });
-        this.getEventHandler().dispatchEvent(event);
-    }
-    static getEventHandler() {
-        return document.getElementsByTagName("body")[0];
-    }
-}
-exports.EventHandler = EventHandler;
+const EventHandler_1 = __webpack_require__(/*! ../event/EventHandler */ "./src/app/event/EventHandler.ts");
 const config = [
     {
         title: "Sync",
@@ -52892,17 +52953,17 @@ const config = [
             {
                 key: "Wireframe",
                 value: false,
-                fn: (value) => EventHandler.throwEvent(EventTypes.Wireframe, value),
+                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Wireframe, value),
             },
             {
                 key: "Outlines",
                 value: true,
-                fn: (value) => EventHandler.throwEvent(EventTypes.Outlines, value),
+                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Outlines, value),
             },
             {
                 key: "Cutter",
                 value: true,
-                fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value),
+                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Cutter, value),
             }
         ]
     }
@@ -52940,14 +53001,14 @@ config.map((value) => {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Config = {
     Vertices: {
-        size: 30,
         length: 2,
-        wireframe: false
+        size: 30,
+        wireframe: false,
     },
     DragHandler: {
-        scale: 0.2,
         line: 3,
-        source: "../assets/draghandle.png"
+        scale: 0.2,
+        source: "../assets/draghandle.png",
     }
 };
 
