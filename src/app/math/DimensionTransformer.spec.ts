@@ -4,8 +4,6 @@ import { expect } from 'chai';
 import 'mocha';
 import { DimensionTransformer } from './DimensionTransformer';
 
-
-
 describe('DimensionTransformer', () => {
     describe('fromFloatArrayToDimension()', () => {
         it('should filter edges', () => {
@@ -44,8 +42,8 @@ describe('DimensionTransformer', () => {
                 2, 0, 0,
                 2, 0.6666666865348816, 0,
                 2, 1.3333333730697632, 0,
-                2, 2, 0 
-            ])
+                2, 2, 0,
+            ]);
 
             const values = DimensionTransformer.fromFloatArrayToDimension(result);
         });

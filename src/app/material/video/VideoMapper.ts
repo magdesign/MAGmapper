@@ -1,9 +1,10 @@
 import { VideoMaterial } from "./VideoMaterial";
-import { PositionDragHandler, VideoMover } from "../../graphic/DragHandler";
 import { Scene } from "three";
 import { WebGLRenderer } from "three";
 import { PerspectiveCamera } from "three";
 import { IDimension } from "../../math/DimensionTransformer";
+import { PositionDragHandler } from "../../dragger/PositionDragHandler";
+import { VideoMover } from "../../dragger/VideoMover";
 
 export class VideoMapper extends VideoMaterial {
     constructor(id: string, source: string, scene: Scene, startPoint: IDimension, renderer: WebGLRenderer, camera:PerspectiveCamera){

@@ -1,10 +1,11 @@
 import { VideoMaterial } from "./VideoMaterial";
-import { UvDragHandler, VideoMover } from "../../graphic/DragHandler";
 import { Scene, PerspectiveCamera } from "three";
 import { WebGLRenderer } from "three";
 import { EventHandler, EventTypes } from "../../event/EventHandler";
 import { VideoSceneHelper } from "../VideoSceneHelper";
 import { IDimension } from "../../math/DimensionTransformer";
+import { UvDragHandler } from "../../dragger/UvDragHandler";
+import { VideoMover } from "../../dragger/VideoMover";
 
 export class VideoCutter extends VideoMaterial {
 
