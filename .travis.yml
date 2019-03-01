@@ -1,0 +1,18 @@
+language: node_js
+
+node_js:
+  - "iojs"
+  - "10.15.1"
+
+before_install:
+  - npm install
+  - npm run test
+  - npm run build
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master
