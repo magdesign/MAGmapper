@@ -1,13 +1,13 @@
 export const Config = {
     Vertices: {
-        size: 30,
         length: 2,
-        wireframe: false
+        size: 30,
+        wireframe: false,
     },
 
     DragHandler: {
-        scale: 0.2,
         line: 3,
-        source: "../assets/draghandle.png"
+        scale: 0.2,
+        source: "../assets/draghandle.png",
     }
 }

@@ -1,118 +1,11 @@
-import { Mapper, Indices, Edges } from './Mapper';
+import { Mapper } from './Mapper';
 
 import { expect } from 'chai';
 import 'mocha';
 import { DimensionTransformer } from './DimensionTransformer';
+import { Edges } from './Edges';
 
 
-
-describe('DimensionTransformer', () => {
-    describe('fromFloatArrayToDimension()', () => {
-        it('should filter edges', () => {
-            const expected = [
-                { x: 0, y: 0, z: 0 },
-    ​            { x: 0, y: 0.6666666666666666, z: 0 },
-                { x: 0, y: 1.3333333333333333, z: 0 },
-                { x: 0, y: 2, z: 0 },
-                { x: 0.6666666666666666, y: 0, z: 0 },
-                { x: 0.6666666666666666, y: 0.6666666666666666, z: 0 },
-                { x: 0.6666666666666666, y: 1.3333333333333333, z: 0 },
-                { x: 0.6666666666666666, y: 2, z: 0 },
-                { x: 1.3333333333333333, y: 0, z: 0 },
-                { x: 1.3333333333333333, y: 0.6666666666666666, z: 0 },
-                { x: 1.3333333333333333, y: 1.3333333333333333, z: 0 },
-                { x: 1.3333333333333333, y: 2, z: 0 },
-                { x: 2, y: 0, z: 0 },
-                { x: 2, y: 0.6666666666666666, z: 0 },
-                { x: 2, y: 1.3333333333333333, z: 0 },
-                {​ x: 2, y: 2, z: 0}
-            ];
-
-            const result = new Float32Array([
-                0, 0, 0,
-                0, 0.6666666865348816, 0,
-                0, 1.3333333730697632, 0,
-                0, 2, 0,
-                0.6666666865348816, 0, 0,
-                0.6666666865348816, 0.6666666865348816, 0,
-                0.6666666865348816, 1.3333333730697632, 0,
-                0.6666666865348816, 2, 0,
-                1.3333333730697632, 0, 0,
-                1.3333333730697632, 0.6666666865348816, 0,
-                1.3333333730697632, 1.3333333730697632, 0,
-                1.3333333730697632, 2, 0,
-                2, 0, 0,
-                2, 0.6666666865348816, 0,
-                2, 1.3333333730697632, 0,
-                2, 2, 0 
-            ])
-
-            const values = DimensionTransformer.fromFloatArrayToDimension(result);
-        });
-    });
-});
-
-
-describe('Edges', () => {
-    describe('getEdges()', () => {
-        it('should filter edges', () => {
-
-            const vert = Mapper.vertices(3, 3);
-            const result = Edges.getEdges(vert);
-
-            const expected = [
-                {x: 0, y: 0, z: 0},
-                {x: 0, y: 3, z: 0},
-                {x: 3, y: 0, z: 0},
-                {x: 3, y: 3, z: 0}
-            ];
-            expect(expected).to.be.deep.equal(result);
-        });
-
-        it('should filter edges with more values', () => {
-            const vert = Mapper.vertices(5, 3);
-            const result = Edges.getEdges(vert);
-
-            const expected = [
-                {x: 0, y: 0, z: 0},
-                {x: 0, y: 3, z: 0},
-                {x: 3, y: 0, z: 0},
-                {x: 3, y: 3, z: 0}
-            ];
-            expect(expected).to.be.deep.equal(result);
-        });
-    });
-});
-
-describe('Indices', () => {
-    describe('calcIndices()', () => {
-        it('should indice with 2', () => {
-            const expected = [
-                0, 2, 1, 
-                1, 2, 3
-            ];
-            
-            const actual = Indices.calcIndices(2);
-            expect(expected).to.be.deep.equal(actual);
-        });
-
-        it('should indice with 3', () => {
-            const expected =  [
-                0, 3, 1, 
-                1, 3, 4, 
-                1, 4, 2, 
-                2, 4, 5, 
-                3, 6, 4, 
-                4, 6, 7,
-                4, 7, 5, 
-                5, 7, 8
-            ];
-            
-            const actual = Indices.calcIndices(3);
-            expect(expected).to.be.deep.equal(actual);
-        });
-    });
-});
 
 
 describe('Mapper', () => {
@@ -128,7 +21,6 @@ describe('Mapper', () => {
             expect(expected).to.be.deep.equal(result);
         });
     });
-
 
     describe('vertices()', () => {
 
@@ -246,8 +138,7 @@ describe('Mapper', () => {
                 {x: 2.76093259641247, y: 3.015058187015134, z: 0},
                 {x: 6.086016210987972, y: 5.7407187810032445, z: 0}
             ]
-            const points =[
-                
+            const points = [
                 {x: -6.541462572520651, y: 0.24938125206688305, z: 0},
                 {x: 0.6138615903831702, y: 2.3069307717746255, z: 0},
                 //the value above this comment and below this comment must be exchanged with each other!!
@@ -288,11 +179,10 @@ describe('Mapper', () => {
                 {x: -0.11509904819684433, y: 0.01918317323591573, z: 0},
                 {x: -8.133666072576998, y: -6.517328916745852, z: 0},
                 {x: 10.306314644872263, y: 2.7048274262638854, z: 0},
-                {x: -4.675744795416971, y: 7.6782192778305705, z: 0}
-            
+                {x: -4.675744795416971, y: 7.6782192778305705, z: 0},
             ];
 
-            const result = Mapper.map(4,points[0],points[1],points[2],points[3]);
+            const result = Mapper.map(4, points[0], points[1], points[2], points[3]);
             expect(expected).to.be.deep.equal(result);
         });
     });

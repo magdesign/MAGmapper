@@ -1,12 +1,12 @@
-import { Edges, Mapper } from "../math/Mapper";
+import { Mapper } from "../math/Mapper";
 import { Config } from "../../config";
 import { DimensionTransformer, IDimension } from "../math/DimensionTransformer";
+import { Edges } from "../math/Edges";
 
 /**
  * filters scene elements and changes properties
  */
 export class VideoSceneHelper{
-
     public static filterVideoScene(scene, id: string){
         return scene.children
             .filter((obj) => obj.type === "Mesh" && obj.name === id);

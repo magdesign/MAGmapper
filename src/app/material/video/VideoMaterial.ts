@@ -1,11 +1,12 @@
 import { Mesh, BufferGeometry, BufferAttribute, VideoTexture, ClampToEdgeWrapping, LinearFilter, MeshBasicMaterial, Scene, PerspectiveCamera, WebGLRenderer } from "three";
-import { Indices, Mapper, Edges } from "../../math/Mapper";
 import { Config } from "../../../config";
 import { PositionDragHandler, UvDragHandler, DragHandler, VideoMover } from '../../graphic/DragHandler';
-import { EventHandler, EventTypes } from '../../ui/UiConfig';
+import { EventHandler, EventTypes } from "../../event/EventHandler";
 import {HtmlVideoMaterial} from '../HtmlVideoMaterial';
 import { VideoSceneHelper } from "../VideoSceneHelper";
 import { IDimension, DimensionTransformer } from "../../math/DimensionTransformer";
+import { Indices } from "../../math/Indices";
+import { Mapper } from "../../math/Mapper";
 
 export class VideoMaterial{
 

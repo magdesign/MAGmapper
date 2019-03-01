@@ -1,62 +1,18 @@
 import { Vector3 } from 'three';
 import { IDimension } from './DimensionTransformer';
 
-
-export class Edges {
-    public static isEdge(length: number, index: number): boolean {
-        return index === 0 || 
-               index === length - Math.sqrt(length) ||
-               index === Math.sqrt(length) - 1 ||
-               index === length - 1;
-    }
-     
-    public static getEdges(vertices: IDimension[]): IDimension[] {
-        return vertices.filter((_, i): boolean => this.isEdge(vertices.length, i));
-    }
-}
-
-export class Indices {
-    public static calcIndices(items: number): number[] {
-        items--;
-        let indices = [];
-
-        const size = Math.pow(items, 2) + items - 1; 
-    
-        for (let i = 0; i < size; i++) {
-            indices = this.calcCube(indices, i, items + 1);
-        }
-        return indices;
-    }
-    
-    private static calcCube(values: number[], start: number, width: number): number[] {
-        if (start !== width - 1) {
-            values.push(
-                start,
-                start + width,
-                start + 1,
-                start + 1,
-                start + width,
-                start + width + 1,
-            );
-        }
-        return values;
-    }
-}
-
 export class Mapper {
 
 
     public static uv(size: number): IDimension[]{
         return this.map(
             size,
-            {x:0, y:0, z:0},
-            {x:0, y:1, z:0},
-            {x:1, y:0, z:0},
-            {x:1, y:1, z:0},
-        ) 
+            {x: 0, y: 0, z: 0},
+            {x: 0, y: 1, z: 0},
+            {x: 1, y: 0, z: 0},
+            {x: 1, y: 1, z: 0},
+        );
     }
-
-
 
     public static verticesWithStartPoint(size: number, length: number, startPoint: IDimension): IDimension[]{
         return this.map(
@@ -65,7 +21,7 @@ export class Mapper {
             {x: startPoint.x, y: startPoint.y + length, z: 0},
             {x: startPoint.x + length , y: startPoint.y, z: 0},
             {x: startPoint.x + length, y: startPoint.y + length, z: 0},
-        ) 
+        );
     }
 
     public static vertices(size: number, length: number): IDimension[]{
@@ -75,7 +31,7 @@ export class Mapper {
             {x: 0, y: length, z: 0},
             {x: length , y: 0, z: 0},
             {x: length, y: length, z: 0},
-        ) 
+        );
     }
 
     public static addVector(point: IDimension, vector: IDimension): IDimension{
@@ -83,16 +39,16 @@ export class Mapper {
             x: point.x + vector.x,
             y: point.y + vector.y,
             z: point.z + vector.z,
-        }
+        };
     }
 
     public static map(size: number, bottomLeft: IDimension, topLeft: IDimension, bottomRight: IDimension, topRight: IDimension): IDimension[] {
         const leftX = this.getDeltaSide(size, bottomLeft.x, topLeft.x);
         const rightX = this.getDeltaSide(size, bottomRight.x, topRight.x);
-    
+
         const bottomY = this.getDeltaSide(size, topLeft.y, topRight.y);
         const topY = this.getDeltaSide(size, bottomLeft.y, bottomRight.y);
-    
+
         let resultX = [];
         let resultY = [];
 
@@ -100,32 +56,32 @@ export class Mapper {
             resultX.push(this.getDeltaSide(size, leftX[i], rightX[i]));
             resultY.push(this.getDeltaSide(size, topY[i], bottomY[i]));
         }
-    
+
         resultY = resultY.reduce((a, b) => a.concat(b));
         resultX = this.parse(size, resultX);
 
         const result: IDimension[] = [];
         for (let i = 0; i < resultX.length; i++) {
             result.push({
-                x: resultX[i], 
-                y: resultY[i], 
-                z: 0
-            })
+                x: resultX[i],
+                y: resultY[i],
+                z: 0,
+            });
         }
-        return result
+        return result;
     }
-    
+
     private static getDeltaSide(size: number, start: number, end: number): number[] {
-        let result: number[] = [];
+        const result: number[] = [];
         const part: number = end - start;
-    
+
         for (let i = 0; i < size; i++) {
             result.push(part * i / (size - 1) + start);
         }
 
         return result;
     }
-    
+
     private static parse(size: number, parsed: number[][]) {
         const result = [];
         for (let i = 0; i < size; i++) {
@@ -137,48 +93,3 @@ export class Mapper {
     }
 }
 
-
-interface UvEdgeValues{
-    x: UvMappingCalculation,
-    y: UvMappingCalculation
-}
-
-interface UvMappingCalculation{
-    startPos: number;
-    endPos: number;
-    uvPos: number;
-    fn: (x: number) => number;
-}
-
-export class UvMapper {
-    public static reorderUvMapping(uvEdges: IDimension[], videoEdges: IDimension[]): IDimension[]{
-        const fnEdge = (val:number): number => - (val - 1);
-        const fnNoop = (val: number): number => val;
-
-        const calcUvEdgePoint = 
-            (start: number, end: number, uv: number, fn:(x: number) => number) =>
-                fn(((end - start) + (start - uv)) /  (end - start));
-
-        return [
-            {
-                x: {startPos: videoEdges[0].x, endPos: videoEdges[2].x, uvPos: uvEdges[0].x, fn: fnEdge },
-                y: {startPos: videoEdges[0].y, endPos: videoEdges[1].y, uvPos: uvEdges[0].y, fn: fnEdge },
-            },
-            {
-                x: {startPos: videoEdges[1].x, endPos: videoEdges[3].x, uvPos: uvEdges[1].x, fn: fnEdge },
-                y: {startPos: videoEdges[1].y, endPos: videoEdges[0].y, uvPos: uvEdges[1].y, fn: fnNoop },
-            },
-            {
-                x: {startPos: videoEdges[2].x, endPos: videoEdges[0].x, uvPos: uvEdges[2].x, fn: fnNoop },
-                y: {startPos: videoEdges[2].y, endPos: videoEdges[3].y, uvPos: uvEdges[2].y, fn: fnEdge },
-            },
-            {
-                x: {startPos: videoEdges[3].x, endPos: videoEdges[1].x, uvPos: uvEdges[3].x, fn: fnNoop },
-                y: {startPos: videoEdges[3].y, endPos: videoEdges[2].y, uvPos: uvEdges[3].y, fn: fnNoop },
-            }
-        ].map((val: UvEdgeValues) => <IDimension>{
-            x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
-            y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
-        });
-    }
-}

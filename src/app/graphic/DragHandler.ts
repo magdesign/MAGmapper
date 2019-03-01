@@ -15,11 +15,13 @@ import {
 } from 'three';
 import DragControls from 'three-dragcontrols';
 
-import {Edges, Mapper, UvMapper } from '../math/Mapper';
+import { Mapper } from '../math/Mapper';
 
 import { Config } from '../../config';
 import { VideoSceneHelper } from '../material/VideoSceneHelper';
 import { IDimension, DimensionTransformer } from '../math/DimensionTransformer';
+import { Edges } from '../math/Edges';
+import { UvMapper } from '../math/UvMapper';
 
 class LineBuilder{
 
