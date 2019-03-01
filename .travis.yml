@@ -15,6 +15,7 @@ install:
 script:
   - npm run test
   - npm run build
+  - cp CNAME dist/
 
 deploy:
   provider: pages
