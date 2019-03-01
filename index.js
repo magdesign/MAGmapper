@@ -52487,7 +52487,6 @@ class HtmlVideoMaterial {
         document
             .getElementsByTagName("body")[0]
             .appendChild(video);
-        video.play();
         return video;
     }
     static init() {
@@ -52502,7 +52501,8 @@ HtmlVideoMaterial.attributes = [
     { qualifiedName: "controls", value: "true" },
     { qualifiedName: "src", value: "assets/testvideo.mp4" },
     { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
-    { qualifiedName: "style", value: "display:none" }
+    { qualifiedName: "style", value: "display:none" },
+    { qualifiedName: "autoPlay", value: "loop" },
 ];
 exports.HtmlVideoMaterial = HtmlVideoMaterial;
 
@@ -53042,6 +53042,7 @@ const EventHandler_1 = __webpack_require__(/*! ../event/EventHandler */ "./src/a
 const config = [
     {
         title: "Sync",
+        open: true,
         subitems: [
             {
                 key: "Wireframe",
@@ -53062,18 +53063,23 @@ const config = [
     }
 ];
 const controller = config
-    .map(val => val.subitems)
+    .map((val) => val.subitems)
     .reduce((a, b) => a.concat(b))
-    .map(val => {
+    .map((val) => {
     let obj = {};
     obj[val.key] = val.value;
     return obj;
 })
-    .reduce((a, b) => (Object.assign({}, a, b)));
+    .reduce((a, b) => {
+    return Object.assign({}, a, b);
+});
 // create a gui element
 let gui = new Dat.GUI();
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
+    if (value.open) {
+        subfolder.open();
+    }
     value.subitems.map((subitem) => {
         subfolder.add(controller, subitem.key).onChange(subitem.fn);
     });
