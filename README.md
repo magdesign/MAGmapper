@@ -1,4 +1,7 @@
-# MAGmapper
+
+# MAGmapper  [![Build Status](https://travis-ci.org/magdesign/MAGmapper.svg?branch=master)](https://travis-ci.org/magdesign/MAGmapper)
+
+
 ## Basic Idea
 A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
