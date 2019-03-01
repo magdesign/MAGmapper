@@ -57,7 +57,7 @@ export class DragHandler{
         return this._edges;
     }
 
-    public updateByVecotor(vector: IDimension){
+    public updateByVecotor(vector: IDimension) {
         this._sprites.map((sprite: Sprite) => {
             sprite.position.setX(sprite.position.x + vector.x);
             sprite.position.setY(sprite.position.y + vector.y);

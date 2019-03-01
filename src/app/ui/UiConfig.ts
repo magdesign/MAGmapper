@@ -2,10 +2,10 @@ import * as Dat from 'dat.gui';
 import { Mapper } from "../math/Mapper";
 import { EventHandler, EventTypes } from '../event/EventHandler';
 
-
 const config = [
     {
         title: "Sync",
+        open: true,
         subitems: [
             {
                 key: "Wireframe",
@@ -27,21 +27,27 @@ const config = [
 ]
 
 const controller = config
-    .map(val => val.subitems)
+    .map((val) => val.subitems)
     .reduce((a, b) => a.concat(b))
-    .map(val => {
-        let  obj = {};
+    .map((val) => {
+        let obj = {};
         obj[val.key] = val.value;
         return obj;
     })
-    .reduce((a,b)=> <any>{...a, ...b});
+    .reduce((a, b) => {
+        return {...a, ...b}
+    });
 
 // create a gui element
 let gui: Dat.GUI = new Dat.GUI();
 
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
+    if(value.open){
+        subfolder.open();
+    }
+
     value.subitems.map((subitem: any) => {
         subfolder.add(controller, subitem.key).onChange(subitem.fn);
     });
-})
+});

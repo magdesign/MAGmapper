@@ -23,8 +23,8 @@ export class UvDragHandler extends DragHandler {
     private loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: IDimension[], targetId: string) {
         const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
-        
-        const uve:IDimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
+
+        const uve: IDimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper.changeUv(uve, scene, targetId);
         renderer.render(scene, camera);
     }
