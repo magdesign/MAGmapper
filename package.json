@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "start": "webpack-dev-server --inline --open",
-    "build": "webpack"
+    "build": "webpack && cp -r assets dist/ && cp CNAME dist/"
   },
   "keywords": [],
   "license": "MIT",
@@ -16,12 +16,13 @@
     "awesome-typescript-loader": "^5.2.1",
     "chai": "^4.2.0",
     "css-loader": "^2.1.0",
+    "file-loader": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
     "json-loader": "^0.5.7",
     "mocha": "^5.2.0",
     "style-loader": "^0.23.1",
-    "typescript": "^3.3.3333",
     "ts-node": "^8.0.2",
+    "typescript": "^3.3.3333",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.1.1",
     "webpack-dev-server": "^3.2.1"
