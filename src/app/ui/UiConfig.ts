@@ -14,6 +14,10 @@ export class EventHandler{
             .addEventListener(type, fn, false);;
     }
 
+    
+
+
+
     public static throwEvent(type: EventTypes, value: any): void {
             const event = new CustomEvent(type, { detail: {value}});
             this.getEventHandler().dispatchEvent(event);
