@@ -52204,9 +52204,10 @@ module.exports = v4;
 Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
-const Mapper_1 = __webpack_require__(/*! ./Mapper */ "./src/app/graphic/Mapper.ts");
+const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
 const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
-const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/graphic/VideoMaterial.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
 class LineBuilder {
     static prepareEdges(edges) {
         return [
@@ -52257,7 +52258,7 @@ class SpriteBuilder {
     static loadSpriteEdges(scene, id) {
         return scene.children
             .filter((obj) => obj.type === "Sprite" && obj.name == id)
-            .map((obj) => Mapper_1.DimensionTransformer.fromVector3D(obj.position));
+            .map((obj) => DimensionTransformer_1.DimensionTransformer.fromVector3D(obj.position));
     }
     static disable(sprites, enable) {
         sprites
@@ -52319,7 +52320,7 @@ class PositionDragHandler extends DragHandler {
         const spriteEdges = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
         const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
-        VideoMaterial_1.VideoSceneHelper.changeVertices(vertices, scene, id);
+        VideoSceneHelper_1.VideoSceneHelper.changeVertices(vertices, scene, id);
         renderer.render(scene, camera);
     }
 }
@@ -52336,14 +52337,14 @@ class UvDragHandler extends DragHandler {
         const spriteEdges = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
         const uve = Mapper_1.UvMapper.reorderUvMapping(spriteEdges, edges);
-        VideoMaterial_1.VideoSceneHelper.changeUv(uve, scene, targetId);
+        VideoSceneHelper_1.VideoSceneHelper.changeUv(uve, scene, targetId);
         renderer.render(scene, camera);
     }
 }
 exports.UvDragHandler = UvDragHandler;
 class VideoMover {
     constructor(scene, renderer, camera, id, dragHandles) {
-        const positions = VideoMaterial_1.VideoSceneHelper.getEdgesFromScene(scene, id);
+        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(scene, id);
         const edges = Mapper_1.Edges.getEdges(positions);
         const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
         this.startPoint = {
@@ -52364,9 +52365,9 @@ class VideoMover {
             y: position.y - this.startPoint.y,
             z: 0
         };
-        let oldVertices = VideoMaterial_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
-        const newVertices = Mapper_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
-        VideoMaterial_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
+        let oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
+        const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
+        VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
         dragHandles.map(dragHandle => dragHandle.updateByVecotor(delta));
         // sets new position for proper delta (i know it is not a proper solution -.-)
         this.startPoint = Object.assign({}, position);
@@ -52381,10 +52382,300 @@ exports.VideoMover = VideoMover;
 
 /***/ }),
 
-/***/ "./src/app/graphic/Mapper.ts":
-/*!***********************************!*\
-  !*** ./src/app/graphic/Mapper.ts ***!
-  \***********************************/
+/***/ "./src/app/graphic/Renderer.ts":
+/*!*************************************!*\
+  !*** ./src/app/graphic/Renderer.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/index.js");
+const VideoCutter_1 = __webpack_require__(/*! ../material/video/VideoCutter */ "./src/app/material/video/VideoCutter.ts");
+const VideoMapper_1 = __webpack_require__(/*! ../material/video/VideoMapper */ "./src/app/material/video/VideoMapper.ts");
+class Graphic {
+    static init() {
+        const id = uuid_1.v4();
+        const scene = new three_1.Scene();
+        const camera = this.loadCamera(scene);
+        const renderer = this.loadRenderer();
+        const video1 = new VideoMapper_1.VideoMapper(id, "", scene, { x: 0, y: 0, z: 0 }, renderer, camera);
+        const id2 = uuid_1.v4();
+        const video2 = new VideoCutter_1.VideoCutter(id2, id, "", scene, { x: 3, y: 0, z: 0 }, renderer, camera);
+        // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
+        // PositionDragHandler.initVertices(scene, renderer, camera, video);
+        this.rendermagic(renderer, camera, scene);
+    }
+    static loadRenderer() {
+        const renderer = new three_1.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        return renderer;
+    }
+    static loadCamera(scene) {
+        const camera = new three_1.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 5;
+        camera.lookAt(scene.position);
+        return camera;
+    }
+    static rendermagic(renderer, camera, scene) {
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+        function render() {
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+}
+Graphic.init();
+
+
+/***/ }),
+
+/***/ "./src/app/material/HtmlVideoMaterial.ts":
+/*!***********************************************!*\
+  !*** ./src/app/material/HtmlVideoMaterial.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class HtmlVideoMaterial {
+    static loadVideo() {
+        const video = this.init();
+        document
+            .getElementsByTagName("body")[0]
+            .appendChild(video);
+        video.play();
+        return video;
+    }
+    static init() {
+        const video = document.createElement("video");
+        this.attributes.map((attr) => video.setAttribute(attr.qualifiedName, attr.value));
+        return video;
+    }
+}
+// todo set loop
+HtmlVideoMaterial.attributes = [
+    { qualifiedName: "id", value: "video" },
+    { qualifiedName: "controls", value: "true" },
+    { qualifiedName: "src", value: "assets/testvideo.mp4" },
+    { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
+    { qualifiedName: "style", value: "display:none" }
+];
+exports.HtmlVideoMaterial = HtmlVideoMaterial;
+
+
+/***/ }),
+
+/***/ "./src/app/material/VideoSceneHelper.ts":
+/*!**********************************************!*\
+  !*** ./src/app/material/VideoSceneHelper.ts ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
+const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+/**
+ * filters scene elements and changes properties
+ */
+class VideoSceneHelper {
+    static filterVideoScene(scene, id) {
+        return scene.children
+            .filter((obj) => obj.type === "Mesh" && obj.name === id);
+    }
+    static getEdgesFromScene(scene, id) {
+        return this.filterVideoScene(scene, id)
+            .map((video) => video.geometry.attributes.position.array)
+            .map(val => DimensionTransformer_1.DimensionTransformer.fromFloatArrayToDimension(val))
+            .map(val => Mapper_1.Edges.getEdges(val))[0];
+    }
+    static changeWireframe(wireframe, scene, id) {
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+            elmt.material.wireframe = wireframe;
+            return elmt;
+        }));
+    }
+    static changeVisibility(wireframe, scene, id) {
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+            elmt.visible = wireframe;
+            return elmt;
+        }));
+    }
+    static changeUv(uve, scene, id) {
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+            elmt.geometry.attributes.uv.needsUpdate = true;
+            elmt.geometry.attributes.uv.array = DimensionTransformer_1.DimensionTransformer.toFloatArray(Mapper_1.Mapper.map(config_1.Config.Vertices.size, uve[0], uve[1], uve[2], uve[3]));
+            return elmt;
+        }));
+    }
+    static changeVerticesWithFloatArray(vertices, scene, id) {
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+            elmt.geometry.attributes.position.needsUpdate = true;
+            elmt.geometry.attributes.position.array = vertices;
+            return elmt;
+        }));
+    }
+    static changeVertices(vertices, scene, id) {
+        this.filterVideoScene(scene, id)
+            .map((elmt => {
+            elmt.geometry.attributes.position.needsUpdate = true;
+            elmt.geometry.attributes.position.array = DimensionTransformer_1.DimensionTransformer.toFloatArray(vertices);
+            return elmt;
+        }));
+    }
+}
+exports.VideoSceneHelper = VideoSceneHelper;
+
+
+/***/ }),
+
+/***/ "./src/app/material/video/VideoCutter.ts":
+/*!***********************************************!*\
+  !*** ./src/app/material/video/VideoCutter.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
+const DragHandler_1 = __webpack_require__(/*! ../../graphic/DragHandler */ "./src/app/graphic/DragHandler.ts");
+const UiConfig_1 = __webpack_require__(/*! ../../ui/UiConfig */ "./src/app/ui/UiConfig.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+class VideoCutter extends VideoMaterial_1.VideoMaterial {
+    constructor(id, targetId, source, scene, startPoint, renderer, camera) {
+        super(id, source, scene, startPoint);
+        this._targetId = targetId;
+        super.draghanlder = new DragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
+        const videoMover = new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Cutter, (e) => {
+            VideoSceneHelper_1.VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
+            super.draghanlder.visibility(e.detail.value);
+        });
+    }
+}
+exports.VideoCutter = VideoCutter;
+
+
+/***/ }),
+
+/***/ "./src/app/material/video/VideoMapper.ts":
+/*!***********************************************!*\
+  !*** ./src/app/material/video/VideoMapper.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
+const DragHandler_1 = __webpack_require__(/*! ../../graphic/DragHandler */ "./src/app/graphic/DragHandler.ts");
+class VideoMapper extends VideoMaterial_1.VideoMaterial {
+    constructor(id, source, scene, startPoint, renderer, camera) {
+        super(id, source, scene, startPoint);
+        super.draghanlder = new DragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
+        console.log(super.id);
+        new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+    }
+}
+exports.VideoMapper = VideoMapper;
+
+
+/***/ }),
+
+/***/ "./src/app/material/video/VideoMaterial.ts":
+/*!*************************************************!*\
+  !*** ./src/app/material/video/VideoMaterial.ts ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const Mapper_1 = __webpack_require__(/*! ../../math/Mapper */ "./src/app/math/Mapper.ts");
+const config_1 = __webpack_require__(/*! ../../../config */ "./src/config.ts");
+const UiConfig_1 = __webpack_require__(/*! ../../ui/UiConfig */ "./src/app/ui/UiConfig.ts");
+const HtmlVideoMaterial_1 = __webpack_require__(/*! ../HtmlVideoMaterial */ "./src/app/material/HtmlVideoMaterial.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const DimensionTransformer_1 = __webpack_require__(/*! ../../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+class VideoMaterial {
+    constructor(id, source, scene, startPoint) {
+        this._id = id;
+        this._scene = scene;
+        const video = HtmlVideoMaterial_1.HtmlVideoMaterial.loadVideo();
+        const indices = Mapper_1.Indices.calcIndices(config_1.Config.Vertices.size);
+        this._positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
+        this._uvs = Mapper_1.Mapper.uv(config_1.Config.Vertices.size);
+        const geometry = new three_1.BufferGeometry();
+        geometry.setIndex(indices);
+        geometry.addAttribute("position", new three_1.BufferAttribute(DimensionTransformer_1.DimensionTransformer.toFloatArray(this._positions), 3));
+        geometry.addAttribute("uv", new three_1.BufferAttribute(DimensionTransformer_1.DimensionTransformer.toFloatArray(this._uvs), 3));
+        const texture = new three_1.VideoTexture(video);
+        texture.generateMipmaps = false;
+        texture.wrapS = texture.wrapT = three_1.ClampToEdgeWrapping;
+        texture.minFilter = three_1.LinearFilter;
+        this._videoMesh = new three_1.Mesh(geometry, new three_1.MeshBasicMaterial({ map: texture, wireframe: false }));
+        this._videoMesh.name = this._id;
+        this._scene.add(this._videoMesh);
+        this.events(scene);
+    }
+    events(scene) {
+        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Wireframe, (e) => {
+            VideoSceneHelper_1.VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
+        });
+        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Outlines, (e) => {
+            this._draghanlder.visibility(e.detail.value);
+        });
+    }
+    get scene() {
+        return this._scene;
+    }
+    get id() {
+        return this._id;
+    }
+    get videoMesh() {
+        return this._videoMesh;
+    }
+    get positions() {
+        return this._positions;
+    }
+    set draghanlder(draghandler) {
+        this._draghanlder = draghandler;
+    }
+    get draghanlder() {
+        return this._draghanlder;
+    }
+}
+exports.VideoMaterial = VideoMaterial;
+
+
+/***/ }),
+
+/***/ "./src/app/math/DimensionTransformer.ts":
+/*!**********************************************!*\
+  !*** ./src/app/math/DimensionTransformer.ts ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -52426,6 +52717,20 @@ class DimensionTransformer {
     }
 }
 exports.DimensionTransformer = DimensionTransformer;
+
+
+/***/ }),
+
+/***/ "./src/app/math/Mapper.ts":
+/*!********************************!*\
+  !*** ./src/app/math/Mapper.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 class Edges {
     static isEdge(length, index) {
         return index === 0 ||
@@ -52544,228 +52849,6 @@ class UvMapper {
     }
 }
 exports.UvMapper = UvMapper;
-
-
-/***/ }),
-
-/***/ "./src/app/graphic/Renderer.ts":
-/*!*************************************!*\
-  !*** ./src/app/graphic/Renderer.ts ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/graphic/VideoMaterial.ts");
-const uuid_1 = __webpack_require__(/*! uuid */ "./node_modules/uuid/index.js");
-class Graphic {
-    static init() {
-        const id = uuid_1.v4();
-        const scene = new three_1.Scene();
-        const camera = this.loadCamera(scene);
-        const renderer = this.loadRenderer();
-        const video1 = new VideoMaterial_1.VideoMapper(id, "", scene, { x: 0, y: 0, z: 0 }, renderer, camera);
-        const id2 = uuid_1.v4();
-        const video2 = new VideoMaterial_1.VideoCutter(id2, id, "", scene, { x: 3, y: 0, z: 0 }, renderer, camera);
-        // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
-        // PositionDragHandler.initVertices(scene, renderer, camera, video);
-        this.rendermagic(renderer, camera, scene);
-    }
-    static loadRenderer() {
-        const renderer = new three_1.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        return renderer;
-    }
-    static loadCamera(scene) {
-        const camera = new three_1.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.z = 5;
-        camera.lookAt(scene.position);
-        return camera;
-    }
-    static rendermagic(renderer, camera, scene) {
-        function animate() {
-            requestAnimationFrame(animate);
-            render();
-        }
-        function render() {
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
-}
-Graphic.init();
-
-
-/***/ }),
-
-/***/ "./src/app/graphic/VideoMaterial.ts":
-/*!******************************************!*\
-  !*** ./src/app/graphic/VideoMaterial.ts ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const Mapper_1 = __webpack_require__(/*! ./Mapper */ "./src/app/graphic/Mapper.ts");
-const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
-const DragHandler_1 = __webpack_require__(/*! ./DragHandler */ "./src/app/graphic/DragHandler.ts");
-const UiConfig_1 = __webpack_require__(/*! ../ui/UiConfig */ "./src/app/ui/UiConfig.ts");
-class VideoMaterial {
-    constructor(id, source, scene, startPoint) {
-        this._id = id;
-        this._scene = scene;
-        const video = HtmlVideoMaterial.loadVideo();
-        const indices = Mapper_1.Indices.calcIndices(config_1.Config.Vertices.size);
-        this._positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
-        this._uvs = Mapper_1.Mapper.uv(config_1.Config.Vertices.size);
-        const geometry = new three_1.BufferGeometry();
-        geometry.setIndex(indices);
-        geometry.addAttribute("position", new three_1.BufferAttribute(Mapper_1.DimensionTransformer.toFloatArray(this._positions), 3));
-        geometry.addAttribute("uv", new three_1.BufferAttribute(Mapper_1.DimensionTransformer.toFloatArray(this._uvs), 3));
-        const texture = new three_1.VideoTexture(video);
-        texture.generateMipmaps = false;
-        texture.wrapS = texture.wrapT = three_1.ClampToEdgeWrapping;
-        texture.minFilter = three_1.LinearFilter;
-        this._videoMesh = new three_1.Mesh(geometry, new three_1.MeshBasicMaterial({ map: texture, wireframe: false }));
-        this._videoMesh.name = this._id;
-        this._scene.add(this._videoMesh);
-        this.events(scene);
-    }
-    events(scene) {
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Wireframe, (e) => {
-            VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
-        });
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Outlines, (e) => {
-            this._draghanlder.visibility(e.detail.value);
-        });
-    }
-    get scene() {
-        return this._scene;
-    }
-    get id() {
-        return this._id;
-    }
-    get videoMesh() {
-        return this._videoMesh;
-    }
-    get positions() {
-        return this._positions;
-    }
-    set draghanlder(draghandler) {
-        this._draghanlder = draghandler;
-    }
-    get draghanlder() {
-        return this._draghanlder;
-    }
-}
-exports.VideoMaterial = VideoMaterial;
-class VideoMapper extends VideoMaterial {
-    constructor(id, source, scene, startPoint, renderer, camera) {
-        super(id, source, scene, startPoint);
-        super.draghanlder = new DragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
-        console.log(super.id);
-        new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
-    }
-}
-exports.VideoMapper = VideoMapper;
-class VideoCutter extends VideoMaterial {
-    constructor(id, targetId, source, scene, startPoint, renderer, camera) {
-        super(id, source, scene, startPoint);
-        this._targetId = targetId;
-        console.log(super.id);
-        super.draghanlder = new DragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
-        new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
-        UiConfig_1.EventHandler.addEventListener(UiConfig_1.EventTypes.Cutter, (e) => {
-            VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
-            super.draghanlder.visibility(e.detail.value);
-        });
-    }
-}
-exports.VideoCutter = VideoCutter;
-/**
- * filters scene elements and changes properties
- */
-class VideoSceneHelper {
-    static filterVideoScene(scene, id) {
-        return scene.children
-            .filter((obj) => obj.type === "Mesh" && obj.name == id);
-    }
-    static getEdgesFromScene(scene, id) {
-        return this.filterVideoScene(scene, id)
-            .map((video) => video.geometry.attributes.position.array)
-            .map(val => Mapper_1.DimensionTransformer.fromFloatArrayToDimension(val))
-            .map(val => Mapper_1.Edges.getEdges(val))[0];
-    }
-    static changeWireframe(wireframe, scene, id) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-            elmt.material.wireframe = wireframe;
-            return elmt;
-        }));
-    }
-    static changeVisibility(wireframe, scene, id) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-            elmt.visible = wireframe;
-            return elmt;
-        }));
-    }
-    static changeUv(uve, scene, id) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-            elmt.geometry.attributes.uv.needsUpdate = true;
-            elmt.geometry.attributes.uv.array = Mapper_1.DimensionTransformer.toFloatArray(Mapper_1.Mapper.map(config_1.Config.Vertices.size, uve[0], uve[1], uve[2], uve[3]));
-            return elmt;
-        }));
-    }
-    static changeVerticesWithFloatArray(vertices, scene, id) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-            elmt.geometry.attributes.position.needsUpdate = true;
-            elmt.geometry.attributes.position.array = vertices;
-            return elmt;
-        }));
-    }
-    static changeVertices(vertices, scene, id) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-            elmt.geometry.attributes.position.needsUpdate = true;
-            elmt.geometry.attributes.position.array = Mapper_1.DimensionTransformer.toFloatArray(vertices);
-            return elmt;
-        }));
-    }
-}
-exports.VideoSceneHelper = VideoSceneHelper;
-class HtmlVideoMaterial {
-    static loadVideo() {
-        let video = this.init();
-        document
-            .getElementsByTagName("body")[0]
-            .appendChild(video);
-        video.play();
-        return video;
-    }
-    static init() {
-        let video = document.createElement("video");
-        this.attributes.map((attr) => video.setAttribute(attr.qualifiedName, attr.value));
-        return video;
-    }
-}
-// todo set loop
-HtmlVideoMaterial.attributes = [
-    { qualifiedName: "id", value: "video" },
-    { qualifiedName: "controls", value: "true" },
-    { qualifiedName: "src", value: "assets/testvideo.mp4" },
-    { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
-    { qualifiedName: "style", value: "display:none" }
-];
 
 
 /***/ }),
