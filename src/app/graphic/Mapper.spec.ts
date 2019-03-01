@@ -47,7 +47,6 @@ describe('DimensionTransformer', () => {
             ])
 
             const values = DimensionTransformer.fromFloatArrayToDimension(result)
-            console.log(values);
         });
     });
 });
@@ -116,8 +115,6 @@ describe('Indices', () => {
 
 
 describe('Mapper', () => {
-
-
     describe('uv()', () => {
         it('should generate uv', () => {
             const result = Mapper.uv(2);
