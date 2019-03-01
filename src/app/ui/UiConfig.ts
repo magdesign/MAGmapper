@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Mapper } from "../graphic/Mapper";
+import { Mapper } from "../math/Mapper";
 
 export enum EventTypes{
     Wireframe = "wireframe",

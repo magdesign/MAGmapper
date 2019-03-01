@@ -15,14 +15,15 @@ import {
 } from 'three';
 import DragControls from 'three-dragcontrols';
 
-import { DimensionTransformer, Dimension ,Edges, Mapper, UvMapper } from './Mapper';
+import {Edges, Mapper, UvMapper } from '../math/Mapper';
 
 import { Config } from '../../config';
-import { VideoMaterial, VideoSceneHelper } from './VideoMaterial';
+import { VideoSceneHelper } from '../material/VideoSceneHelper';
+import { IDimension, DimensionTransformer } from '../math/DimensionTransformer';
 
 class LineBuilder{
 
-    private static prepareEdges(edges: Dimension[]): Vector3[]{
+    private static prepareEdges(edges: IDimension[]): Vector3[]{
         return [
             edges[0],
             edges[1],
@@ -32,7 +33,7 @@ class LineBuilder{
         ].map(edge => new Vector3(edge.x, edge.y, edge.z));
     }
 
-    public static addLines(scene: Scene, id: string, edges: Dimension[]): Line{
+    public static addLines(scene: Scene, id: string, edges: IDimension[]): Line{
 
         const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line}); 
         let geometry: Geometry = new Geometry();
@@ -50,7 +51,7 @@ class LineBuilder{
             .filter((child: any) => child.name === id && child.type === "Line")
     }
 
-    public static reorderLines(scene, id: string, edges: Dimension[]){
+    public static reorderLines(scene, id: string, edges: IDimension[]){
         this.filterLines(scene, id)
             .map((child: any) => {
                 child.geometry.vertices = this.prepareEdges(edges)
@@ -66,11 +67,11 @@ class LineBuilder{
 }
 
 class SpriteBuilder{
-    public static generateDragHanldes(edges: Dimension[], source: string, scale: number): Sprite[]{
-        return edges.map((edge: Dimension) => this.makeSprite(edge, source, scale));
+    public static generateDragHanldes(edges: IDimension[], source: string, scale: number): Sprite[]{
+        return edges.map((edge: IDimension) => this.makeSprite(edge, source, scale));
     }
 
-    public static makeSprite(point: Dimension, source: string, scale: number): Sprite {
+    public static makeSprite(point: IDimension, source: string, scale: number): Sprite {
  
         const texture = new TextureLoader().load(source);
     
@@ -105,9 +106,9 @@ export class DragHandler{
     private _sprites:  Sprite[];
     private _line: Line;
 
-    private _edges: Dimension[];
+    private _edges: IDimension[];
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[]) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[]) {
         this._id = id;
         this._edges = Edges.getEdges(positions);
         this._sprites = SpriteBuilder
@@ -130,7 +131,7 @@ export class DragHandler{
         return this._edges;
     }
 
-    public updateByVecotor(vector: Dimension){
+    public updateByVecotor(vector: IDimension){
         this._sprites.map((sprite: Sprite) => {
             sprite.position.setX(sprite.position.x + vector.x);
             sprite.position.setY(sprite.position.y + vector.y);
@@ -154,7 +155,7 @@ export class DragHandler{
 
 export class PositionDragHandler extends DragHandler {
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[]) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[]) {
         super(scene, renderer, camera, id, positions);
 
         new DragControls(super.sprites, camera, renderer.domElement)
@@ -164,7 +165,7 @@ export class PositionDragHandler extends DragHandler {
     }
 
     private loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera) {
-        const spriteEdges: Dimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
+        const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
 
         LineBuilder.reorderLines(scene, id, spriteEdges);
 
@@ -177,7 +178,7 @@ export class PositionDragHandler extends DragHandler {
 
 export class UvDragHandler extends DragHandler {
 
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: Dimension[], targetId: string) {
+    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[], targetId: string) {
         super(scene, renderer, camera, id, positions);
 
         new DragControls(super.sprites, camera, renderer.domElement)
@@ -186,18 +187,18 @@ export class UvDragHandler extends DragHandler {
             });
     }
 
-    private loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: Dimension[], targetId: string) {
-        const spriteEdges: Dimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
+    private loadPositions(id: string, scene: any, renderer: WebGLRenderer, camera: PerspectiveCamera, edges: IDimension[], targetId: string) {
+        const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
         
-        const uve:Dimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
+        const uve:IDimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper.changeUv(uve, scene, targetId);
         renderer.render(scene, camera);
     }
 }
 
 export class VideoMover {
-    private startPoint: Dimension;
+    private startPoint: IDimension;
     private sprite: Sprite;
 
     constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, dragHandles: DragHandler[]){
@@ -225,7 +226,7 @@ export class VideoMover {
             });
     }
 
-    private loadPositions(id: string, scene: any, position: Dimension, renderer: WebGLRenderer, camera: PerspectiveCamera, dragHandles: DragHandler[]) {
+    private loadPositions(id: string, scene: any, position: IDimension, renderer: WebGLRenderer, camera: PerspectiveCamera, dragHandles: DragHandler[]) {
 
         const delta = {
             x: position.x - this.startPoint.x,

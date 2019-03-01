@@ -1,60 +1,16 @@
 import { Vector3 } from 'three';
+import { IDimension } from './DimensionTransformer';
 
-export interface Dimension {
-    x: number;
-    y: number;
-    z: number;
-}
-
-export class DimensionTransformer{
-    public static fromVector3D(value: Vector3): Dimension{
-        return {
-            x: value.x,
-            y: value.y,
-            z: value.z,
-        } as Dimension;
-    }
-
-    public static vectorizeFloatArray(vertices: Float32Array, vector: Dimension): Float32Array{
-        const values = Array.from(vertices);
-
-        for (let index = 0; index < values.length; index += 3) {
-            values[index] = values[index] + vector.x;
-            values[index + 1] = values[index + 1] + vector.y;
-        }
-        return new Float32Array(values);
-    }
-
-    public static fromFloatArrayToDimension(vertices: Float32Array): Dimension[]{
-        const values = Array.from(vertices);
-        const dimensions = [];
-        for (let index = 0; index < values.length; index += 3) {
-            dimensions.push({x: values[index], y: values[index + 1], z:  values[index + 2]});
-        }
-        return dimensions;
-    }
-
-    public static toFloatArray(vertices: Dimension[]): Float32Array{
-        return new Float32Array(
-            vertices
-                .map((cube: Dimension): number[] => [
-                    cube.x,
-                    cube.y,
-                    cube.z,
-                ])
-                .reduce((p, c) => p.concat(c)));
-    }
-}
 
 export class Edges {
     public static isEdge(length: number, index: number): boolean {
         return index === 0 || 
-               index === length - Math.sqrt(length) || 
+               index === length - Math.sqrt(length) ||
                index === Math.sqrt(length) - 1 ||
                index === length - 1;
     }
      
-    public static getEdges(vertices: Dimension[]): Dimension[] {
+    public static getEdges(vertices: IDimension[]): IDimension[] {
         return vertices.filter((_, i): boolean => this.isEdge(vertices.length, i));
     }
 }
@@ -90,7 +46,7 @@ export class Indices {
 export class Mapper {
 
 
-    public static uv(size: number): Dimension[]{
+    public static uv(size: number): IDimension[]{
         return this.map(
             size,
             {x:0, y:0, z:0},
@@ -102,7 +58,7 @@ export class Mapper {
 
 
 
-    public static verticesWithStartPoint(size: number, length: number, startPoint: Dimension): Dimension[]{
+    public static verticesWithStartPoint(size: number, length: number, startPoint: IDimension): IDimension[]{
         return this.map(
             size,
             {x: startPoint.x, y: startPoint.y, z: 0},
@@ -112,7 +68,7 @@ export class Mapper {
         ) 
     }
 
-    public static vertices(size: number, length: number): Dimension[]{
+    public static vertices(size: number, length: number): IDimension[]{
         return this.map(
             size,
             {x: 0, y: 0, z: 0},
@@ -122,7 +78,7 @@ export class Mapper {
         ) 
     }
 
-    public static addVector(point: Dimension, vector: Dimension): Dimension{
+    public static addVector(point: IDimension, vector: IDimension): IDimension{
         return {
             x: point.x + vector.x,
             y: point.y + vector.y,
@@ -130,7 +86,7 @@ export class Mapper {
         }
     }
 
-    public static map(size: number, bottomLeft: Dimension, topLeft: Dimension, bottomRight: Dimension, topRight: Dimension): Dimension[] {
+    public static map(size: number, bottomLeft: IDimension, topLeft: IDimension, bottomRight: IDimension, topRight: IDimension): IDimension[] {
         const leftX = this.getDeltaSide(size, bottomLeft.x, topLeft.x);
         const rightX = this.getDeltaSide(size, bottomRight.x, topRight.x);
     
@@ -148,7 +104,7 @@ export class Mapper {
         resultY = resultY.reduce((a, b) => a.concat(b));
         resultX = this.parse(size, resultX);
 
-        const result: Dimension[] = [];
+        const result: IDimension[] = [];
         for (let i = 0; i < resultX.length; i++) {
             result.push({
                 x: resultX[i], 
@@ -195,7 +151,7 @@ interface UvMappingCalculation{
 }
 
 export class UvMapper {
-    public static reorderUvMapping(uvEdges: Dimension[], videoEdges: Dimension[]): Dimension[]{
+    public static reorderUvMapping(uvEdges: IDimension[], videoEdges: IDimension[]): IDimension[]{
         const fnEdge = (val:number): number => - (val - 1);
         const fnNoop = (val: number): number => val;
 
@@ -220,7 +176,7 @@ export class UvMapper {
                 x: {startPos: videoEdges[3].x, endPos: videoEdges[1].x, uvPos: uvEdges[3].x, fn: fnNoop },
                 y: {startPos: videoEdges[3].y, endPos: videoEdges[2].y, uvPos: uvEdges[3].y, fn: fnNoop },
             }
-        ].map((val: UvEdgeValues) => <Dimension>{
+        ].map((val: UvEdgeValues) => <IDimension>{
             x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
             y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
         });

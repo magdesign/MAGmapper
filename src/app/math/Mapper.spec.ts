@@ -1,7 +1,8 @@
-import { Mapper, Indices, Edges, DimensionTransformer } from './Mapper';
+import { Mapper, Indices, Edges } from './Mapper';
 
 import { expect } from 'chai';
 import 'mocha';
+import { DimensionTransformer } from './DimensionTransformer';
 
 
 
@@ -46,7 +47,7 @@ describe('DimensionTransformer', () => {
                 2, 2, 0 
             ])
 
-            const values = DimensionTransformer.fromFloatArrayToDimension(result)
+            const values = DimensionTransformer.fromFloatArrayToDimension(result);
         });
     });
 });
