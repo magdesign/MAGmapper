@@ -52192,6 +52192,195 @@ module.exports = v4;
 
 /***/ }),
 
+/***/ "./src/app/dragger/DragHandler.ts":
+/*!****************************************!*\
+  !*** ./src/app/dragger/DragHandler.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
+const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
+const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
+const LineBuilder_1 = __webpack_require__(/*! ../material/LineBuilder */ "./src/app/material/LineBuilder.ts");
+class DragHandler {
+    constructor(scene, renderer, camera, id, positions) {
+        this._id = id;
+        this._edges = Edges_1.Edges.getEdges(positions);
+        this._sprites = SpriteBuilder_1.SpriteBuilder
+            .generateDragHanldes(this._edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale)
+            .map((sprite) => {
+            scene.add(sprite);
+            sprite.name = id;
+            return sprite;
+        });
+        this._line = LineBuilder_1.LineBuilder.addLines(scene, id, this._edges);
+        scene.add(this._line);
+    }
+    get sprites() {
+        return this._sprites;
+    }
+    get edges() {
+        return this._edges;
+    }
+    updateByVecotor(vector) {
+        this._sprites.map((sprite) => {
+            sprite.position.setX(sprite.position.x + vector.x);
+            sprite.position.setY(sprite.position.y + vector.y);
+            return sprite;
+        });
+        let geo = this._line.geometry;
+        geo.vertices.map((vert) => {
+            vert.x = vert.x + vector.x;
+            vert.y = vert.y + vector.y;
+            return vert;
+        });
+        geo.verticesNeedUpdate = true;
+    }
+    visibility(toggle) {
+        SpriteBuilder_1.SpriteBuilder.disable(this.sprites, toggle);
+        LineBuilder_1.LineBuilder.disable(this._line, toggle);
+    }
+}
+exports.DragHandler = DragHandler;
+
+
+/***/ }),
+
+/***/ "./src/app/dragger/PositionDragHandler.ts":
+/*!************************************************!*\
+  !*** ./src/app/dragger/PositionDragHandler.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const DragHandler_1 = __webpack_require__(/*! ./DragHandler */ "./src/app/dragger/DragHandler.ts");
+const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
+const LineBuilder_1 = __webpack_require__(/*! ../material/LineBuilder */ "./src/app/material/LineBuilder.ts");
+const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+class PositionDragHandler extends DragHandler_1.DragHandler {
+    constructor(scene, renderer, camera, id, positions) {
+        super(scene, renderer, camera, id, positions);
+        new three_dragcontrols_1.default(super.sprites, camera, renderer.domElement)
+            .addEventListener('drag', () => {
+            this.loadPositions(id, scene, renderer, camera);
+        });
+    }
+    loadPositions(id, scene, renderer, camera) {
+        const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(scene, id);
+        LineBuilder_1.LineBuilder.reorderLines(scene, id, spriteEdges);
+        const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
+        VideoSceneHelper_1.VideoSceneHelper.changeVertices(vertices, scene, id);
+        renderer.render(scene, camera);
+    }
+}
+exports.PositionDragHandler = PositionDragHandler;
+
+
+/***/ }),
+
+/***/ "./src/app/dragger/UvDragHandler.ts":
+/*!******************************************!*\
+  !*** ./src/app/dragger/UvDragHandler.ts ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const DragHandler_1 = __webpack_require__(/*! ./DragHandler */ "./src/app/dragger/DragHandler.ts");
+const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+const LineBuilder_1 = __webpack_require__(/*! ../material/LineBuilder */ "./src/app/material/LineBuilder.ts");
+const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
+const UvMapper_1 = __webpack_require__(/*! ../math/UvMapper */ "./src/app/math/UvMapper.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+class UvDragHandler extends DragHandler_1.DragHandler {
+    constructor(scene, renderer, camera, id, positions, targetId) {
+        super(scene, renderer, camera, id, positions);
+        new three_dragcontrols_1.default(super.sprites, camera, renderer.domElement)
+            .addEventListener('drag', () => {
+            this.loadPositions(id, scene, renderer, camera, this.edges, targetId);
+        });
+    }
+    loadPositions(id, scene, renderer, camera, edges, targetId) {
+        const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(scene, id);
+        LineBuilder_1.LineBuilder.reorderLines(scene, id, spriteEdges);
+        const uve = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, edges);
+        VideoSceneHelper_1.VideoSceneHelper.changeUv(uve, scene, targetId);
+        renderer.render(scene, camera);
+    }
+}
+exports.UvDragHandler = UvDragHandler;
+
+
+/***/ }),
+
+/***/ "./src/app/dragger/VideoMover.ts":
+/*!***************************************!*\
+  !*** ./src/app/dragger/VideoMover.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
+const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+class VideoMover {
+    constructor(scene, renderer, camera, id, dragHandles) {
+        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(scene, id);
+        const edges = Edges_1.Edges.getEdges(positions);
+        const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
+        this.startPoint = {
+            x: calcDelta(edges[0].x, edges[3].x),
+            y: calcDelta(edges[0].y, edges[3].y),
+            z: 0
+        };
+        this.sprite = SpriteBuilder_1.SpriteBuilder.makeSprite(this.startPoint, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
+        scene.add(this.sprite);
+        new three_dragcontrols_1.default([this.sprite], camera, renderer.domElement)
+            .addEventListener('drag', (event) => {
+            this.loadPositions(id, scene, event.object.position, renderer, camera, dragHandles);
+        });
+    }
+    loadPositions(id, scene, position, renderer, camera, dragHandles) {
+        const delta = {
+            x: position.x - this.startPoint.x,
+            y: position.y - this.startPoint.y,
+            z: 0
+        };
+        let oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
+        const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
+        VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
+        dragHandles.map(dragHandle => dragHandle.updateByVecotor(delta));
+        // sets new position for proper delta (i know it is not a proper solution -.-)
+        this.startPoint = Object.assign({}, position);
+        renderer.render(scene, camera);
+    }
+    visible(toggle) {
+        SpriteBuilder_1.SpriteBuilder.disable([this.sprite], toggle);
+    }
+}
+exports.VideoMover = VideoMover;
+
+
+/***/ }),
+
 /***/ "./src/app/event/EventHandler.ts":
 /*!***************************************!*\
   !*** ./src/app/event/EventHandler.ts ***!
@@ -52223,198 +52412,6 @@ class EventHandler {
     }
 }
 exports.EventHandler = EventHandler;
-
-
-/***/ }),
-
-/***/ "./src/app/graphic/DragHandler.ts":
-/*!****************************************!*\
-  !*** ./src/app/graphic/DragHandler.ts ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
-const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
-const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
-const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
-const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
-const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
-const UvMapper_1 = __webpack_require__(/*! ../math/UvMapper */ "./src/app/math/UvMapper.ts");
-class LineBuilder {
-    static prepareEdges(edges) {
-        return [
-            edges[0],
-            edges[1],
-            edges[3],
-            edges[2],
-            edges[0],
-        ].map(edge => new three_1.Vector3(edge.x, edge.y, edge.z));
-    }
-    static addLines(scene, id, edges) {
-        const material = new three_1.LineBasicMaterial({ color: 255255255255255255, linewidth: config_1.Config.DragHandler.line });
-        let geometry = new three_1.Geometry();
-        geometry.vertices = this.prepareEdges(edges);
-        let line = new three_1.Line(geometry, material);
-        line.name = id;
-        return line;
-    }
-    static filterLines(scene, id) {
-        return scene.children
-            .filter((child) => child.name === id && child.type === "Line");
-    }
-    static reorderLines(scene, id, edges) {
-        this.filterLines(scene, id)
-            .map((child) => {
-            child.geometry.vertices = this.prepareEdges(edges);
-            child.geometry.verticesNeedUpdate = true;
-            return child;
-        });
-    }
-    static disable(line, enable) {
-        line.visible = enable;
-        return line;
-    }
-}
-class SpriteBuilder {
-    static generateDragHanldes(edges, source, scale) {
-        return edges.map((edge) => this.makeSprite(edge, source, scale));
-    }
-    static makeSprite(point, source, scale) {
-        const texture = new three_1.TextureLoader().load(source);
-        const material = new three_1.SpriteMaterial({ map: texture });
-        let sprite = new three_1.Sprite(material);
-        sprite.position.set(point.x, point.y, point.z);
-        sprite.scale.set(scale, scale, 1);
-        return sprite;
-    }
-    static loadSpriteEdges(scene, id) {
-        return scene.children
-            .filter((obj) => obj.type === "Sprite" && obj.name == id)
-            .map((obj) => DimensionTransformer_1.DimensionTransformer.fromVector3D(obj.position));
-    }
-    static disable(sprites, enable) {
-        sprites
-            .map((sprite) => {
-            sprite.visible = enable;
-            return sprite;
-        });
-    }
-}
-class DragHandler {
-    constructor(scene, renderer, camera, id, positions) {
-        this._id = id;
-        this._edges = Edges_1.Edges.getEdges(positions);
-        this._sprites = SpriteBuilder
-            .generateDragHanldes(this._edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale)
-            .map((sprite) => {
-            scene.add(sprite);
-            sprite.name = id;
-            return sprite;
-        });
-        this._line = LineBuilder.addLines(scene, id, this._edges);
-        scene.add(this._line);
-    }
-    get sprites() {
-        return this._sprites;
-    }
-    get edges() {
-        return this._edges;
-    }
-    updateByVecotor(vector) {
-        this._sprites.map((sprite) => {
-            sprite.position.setX(sprite.position.x + vector.x);
-            sprite.position.setY(sprite.position.y + vector.y);
-            return sprite;
-        });
-        let geo = this._line.geometry;
-        geo.vertices.map(vert => {
-            vert.x = vert.x + vector.x;
-            vert.y = vert.y + vector.y;
-            return vert;
-        });
-        geo.verticesNeedUpdate = true;
-    }
-    visibility(toggle) {
-        SpriteBuilder.disable(this.sprites, toggle);
-        LineBuilder.disable(this._line, toggle);
-    }
-}
-exports.DragHandler = DragHandler;
-class PositionDragHandler extends DragHandler {
-    constructor(scene, renderer, camera, id, positions) {
-        super(scene, renderer, camera, id, positions);
-        new three_dragcontrols_1.default(super.sprites, camera, renderer.domElement)
-            .addEventListener('drag', () => {
-            this.loadPositions(id, scene, renderer, camera);
-        });
-    }
-    loadPositions(id, scene, renderer, camera) {
-        const spriteEdges = SpriteBuilder.loadSpriteEdges(scene, id);
-        LineBuilder.reorderLines(scene, id, spriteEdges);
-        const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
-        VideoSceneHelper_1.VideoSceneHelper.changeVertices(vertices, scene, id);
-        renderer.render(scene, camera);
-    }
-}
-exports.PositionDragHandler = PositionDragHandler;
-class UvDragHandler extends DragHandler {
-    constructor(scene, renderer, camera, id, positions, targetId) {
-        super(scene, renderer, camera, id, positions);
-        new three_dragcontrols_1.default(super.sprites, camera, renderer.domElement)
-            .addEventListener('drag', () => {
-            this.loadPositions(id, scene, renderer, camera, this.edges, targetId);
-        });
-    }
-    loadPositions(id, scene, renderer, camera, edges, targetId) {
-        const spriteEdges = SpriteBuilder.loadSpriteEdges(scene, id);
-        LineBuilder.reorderLines(scene, id, spriteEdges);
-        const uve = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, edges);
-        VideoSceneHelper_1.VideoSceneHelper.changeUv(uve, scene, targetId);
-        renderer.render(scene, camera);
-    }
-}
-exports.UvDragHandler = UvDragHandler;
-class VideoMover {
-    constructor(scene, renderer, camera, id, dragHandles) {
-        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(scene, id);
-        const edges = Edges_1.Edges.getEdges(positions);
-        const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
-        this.startPoint = {
-            x: calcDelta(edges[0].x, edges[3].x),
-            y: calcDelta(edges[0].y, edges[3].y),
-            z: 0
-        };
-        this.sprite = SpriteBuilder.makeSprite(this.startPoint, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
-        scene.add(this.sprite);
-        new three_dragcontrols_1.default([this.sprite], camera, renderer.domElement)
-            .addEventListener('drag', (event) => {
-            this.loadPositions(id, scene, event.object.position, renderer, camera, dragHandles);
-        });
-    }
-    loadPositions(id, scene, position, renderer, camera, dragHandles) {
-        const delta = {
-            x: position.x - this.startPoint.x,
-            y: position.y - this.startPoint.y,
-            z: 0
-        };
-        let oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
-        const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
-        VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
-        dragHandles.map(dragHandle => dragHandle.updateByVecotor(delta));
-        // sets new position for proper delta (i know it is not a proper solution -.-)
-        this.startPoint = Object.assign({}, position);
-        renderer.render(scene, camera);
-    }
-    visible(toggle) {
-        SpriteBuilder.disable([this.sprite], toggle);
-    }
-}
-exports.VideoMover = VideoMover;
 
 
 /***/ }),
@@ -52512,6 +52509,100 @@ exports.HtmlVideoMaterial = HtmlVideoMaterial;
 
 /***/ }),
 
+/***/ "./src/app/material/LineBuilder.ts":
+/*!*****************************************!*\
+  !*** ./src/app/material/LineBuilder.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
+class LineBuilder {
+    static addLines(scene, id, edges) {
+        const material = new three_1.LineBasicMaterial({ color: 255255255255255255, linewidth: config_1.Config.DragHandler.line });
+        let geometry = new three_1.Geometry();
+        geometry.vertices = this.prepareEdges(edges);
+        let line = new three_1.Line(geometry, material);
+        line.name = id;
+        return line;
+    }
+    static filterLines(scene, id) {
+        return scene.children
+            .filter((child) => child.name === id && child.type === "Line");
+    }
+    static reorderLines(scene, id, edges) {
+        this.filterLines(scene, id)
+            .map((child) => {
+            child.geometry.vertices = this.prepareEdges(edges);
+            child.geometry.verticesNeedUpdate = true;
+            return child;
+        });
+    }
+    static disable(line, enable) {
+        line.visible = enable;
+        return line;
+    }
+    static prepareEdges(edges) {
+        return [
+            edges[0],
+            edges[1],
+            edges[3],
+            edges[2],
+            edges[0],
+        ].map(edge => new three_1.Vector3(edge.x, edge.y, edge.z));
+    }
+}
+exports.LineBuilder = LineBuilder;
+
+
+/***/ }),
+
+/***/ "./src/app/material/SpriteBuilder.ts":
+/*!*******************************************!*\
+  !*** ./src/app/material/SpriteBuilder.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
+class SpriteBuilder {
+    static generateDragHanldes(edges, source, scale) {
+        return edges.map((edge) => this.makeSprite(edge, source, scale));
+    }
+    static makeSprite(point, source, scale) {
+        const texture = new three_1.TextureLoader().load(source);
+        const material = new three_1.SpriteMaterial({ map: texture });
+        let sprite = new three_1.Sprite(material);
+        sprite.position.set(point.x, point.y, point.z);
+        sprite.scale.set(scale, scale, 1);
+        return sprite;
+    }
+    static loadSpriteEdges(scene, id) {
+        return scene.children
+            .filter((obj) => obj.type === "Sprite" && obj.name === id)
+            .map((obj) => DimensionTransformer_1.DimensionTransformer.fromVector3D(obj.position));
+    }
+    static disable(sprites, enable) {
+        sprites
+            .map((sprite) => {
+            sprite.visible = enable;
+            return sprite;
+        });
+    }
+}
+exports.SpriteBuilder = SpriteBuilder;
+
+
+/***/ }),
+
 /***/ "./src/app/material/VideoSceneHelper.ts":
 /*!**********************************************!*\
   !*** ./src/app/material/VideoSceneHelper.ts ***!
@@ -52595,15 +52686,16 @@ exports.VideoSceneHelper = VideoSceneHelper;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
-const DragHandler_1 = __webpack_require__(/*! ../../graphic/DragHandler */ "./src/app/graphic/DragHandler.ts");
 const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const UvDragHandler_1 = __webpack_require__(/*! ../../dragger/UvDragHandler */ "./src/app/dragger/UvDragHandler.ts");
+const VideoMover_1 = __webpack_require__(/*! ../../dragger/VideoMover */ "./src/app/dragger/VideoMover.ts");
 class VideoCutter extends VideoMaterial_1.VideoMaterial {
     constructor(id, targetId, source, scene, startPoint, renderer, camera) {
         super(id, source, scene, startPoint);
         this._targetId = targetId;
-        super.draghanlder = new DragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
-        const videoMover = new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        super.draghanlder = new UvDragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
+        const videoMover = new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (e) => {
             VideoSceneHelper_1.VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
             super.draghanlder.visibility(e.detail.value);
@@ -52626,13 +52718,14 @@ exports.VideoCutter = VideoCutter;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
-const DragHandler_1 = __webpack_require__(/*! ../../graphic/DragHandler */ "./src/app/graphic/DragHandler.ts");
+const PositionDragHandler_1 = __webpack_require__(/*! ../../dragger/PositionDragHandler */ "./src/app/dragger/PositionDragHandler.ts");
+const VideoMover_1 = __webpack_require__(/*! ../../dragger/VideoMover */ "./src/app/dragger/VideoMover.ts");
 class VideoMapper extends VideoMaterial_1.VideoMaterial {
     constructor(id, source, scene, startPoint, renderer, camera) {
         super(id, source, scene, startPoint);
-        super.draghanlder = new DragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
+        super.draghanlder = new PositionDragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
         console.log(super.id);
-        new DragHandler_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
     }
 }
 exports.VideoMapper = VideoMapper;
