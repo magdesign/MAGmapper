@@ -64,13 +64,14 @@ export class DragHandler{
             return sprite;
         });
 
-        let geo:any = this._line.geometry
-         geo.vertices.map((vert) => {
-            vert.x = vert.x + vector.x;
-            vert.y = vert.y + vector.y;
-            return vert;
-        })
-        geo.verticesNeedUpdate = true
+        let geo: any = this._line.geometry;
+         geo.vertices
+            .map((vert): IDimension => {
+                vert.x = vert.x + vector.x;
+                vert.y = vert.y + vector.y;
+                return vert;
+            });
+        geo.verticesNeedUpdate = true;
     }
 
     public visibility(toggle: boolean): void{
@@ -78,4 +79,3 @@ export class DragHandler{
         LineBuilder.disable(this._line, toggle);
     }
 }
-

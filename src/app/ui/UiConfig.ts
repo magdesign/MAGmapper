@@ -43,7 +43,7 @@ let gui: Dat.GUI = new Dat.GUI();
 
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
-    if(value.open){
+    if (value.open) {
         subfolder.open();
     }
 

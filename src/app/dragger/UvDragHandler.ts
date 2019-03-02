@@ -8,7 +8,6 @@ import { SpriteBuilder } from "../material/SpriteBuilder";
 import { UvMapper } from "../math/UvMapper";
 import { VideoSceneHelper } from "../material/VideoSceneHelper";
 
-
 export class UvDragHandler extends DragHandler {
 
     constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[], targetId: string) {
