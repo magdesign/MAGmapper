@@ -52233,7 +52233,8 @@ class DragHandler {
             return sprite;
         });
         let geo = this._line.geometry;
-        geo.vertices.map((vert) => {
+        geo.vertices
+            .map((vert) => {
             vert.x = vert.x + vector.x;
             vert.y = vert.y + vector.y;
             return vert;
@@ -52349,7 +52350,7 @@ class VideoMover {
         this.startPoint = {
             x: calcDelta(edges[0].x, edges[3].x),
             y: calcDelta(edges[0].y, edges[3].y),
-            z: 0
+            z: 0,
         };
         this.sprite = SpriteBuilder_1.SpriteBuilder.makeSprite(this.startPoint, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
         scene.add(this.sprite);
@@ -52358,22 +52359,22 @@ class VideoMover {
             this.loadPositions(id, scene, event.object.position, renderer, camera, dragHandles);
         });
     }
+    visible(toggle) {
+        SpriteBuilder_1.SpriteBuilder.disable([this.sprite], toggle);
+    }
     loadPositions(id, scene, position, renderer, camera, dragHandles) {
         const delta = {
             x: position.x - this.startPoint.x,
             y: position.y - this.startPoint.y,
-            z: 0
+            z: 0,
         };
-        let oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
+        const oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
         const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
         VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
         dragHandles.map(dragHandle => dragHandle.updateByVecotor(delta));
         // sets new position for proper delta (i know it is not a proper solution -.-)
         this.startPoint = Object.assign({}, position);
         renderer.render(scene, camera);
-    }
-    visible(toggle) {
-        SpriteBuilder_1.SpriteBuilder.disable([this.sprite], toggle);
     }
 }
 exports.VideoMover = VideoMover;
