@@ -52396,6 +52396,7 @@ var EventTypes;
     EventTypes["Wireframe"] = "wireframe";
     EventTypes["Cutter"] = "cutter";
     EventTypes["Outlines"] = "outlines";
+    EventTypes["Screen"] = "screen";
 })(EventTypes = exports.EventTypes || (exports.EventTypes = {}));
 class EventHandler {
     static addEventListener(type, fn) {
@@ -53062,6 +53063,12 @@ const config = [
                 value: true,
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Cutter, value),
             },
+            {
+                key: "test",
+                value: [0, 1, 2, 3],
+                default: 0,
+                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Screen, value),
+            },
         ],
     },
 ];
@@ -53084,7 +53091,12 @@ config.map((value) => {
         subfolder.open();
     }
     value.subitems.map((subitem) => {
-        subfolder.add(controller, subitem.key).onChange(subitem.fn);
+        switch (typeof controller[subitem.key]) {
+            case "object":
+                subfolder.add(controller, subitem.key, subitem.value).onChange(subitem.fn);
+            default:
+                subfolder.add(controller, subitem.key).onChange(subitem.fn);
+        }
     });
 });
 
