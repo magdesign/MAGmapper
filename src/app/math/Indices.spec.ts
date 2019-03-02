@@ -1,6 +1,6 @@
 import { Indices } from "./Indices";
-import 'mocha';
-import { expect } from 'chai';
+import "mocha";
+import { expect } from "chai";
 
 describe("Indices", () => {
     describe("calcIndices()", () => {

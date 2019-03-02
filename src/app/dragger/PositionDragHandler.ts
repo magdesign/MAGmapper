@@ -1,7 +1,7 @@
 import { DragHandler } from "./DragHandler";
 import { WebGLRenderer } from "three";
 import { Scene } from "three";
-import DragControls from 'three-dragcontrols';
+import DragControls from "three-dragcontrols";
 import { PerspectiveCamera } from "three";
 import { IDimension } from "../math/DimensionTransformer";
 import { SpriteBuilder } from "../material/SpriteBuilder";
@@ -16,7 +16,7 @@ export class PositionDragHandler extends DragHandler {
         super(scene, renderer, camera, id, positions);
 
         new DragControls(super.sprites, camera, renderer.domElement)
-            .addEventListener('drag', () => {
+            .addEventListener("drag", () => {
                 this.loadPositions(id, scene, renderer, camera);
             });
     }
@@ -31,4 +31,4 @@ export class PositionDragHandler extends DragHandler {
 
         renderer.render(scene, camera);
     }
-}   
+}

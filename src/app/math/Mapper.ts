@@ -1,10 +1,9 @@
-import { Vector3 } from 'three';
-import { IDimension } from './DimensionTransformer';
+import { Vector3 } from "three";
+import { IDimension } from "./DimensionTransformer";
 
 export class Mapper {
 
-
-    public static uv(size: number): IDimension[]{
+    public static uv(size: number): IDimension[] {
         return this.map(
             size,
             {x: 0, y: 0, z: 0},
@@ -14,7 +13,7 @@ export class Mapper {
         );
     }
 
-    public static verticesWithStartPoint(size: number, length: number, startPoint: IDimension): IDimension[]{
+    public static verticesWithStartPoint(size: number, length: number, startPoint: IDimension): IDimension[] {
         return this.map(
             size,
             {x: startPoint.x, y: startPoint.y, z: 0},
@@ -24,7 +23,7 @@ export class Mapper {
         );
     }
 
-    public static vertices(size: number, length: number): IDimension[]{
+    public static vertices(size: number, length: number): IDimension[] {
         return this.map(
             size,
             {x: 0, y: 0, z: 0},
@@ -34,7 +33,7 @@ export class Mapper {
         );
     }
 
-    public static addVector(point: IDimension, vector: IDimension): IDimension{
+    public static addVector(point: IDimension, vector: IDimension): IDimension {
         return {
             x: point.x + vector.x,
             y: point.y + vector.y,
@@ -86,10 +85,9 @@ export class Mapper {
         const result = [];
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
-                result.push(parsed[j][i])
+                result.push(parsed[j][i]);
             }
         }
         return result;
     }
 }
-

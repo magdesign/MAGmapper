@@ -1,6 +1,6 @@
-import * as Dat from 'dat.gui';
+import * as Dat from "dat.gui";
 import { Mapper } from "../math/Mapper";
-import { EventHandler, EventTypes } from '../event/EventHandler';
+import { EventHandler, EventTypes } from "../event/EventHandler";
 
 const config = [
     {
@@ -21,25 +21,25 @@ const config = [
                 key: "Cutter",
                 value: true,
                 fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value),
-            }
-        ]
-    }
-]
+            },
+        ],
+    },
+];
 
 const controller = config
     .map((val) => val.subitems)
     .reduce((a, b) => a.concat(b))
     .map((val) => {
-        let obj = {};
+        const obj = {};
         obj[val.key] = val.value;
         return obj;
     })
     .reduce((a, b) => {
-        return {...a, ...b}
+        return {...a, ...b};
     });
 
 // create a gui element
-let gui: Dat.GUI = new Dat.GUI();
+const gui: Dat.GUI = new Dat.GUI();
 
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);

@@ -6,8 +6,9 @@ export interface IDimension {
     z: number;
 }
 
-export class DimensionTransformer{
-    public static fromVector3D(value: Vector3): IDimension{
+export class DimensionTransformer {
+
+    public static fromVector3D(value: Vector3): IDimension {
         return {
             x: value.x,
             y: value.y,
@@ -15,7 +16,7 @@ export class DimensionTransformer{
         } as IDimension;
     }
 
-    public static vectorizeFloatArray(vertices: Float32Array, vector: IDimension): Float32Array{
+    public static vectorizeFloatArray(vertices: Float32Array, vector: IDimension): Float32Array {
         const values = Array.from(vertices);
 
         for (let index = 0; index < values.length; index += 3) {
@@ -25,7 +26,7 @@ export class DimensionTransformer{
         return new Float32Array(values);
     }
 
-    public static fromFloatArrayToDimension(vertices: Float32Array): IDimension[]{
+    public static fromFloatArrayToDimension(vertices: Float32Array): IDimension[] {
         const values = Array.from(vertices);
         const dimensions = [];
         for (let index = 0; index < values.length; index += 3) {
@@ -34,7 +35,7 @@ export class DimensionTransformer{
         return dimensions;
     }
 
-    public static toFloatArray(vertices: IDimension[]): Float32Array{
+    public static toFloatArray(vertices: IDimension[]): Float32Array {
         return new Float32Array(
             vertices
                 .map((cube: IDimension): number[] => [

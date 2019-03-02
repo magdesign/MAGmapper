@@ -1,11 +1,11 @@
 import { IDimension } from "./DimensionTransformer";
 
-interface IUvEdgeValues{
-    x: IUvMappingCalculation,
-    y: IUvMappingCalculation
+interface IUvEdgeValues {
+    x: IUvMappingCalculation;
+    y: IUvMappingCalculation;
 }
 
-interface IUvMappingCalculation{
+interface IUvMappingCalculation {
     startPos: number;
     endPos: number;
     uvPos: number;
@@ -13,12 +13,12 @@ interface IUvMappingCalculation{
 }
 
 export class UvMapper {
-    public static reorderUvMapping(uvEdges: IDimension[], videoEdges: IDimension[]): IDimension[]{
+    public static reorderUvMapping(uvEdges: IDimension[], videoEdges: IDimension[]): IDimension[] {
         const fnEdge = (val: number): number => - (val - 1);
         const fnNoop = (val: number): number => val;
 
         const calcUvEdgePoint =
-            (start: number, end: number, uv: number, fn:(x: number) => number) =>
+            (start: number, end: number, uv: number, fn: (x: number) => number) =>
                 fn(((end - start) + (start - uv)) /  (end - start));
 
         return [
@@ -37,10 +37,13 @@ export class UvMapper {
             {
                 x: {startPos: videoEdges[3].x, endPos: videoEdges[1].x, uvPos: uvEdges[3].x, fn: fnNoop },
                 y: {startPos: videoEdges[3].y, endPos: videoEdges[2].y, uvPos: uvEdges[3].y, fn: fnNoop },
-            }
-        ].map((val: IUvEdgeValues) => <IDimension>{
-            x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
-            y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
+            },
+        ].map((val: IUvEdgeValues): IDimension => {
+            return {
+                x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
+                y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
+                z: 0,
+            };
         });
     }
 }
