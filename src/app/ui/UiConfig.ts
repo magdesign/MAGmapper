@@ -1,6 +1,7 @@
 import * as Dat from "dat.gui";
 import { Mapper } from "../math/Mapper";
 import { EventHandler, EventTypes } from "../event/EventHandler";
+import { type } from "os";
 
 const config = [
     {
@@ -21,6 +22,12 @@ const config = [
                 key: "Cutter",
                 value: true,
                 fn: (value) => EventHandler.throwEvent(EventTypes.Cutter, value),
+            },
+            {
+                key: "test",
+                value: [0,1,2,3],
+                default: 0,
+                fn: (value) => EventHandler.throwEvent(EventTypes.Screen, value),
             },
         ],
     },
@@ -48,6 +55,11 @@ config.map((value) => {
     }
 
     value.subitems.map((subitem: any) => {
-        subfolder.add(controller, subitem.key).onChange(subitem.fn);
+        switch (typeof controller[subitem.key]) {
+            case "object" :
+                subfolder.add(controller, subitem.key, subitem.value).onChange(subitem.fn);
+            default:
+                subfolder.add(controller, subitem.key).onChange(subitem.fn);
+        }
     });
 });

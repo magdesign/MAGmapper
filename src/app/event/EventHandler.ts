@@ -2,6 +2,7 @@ export enum EventTypes{
     Wireframe = "wireframe",
     Cutter = "cutter",
     Outlines = "outlines",
+    Screen = "screen",
 }
 
 export class EventHandler{
