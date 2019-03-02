@@ -52232,14 +52232,13 @@ class DragHandler {
             sprite.position.setY(sprite.position.y + vector.y);
             return sprite;
         });
-        let geo = this._line.geometry;
-        geo.vertices
-            .map((vert) => {
+        const lineGeometry = this._line.geometry;
+        lineGeometry.vertices.map((vert) => {
             vert.x = vert.x + vector.x;
             vert.y = vert.y + vector.y;
             return vert;
         });
-        geo.verticesNeedUpdate = true;
+        lineGeometry.verticesNeedUpdate = true;
     }
     visibility(toggle) {
         SpriteBuilder_1.SpriteBuilder.disable(this.sprites, toggle);
@@ -52272,7 +52271,7 @@ class PositionDragHandler extends DragHandler_1.DragHandler {
     constructor(scene, renderer, camera, id, positions) {
         super(scene, renderer, camera, id, positions);
         new three_dragcontrols_1.default(super.sprites, camera, renderer.domElement)
-            .addEventListener('drag', () => {
+            .addEventListener("drag", () => {
             this.loadPositions(id, scene, renderer, camera);
         });
     }
@@ -52336,12 +52335,12 @@ exports.UvDragHandler = UvDragHandler;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
-const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
 const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
-const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
-const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 class VideoMover {
     constructor(scene, renderer, camera, id, dragHandles) {
         const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(scene, id);
@@ -52355,7 +52354,7 @@ class VideoMover {
         this.sprite = SpriteBuilder_1.SpriteBuilder.makeSprite(this.startPoint, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
         scene.add(this.sprite);
         new three_dragcontrols_1.default([this.sprite], camera, renderer.domElement)
-            .addEventListener('drag', (event) => {
+            .addEventListener("drag", (event) => {
             this.loadPositions(id, scene, event.object.position, renderer, camera, dragHandles);
         });
     }
@@ -52371,7 +52370,7 @@ class VideoMover {
         const oldVertices = VideoSceneHelper_1.VideoSceneHelper.filterVideoScene(scene, id)[0].geometry.attributes.position.array;
         const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
         VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
-        dragHandles.map(dragHandle => dragHandle.updateByVecotor(delta));
+        dragHandles.map((dragHandle) => dragHandle.updateByVecotor(delta));
         // sets new position for proper delta (i know it is not a proper solution -.-)
         this.startPoint = Object.assign({}, position);
         renderer.render(scene, camera);
@@ -53016,11 +53015,14 @@ class UvMapper {
             {
                 x: { startPos: videoEdges[3].x, endPos: videoEdges[1].x, uvPos: uvEdges[3].x, fn: fnNoop },
                 y: { startPos: videoEdges[3].y, endPos: videoEdges[2].y, uvPos: uvEdges[3].y, fn: fnNoop },
-            }
-        ].map((val) => ({
-            x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
-            y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
-        }));
+            },
+        ].map((val) => {
+            return {
+                x: calcUvEdgePoint(val.x.startPos, val.x.endPos, val.x.uvPos, val.x.fn),
+                y: calcUvEdgePoint(val.y.startPos, val.y.endPos, val.y.uvPos, val.y.fn),
+                z: 0,
+            };
+        });
     }
 }
 exports.UvMapper = UvMapper;
@@ -53059,15 +53061,15 @@ const config = [
                 key: "Cutter",
                 value: true,
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Cutter, value),
-            }
-        ]
-    }
+            },
+        ],
+    },
 ];
 const controller = config
     .map((val) => val.subitems)
     .reduce((a, b) => a.concat(b))
     .map((val) => {
-    let obj = {};
+    const obj = {};
     obj[val.key] = val.value;
     return obj;
 })
@@ -53075,7 +53077,7 @@ const controller = config
     return Object.assign({}, a, b);
 });
 // create a gui element
-let gui = new Dat.GUI();
+const gui = new Dat.GUI();
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
     if (value.open) {
