@@ -20,7 +20,7 @@ export class HtmlVideoMaterial {
         {qualifiedName: "src", value: "assets/testvideo.mp4"},
         {qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2"},
         {qualifiedName: "style", value: "display:none"},
-        {qualifiedName: "autoPlay", value: "loop"},
+        {qualifiedName: "autoplay", value: "loop"},
     ];
 
     private static init(): HTMLVideoElement {
