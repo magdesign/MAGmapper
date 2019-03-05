@@ -45,8 +45,21 @@ const controller = config
         return {...a, ...b};
     });
 
+
 // create a gui element
 const gui: Dat.GUI = new Dat.GUI();
+
+//close gui element as default, it somehow does not find the closeOnTop definition, but its written in index.d.ts:
+// do I have to manally add it in index.d.ts or what do I wrong?
+//gui.closeOnTop = true;
+//interface.gui.closeOnTop = true;
+//closeOnTop = true;
+
+//Dat.GUI.closeOnTop = true;
+//gui.closeOnTop = ();
+
+
+
 
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
