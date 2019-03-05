@@ -12,16 +12,25 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 ![Alt text](https://github.com/magdesign/MAGmapper/blob/master/doc/Layout/Layout_01_MappingMode.png?raw=true "Optional Title")
 
+## Next important fixes
+
+- [ ] hide menu by default (see comment in UiConfig.ts)
+- [ ] get autoplay loop somehow working, it really sucks, do we have to place it in a html to get it working?
+- [ ] move handle new with movehandle.png and also hides when unticking outlines 
+- [ ] cutter in fullscreen
+- [ ] resize refresh of browser resizing [see here](https://stackoverflow.com/questions/20290402/three-js-resizing-canvas)
+- [ ] save current state
+
 
 ## To Do Tasklist
 
-- [ ] Basic working prototype to find contributers
+- [x] Basic working prototype to find contributers
 - [ ] Fundraising, make bountysources, promote on known vj channels
 - [ ] Open a domain :-)
 
 ### Basics
 - [x] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
-- [x] Play / Pause
+- [ ] Play / Pause
 - [x] Enable/Disable Wireframe mode
 - [x] Center Point to move entire surface
 - [ ] Handle to scale entire surface
@@ -50,13 +59,11 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] much much more crazy stuff....
 
 
-## Progress Update
+## Notes
 
 We could also choose to load the video files from storge with the input type="file" tag, as seen [here](http://jsfiddle.net/dsbonev/cCCZ2/embedded/result,js,html,css/)  on the index page.</br>
 
 For syncing multiple players with the same source, we would have to check this [approach](https://bocoup.com/blog/html5-video-synchronizing-playback-of-two-videos) or dig for other solutions.
-
-These guys do [map](http://www.floz.fr/Tsuki8Projection-mapping-in-Japan) with three.js. 
 
 
 
