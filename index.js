@@ -52496,14 +52496,14 @@ class HtmlVideoMaterial {
         return video;
     }
 }
-// todo set loop
+// todo set loop and autoplay, since sometimes it works, sometimes not
 HtmlVideoMaterial.attributes = [
     { qualifiedName: "id", value: "video" },
-    { qualifiedName: "controls", value: "true" },
+    { qualifiedName: 'autoplay', value: 'loop' },
+    //{qualifiedName: "controls", value: "true"},
     { qualifiedName: "src", value: "assets/testvideo.mp4" },
     { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
-    { qualifiedName: "style", value: "display:none" },
-    { qualifiedName: "autoplay", value: "loop" },
+    { qualifiedName: "style", value: "display:none" }
 ];
 exports.HtmlVideoMaterial = HtmlVideoMaterial;
 
