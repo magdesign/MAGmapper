@@ -1,13 +1,15 @@
-Copyright ©2018 by MAG Design, Marc-André Gasser and Jan Kuonen, Berne, Switzerland.
+Copyright ©2019 by MAG Design,
+Marc-André Gasser and Jan Kuonen, Switzerland.
+https://mapper.jku.one
 
 You may use this software as long as it is in a non-commercial and open-source manner.
 
 The software is provided "as is", without warranty of any kind.
-
 If you use it and/or add functions, you should contribute your additions.
 
 It is not allowed to use it in any closed-source application or commercial product. 
 It is not allowed to patent functions of this software. 
-It is not allowed to distribute or sell this software without the autors permission.
+It is not allowed to distribute or sell this software or parts of the code without the autors permission.
 
 You must include this license text in your application.
+

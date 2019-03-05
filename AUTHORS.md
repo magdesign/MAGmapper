@@ -1,8 +1,9 @@
-Authors of MAGmapper 2018
+Authors of MAGmapper
+********************
 
-- Marc-André Gasser
-- Jan Kuonen
+- Marc-André Gasser (initiator, artist)
+- Jan Kuonen (coder, brain)
 
-
-The whole concept is initated by magdesign.ch and pocketvj.com.
-You are very welcome if you can help and contribute on this.
+The whole concept is initated by magdesign.ch and financed through pocketvj.com
+If you like this software or have any good code to implemt, let us know.
+Donations are welcome.
