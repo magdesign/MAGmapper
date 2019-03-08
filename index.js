@@ -95,7 +95,7 @@
 
 exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Styles go here. */\n\nhtml, body {\n\tmargin: 0;\n\tpadding: 0;\n\tbackground-color: black;\n}", ""]);
+exports.push([module.i, "/* Styles go here. */\n\nhtml, body {\n\tmargin: 0;\n\tpadding: 0;\n\tbackground-color: black;\n}\n", ""]);
 
 
 
@@ -26403,7 +26403,7 @@ function WebXRManager( renderer ) {
 	this.getStandingMatrix = function () {
 
 		console.warn( 'THREE.WebXRManager: getStandingMatrix() is no longer needed.' );
-		return new THREE.Matrix4();
+		return new Matrix4();
 
 	};
 
@@ -44172,8 +44172,7 @@ function CubeCamera( near, far, cubeResolution, options ) {
 
 		for ( var i = 0; i < 6; i ++ ) {
 
-			renderTarget.activeCubeFace = i;
-			renderer.setRenderTarget( renderTarget );
+			renderer.setRenderTarget( renderTarget, i );
 
 			renderer.clear( color, depth, stencil );
 
@@ -52499,8 +52498,8 @@ class HtmlVideoMaterial {
 // todo set loop and autoplay, since sometimes it works, sometimes not
 HtmlVideoMaterial.attributes = [
     { qualifiedName: "id", value: "video" },
-    { qualifiedName: 'autoplay', value: 'loop' },
-    //{qualifiedName: "controls", value: "true"},
+    { qualifiedName: 'autoplay', value: 'autoplay' },
+    { qualifiedName: "loop", value: "loop" },
     { qualifiedName: "src", value: "assets/testvideo.mp4" },
     { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
     { qualifiedName: "style", value: "display:none" }
@@ -53083,15 +53082,15 @@ const controller = config
     .reduce((a, b) => {
     return Object.assign({}, a, b);
 });
+// todo: MAG should hide frame
+const initConfig = {
+    closed: true,
+    closeOnTop: true,
+    hideable: true,
+    preset: "autoPlace"
+};
 // create a gui element
-const gui = new Dat.GUI();
-//close gui element as default, it somehow does not find the closeOnTop definition, but its written in index.d.ts:
-// do I have to manally add it in index.d.ts or what do I wrong?
-//gui.closeOnTop = true;
-//interface.gui.closeOnTop = true;
-//closeOnTop = true;
-//Dat.GUI.closeOnTop = true;
-//gui.closeOnTop = ();
+const gui = new Dat.GUI(initConfig);
 config.map((value) => {
     const subfolder = gui.addFolder(value.title);
     if (value.open) {
