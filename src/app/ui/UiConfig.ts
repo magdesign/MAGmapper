@@ -4,23 +4,22 @@ import { EventHandler, EventTypes } from "../event/EventHandler";
 import { type } from "os";
 import { exists } from "fs";
 
-
-interface GuiItem {
+interface IGuiItem {
     key: string;
     value: any;
     keycode?: string;
     default?: any;
-    fn: (value:any) => void
+    fn: (value: any) => void;
 }
 
-interface Config {
+interface IConfig {
     title: string;
     open: boolean;
-    subitems: GuiItem[];
+    subitems: IGuiItem[];
 }
 
 
-const config: Config[] = [
+const config: IConfig[] = [
     {
         title: "Sync",
         open: true,
@@ -47,8 +46,6 @@ const config: Config[] = [
     },
 ];
 
-
-
 const controller = config
     .map((val) => val.subitems)
     .reduce((a, b) => a.concat(b))
@@ -66,20 +63,19 @@ const initConfig: Dat.GUIParams = {
     closed: true,
     closeOnTop: false,
     hideable: false,
-
-    preset: "autoPlace"
+    preset: "autoPlace",
 }
 
 // create a gui element
 const gui = new Dat.GUI(initConfig);
 
-config.map((value: Config) => {
+config.map((value: IConfig) => {
     const subfolder = gui.addFolder(value.title);
     if (value.open) {
         subfolder.open();
     }
 
-    value.subitems.map((subitem: GuiItem) => {
+    value.subitems.map((subitem: IGuiItem) => {
         switch (typeof controller[subitem.key]) {
             case "object" :
                 subfolder.add(controller, subitem.key, subitem.value).onChange(subitem.fn);
@@ -90,28 +86,24 @@ config.map((value: Config) => {
 });
 
 
-function getKeyCodes(config: Config[]): GuiItem[]{
+function getKeyCodes(config: IConfig[]): IGuiItem[]{
     return config
-                .map((conf: Config): GuiItem[]  => 
-                    conf.subitems.filter((guiItem: GuiItem): boolean =>  'keycode' in guiItem))
+                .map((conf: IConfig): IGuiItem[]  =>
+                    conf.subitems.filter((guiItem: IGuiItem): boolean => 'keycode' in guiItem))
                 .reduce((a, b) => a.concat(b));
 }
 
-function getTitleValues(config: Config[]){
-    return config.map(conf => conf.title);
-}
-
-const keyItems: GuiItem[] = getKeyCodes(config);
+const keyItems: IGuiItem[] = getKeyCodes(config);
 
 document.addEventListener('keydown', (event) => {
     keyItems
-        .filter((keyItem: GuiItem) => keyItem.keycode === event.code)
-        .map((keyItem: GuiItem) => {
-            keyItem.value  = !keyItem.value
+        .filter((keyItem: IGuiItem) => keyItem.keycode === event.code)
+        .map((keyItem: IGuiItem) => {
+            keyItem.value  = !keyItem.value;
             return keyItem;
         })
-        .map((keyItem: GuiItem) => {
-            config.forEach(conf => {
+        .map((keyItem: IGuiItem) => {
+            config.forEach((conf: IConfig) => {
                 gui.__folders[conf.title].__controllers
                             .filter(ctrl => ctrl.property === keyItem.key)
                             .map(ctrl => ctrl.setValue(keyItem.value));

@@ -19,7 +19,7 @@ export class VideoCutter extends VideoMaterial {
 
         EventHandler.addEventListener(EventTypes.Cutter, (e) => {
             VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
-            super.draghanlder.visibility(e.detail.value);
+            super.draghanlder.visible(e.detail.value);
         });
     }
 }

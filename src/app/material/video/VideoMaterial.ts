@@ -9,6 +9,13 @@ import { Mapper } from "../../math/Mapper";
 import { DragHandler } from "../../dragger/DragHandler";
 import { VideoMover } from "../../dragger/VideoMover";
 
+interface IVideoMaterial {
+    id: string;
+    videoMesh: Mesh;
+    scene: any;
+    draghanlder: DragHandler;
+}
+
 export class VideoMaterial{
 
     private _id: string;
@@ -17,8 +24,6 @@ export class VideoMaterial{
     private _uvs: IDimension[];
     private _scene: any;
     private _draghanlder: DragHandler;
-    private _mover: VideoMover;
-
 
     constructor(id: string, source: string, scene: Scene, startPoint: IDimension) {
         this._id = id;
@@ -55,8 +60,7 @@ export class VideoMaterial{
         });
 
         EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-            this._draghanlder.visibility(e.detail.value);
-            this._mover.visible(e.detail.value);
+            this._draghanlder.visible(e.detail.value);
         });
     }
 
@@ -64,11 +68,11 @@ export class VideoMaterial{
         return this._scene;
     }
 
-    public get id(): string{
+    public get id(): string {
         return this._id;
     }
 
-    public get videoMesh(): Mesh{
+    public get videoMesh(): Mesh {
         return this._videoMesh;
     }
 
@@ -82,14 +86,5 @@ export class VideoMaterial{
 
     public get draghanlder(){
         return this._draghanlder;
-    }
-
-
-    public set mover(mover: VideoMover){
-        this._mover = mover;
-    }
-
-    public get mover(){
-        return this._mover;
     }
 }

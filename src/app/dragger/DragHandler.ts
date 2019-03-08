@@ -65,7 +65,7 @@ export class DragHandler {
         lineGeometry.verticesNeedUpdate = true;
     }
 
-    public visibility(toggle: boolean): void {
+    public visible(toggle: boolean): void {
         SpriteBuilder.disable(this.sprites, toggle);
         LineBuilder.disable(this._line, toggle);
     }
