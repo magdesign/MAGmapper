@@ -16,8 +16,8 @@ export class HtmlVideoMaterial {
     // todo set loop and autoplay, since sometimes it works, sometimes not
     private static attributes: IAttribute[] = [
         {qualifiedName: "id", value: "video"},
-        {qualifiedName: 'autoplay', value: 'loop'},
-        //{qualifiedName: "controls", value: "true"},
+        {qualifiedName: 'autoplay', value: 'autoplay'},
+        {qualifiedName: "loop", value: "loop"},
         {qualifiedName: "src", value: "assets/testvideo.mp4"},
         {qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2"},
         {qualifiedName: "style", value: "display:none"}

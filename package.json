@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
+    "lodash": "^4.17.11",
     "awesome-typescript-loader": "^5.2.1",
     "chai": "^4.2.0",
     "css-loader": "^2.1.0",
@@ -29,11 +30,11 @@
   },
   "dependencies": {
     "@types/dat.gui": "^0.7.2",
-    "@types/three": "latest",
+    "@types/three": "^0.93.26",
     "@types/uuid": "^3.4.4",
     "dat.gui": "^0.7.5",
     "serve": "^10.1.2",
-    "three": "latest",
+    "three": "^0.102.1",
     "three-dragcontrols": "^0.88.2",
     "tslint": "^5.12.1",
     "uuid": "^3.3.2"
