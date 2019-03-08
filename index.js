@@ -52350,7 +52350,7 @@ class VideoMover {
             y: calcDelta(edges[0].y, edges[3].y),
             z: 0,
         };
-        this.sprite = SpriteBuilder_1.SpriteBuilder.makeSprite(this.startPoint, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
+        this.sprite = SpriteBuilder_1.SpriteBuilder.makeSprite(this.startPoint, config_1.Config.MoveHandler.source, config_1.Config.MoveHandler.scale);
         scene.add(this.sprite);
         new three_dragcontrols_1.default([this.sprite], camera, renderer.domElement)
             .addEventListener("drag", (event) => {
@@ -52495,7 +52495,7 @@ class HtmlVideoMaterial {
         return video;
     }
 }
-// todo set loop and autoplay, since sometimes it works, sometimes not
+// set loop and autoplay, since sometimes it works, sometimes not
 HtmlVideoMaterial.attributes = [
     { qualifiedName: "id", value: "video" },
     { qualifiedName: 'autoplay', value: 'autoplay' },
@@ -52528,6 +52528,7 @@ class LineBuilder {
         geometry.vertices = this.prepareEdges(edges);
         let line = new three_1.Line(geometry, material);
         line.name = id;
+        line.visible = false;
         return line;
     }
     static filterLines(scene, id) {
@@ -52583,6 +52584,7 @@ class SpriteBuilder {
         let sprite = new three_1.Sprite(material);
         sprite.position.set(point.x, point.y, point.z);
         sprite.scale.set(scale, scale, 1);
+        sprite.visible = false;
         return sprite;
     }
     static loadSpriteEdges(scene, id) {
@@ -52689,13 +52691,11 @@ const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/ma
 const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const UvDragHandler_1 = __webpack_require__(/*! ../../dragger/UvDragHandler */ "./src/app/dragger/UvDragHandler.ts");
-const VideoMover_1 = __webpack_require__(/*! ../../dragger/VideoMover */ "./src/app/dragger/VideoMover.ts");
 class VideoCutter extends VideoMaterial_1.VideoMaterial {
     constructor(id, targetId, source, scene, startPoint, renderer, camera) {
         super(id, source, scene, startPoint);
         this._targetId = targetId;
         super.draghanlder = new UvDragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
-        const videoMover = new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (e) => {
             VideoSceneHelper_1.VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
             super.draghanlder.visibility(e.detail.value);
@@ -52725,7 +52725,7 @@ class VideoMapper extends VideoMaterial_1.VideoMaterial {
         super(id, source, scene, startPoint);
         super.draghanlder = new PositionDragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
         console.log(super.id);
-        new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        super.mover = new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
     }
 }
 exports.VideoMapper = VideoMapper;
@@ -52778,6 +52778,7 @@ class VideoMaterial {
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Outlines, (e) => {
             this._draghanlder.visibility(e.detail.value);
+            this._mover.visible(e.detail.value);
         });
     }
     get scene() {
@@ -52797,6 +52798,12 @@ class VideoMaterial {
     }
     get draghanlder() {
         return this._draghanlder;
+    }
+    set mover(mover) {
+        this._mover = mover;
+    }
+    get mover() {
+        return this._mover;
     }
 }
 exports.VideoMaterial = VideoMaterial;
@@ -53050,23 +53057,20 @@ const config = [
             {
                 key: "Wireframe",
                 value: false,
+                keycode: "KeyW",
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Wireframe, value),
             },
             {
                 key: "Outlines",
-                value: true,
+                value: false,
+                keycode: "KeyO",
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Outlines, value),
             },
             {
                 key: "Cutter",
                 value: true,
+                keycode: "KeyC",
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Cutter, value),
-            },
-            {
-                key: "test",
-                value: [0, 1, 2, 3],
-                default: 0,
-                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Screen, value),
             },
         ],
     },
@@ -53085,8 +53089,8 @@ const controller = config
 // todo: MAG should hide frame
 const initConfig = {
     closed: true,
-    closeOnTop: true,
-    hideable: true,
+    closeOnTop: false,
+    hideable: false,
     preset: "autoPlace"
 };
 // create a gui element
@@ -53103,6 +53107,32 @@ config.map((value) => {
             default:
                 subfolder.add(controller, subitem.key).onChange(subitem.fn);
         }
+    });
+});
+function getKeyCodes(config) {
+    return config
+        .map((conf) => conf.subitems.filter((guiItem) => 'keycode' in guiItem))
+        .reduce((a, b) => a.concat(b));
+}
+function getTitleValues(config) {
+    return config.map(conf => conf.title);
+}
+const keyItems = getKeyCodes(config);
+document.addEventListener('keydown', (event) => {
+    keyItems
+        .filter((keyItem) => keyItem.keycode === event.code)
+        .map((keyItem) => {
+        keyItem.value = !keyItem.value;
+        return keyItem;
+    })
+        .map((keyItem) => {
+        config.forEach(conf => {
+            gui.__folders[conf.title].__controllers
+                .filter(ctrl => ctrl.property === keyItem.key)
+                .map(ctrl => ctrl.setValue(keyItem.value));
+        });
+        keyItem.fn(keyItem.value);
+        return keyItem;
     });
 });
 
@@ -53126,9 +53156,14 @@ exports.Config = {
         wireframe: false,
     },
     DragHandler: {
-        line: 3,
-        scale: 0.2,
+        line: 2,
+        scale: 0.4,
         source: "../assets/draghandle.png",
+    },
+    MoveHandler: {
+        line: 3,
+        scale: 0.4,
+        source: "../assets/movehandle.png",
     }
 };
 
