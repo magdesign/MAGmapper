@@ -52239,7 +52239,7 @@ class DragHandler {
         });
         lineGeometry.verticesNeedUpdate = true;
     }
-    visibility(toggle) {
+    visible(toggle) {
         SpriteBuilder_1.SpriteBuilder.disable(this.sprites, toggle);
         LineBuilder_1.LineBuilder.disable(this._line, toggle);
     }
@@ -52498,7 +52498,7 @@ class HtmlVideoMaterial {
 // set loop and autoplay, since sometimes it works, sometimes not
 HtmlVideoMaterial.attributes = [
     { qualifiedName: "id", value: "video" },
-    { qualifiedName: 'autoplay', value: 'autoplay' },
+    { qualifiedName: "autoplay", value: "autoplay" },
     { qualifiedName: "loop", value: "loop" },
     { qualifiedName: "src", value: "assets/testvideo.mp4" },
     { qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2" },
@@ -52698,7 +52698,7 @@ class VideoCutter extends VideoMaterial_1.VideoMaterial {
         super.draghanlder = new UvDragHandler_1.UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (e) => {
             VideoSceneHelper_1.VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);
-            super.draghanlder.visibility(e.detail.value);
+            super.draghanlder.visible(e.detail.value);
         });
     }
 }
@@ -52720,12 +52720,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const VideoMaterial_1 = __webpack_require__(/*! ./VideoMaterial */ "./src/app/material/video/VideoMaterial.ts");
 const PositionDragHandler_1 = __webpack_require__(/*! ../../dragger/PositionDragHandler */ "./src/app/dragger/PositionDragHandler.ts");
 const VideoMover_1 = __webpack_require__(/*! ../../dragger/VideoMover */ "./src/app/dragger/VideoMover.ts");
+const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 class VideoMapper extends VideoMaterial_1.VideoMaterial {
     constructor(id, source, scene, startPoint, renderer, camera) {
         super(id, source, scene, startPoint);
         super.draghanlder = new PositionDragHandler_1.PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
-        console.log(super.id);
-        super.mover = new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        const mover = new VideoMover_1.VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Outlines, (e) => {
+            mover.visible(e.detail.value);
+        });
     }
 }
 exports.VideoMapper = VideoMapper;
@@ -52777,8 +52780,7 @@ class VideoMaterial {
             VideoSceneHelper_1.VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Outlines, (e) => {
-            this._draghanlder.visibility(e.detail.value);
-            this._mover.visible(e.detail.value);
+            this._draghanlder.visible(e.detail.value);
         });
     }
     get scene() {
@@ -52798,12 +52800,6 @@ class VideoMaterial {
     }
     get draghanlder() {
         return this._draghanlder;
-    }
-    set mover(mover) {
-        this._mover = mover;
-    }
-    get mover() {
-        return this._mover;
     }
 }
 exports.VideoMaterial = VideoMaterial;
@@ -53091,7 +53087,7 @@ const initConfig = {
     closed: true,
     closeOnTop: false,
     hideable: false,
-    preset: "autoPlace"
+    preset: "autoPlace",
 };
 // create a gui element
 const gui = new Dat.GUI(initConfig);
@@ -53114,9 +53110,6 @@ function getKeyCodes(config) {
         .map((conf) => conf.subitems.filter((guiItem) => 'keycode' in guiItem))
         .reduce((a, b) => a.concat(b));
 }
-function getTitleValues(config) {
-    return config.map(conf => conf.title);
-}
 const keyItems = getKeyCodes(config);
 document.addEventListener('keydown', (event) => {
     keyItems
@@ -53126,7 +53119,7 @@ document.addEventListener('keydown', (event) => {
         return keyItem;
     })
         .map((keyItem) => {
-        config.forEach(conf => {
+        config.forEach((conf) => {
             gui.__folders[conf.title].__controllers
                 .filter(ctrl => ctrl.property === keyItem.key)
                 .map(ctrl => ctrl.setValue(keyItem.value));
