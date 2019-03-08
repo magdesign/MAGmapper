@@ -30,7 +30,7 @@ export class VideoMover {
             z: 0,
         };
 
-        this.sprite = SpriteBuilder.makeSprite(this.startPoint, Config.DragHandler.source, Config.DragHandler.scale);
+        this.sprite = SpriteBuilder.makeSprite(this.startPoint, Config.MoveHandler.source, Config.MoveHandler.scale);
         scene.add(this.sprite);
 
         new DragControls([this.sprite], camera, renderer.domElement)

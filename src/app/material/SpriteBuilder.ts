@@ -15,6 +15,7 @@ export class SpriteBuilder{
 
         sprite.position.set(point.x, point.y, point.z);
         sprite.scale.set(scale, scale, 1);
+        sprite.visible = false;
         return sprite;
     }
 

@@ -13,6 +13,8 @@ export class LineBuilder {
 
         let line = new Line( geometry, material );
         line.name = id;
+        line.visible = false;
+
         return line;
     }
 

@@ -11,6 +11,6 @@ export class VideoMapper extends VideoMaterial {
         super(id, source, scene, startPoint);
         super.draghanlder = new PositionDragHandler(super.scene, renderer, camera, super.id, super.positions);
         console.log(super.id)
-        new VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
+        super.mover = new VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
     }
 }

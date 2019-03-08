@@ -4,10 +4,15 @@ export const Config = {
         size: 30,
         wireframe: false,
     },
-
     DragHandler: {
-        line: 3,
-        scale: 0.2,
+        line: 2, // with of line
+        scale: 0.4,
         source: "../assets/draghandle.png",
+    },
+
+    MoveHandler: {
+        line: 3,
+        scale: 0.4,
+        source: "../assets/movehandle.png",
     }
 }

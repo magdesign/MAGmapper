@@ -16,7 +16,6 @@ export class VideoCutter extends VideoMaterial {
         this._targetId = targetId;
 
         super.draghanlder = new UvDragHandler(super.scene, renderer, camera, super.id, super.positions, this._targetId);
-        const videoMover = new VideoMover(super.scene, renderer, camera, super.id, [super.draghanlder]);
 
         EventHandler.addEventListener(EventTypes.Cutter, (e) => {
             VideoSceneHelper.changeVisibility(e.detail.value, scene, super.id);

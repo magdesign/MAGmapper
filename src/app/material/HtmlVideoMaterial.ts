@@ -13,7 +13,7 @@ export class HtmlVideoMaterial {
         return video;
     }
 
-    // todo set loop and autoplay, since sometimes it works, sometimes not
+    // set loop and autoplay, since sometimes it works, sometimes not
     private static attributes: IAttribute[] = [
         {qualifiedName: "id", value: "video"},
         {qualifiedName: 'autoplay', value: 'autoplay'},
@@ -21,7 +21,6 @@ export class HtmlVideoMaterial {
         {qualifiedName: "src", value: "assets/testvideo.mp4"},
         {qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2"},
         {qualifiedName: "style", value: "display:none"}
-        
     ];
 
     private static init(): HTMLVideoElement {
