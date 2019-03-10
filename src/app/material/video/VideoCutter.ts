@@ -10,6 +10,7 @@ export class VideoCutter extends VideoMaterial {
     private _targetId: string;
 
     constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: IDimension, renderer: WebGLRenderer, camera: PerspectiveCamera) {
+
         super(id, source, scene, startPoint);
         this._targetId = targetId;
 

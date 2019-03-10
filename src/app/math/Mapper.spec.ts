@@ -1,152 +1,159 @@
-import {expect} from 'chai';
-import 'mocha';
-import {Mapper} from './Mapper';
+import {expect} from "chai";
+import "mocha";
+import {DimensionTransformer} from "./DimensionTransformer";
+import {Edges} from "./Edges";
+import {Indices} from "./Indices";
+import {Mapper} from "./Mapper";
 
-describe('Mapper', () => {
-    describe('uv()', () => {
-        it('should generate uv', () => {
+describe("DimensionTransformer", () => {
+    describe("fromFloatArrayToDimension()", () => {
+        it("should filter edges", () => {
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 0.6666666666666666, z: 0},
+                {x: 0, y: 1.3333333333333333, z: 0},
+                {x: 0, y: 2, z: 0},
+                {x: 0.6666666666666666, y: 0, z: 0},
+                {x: 0.6666666666666666, y: 0.6666666666666666, z: 0},
+                {x: 0.6666666666666666, y: 1.3333333333333333, z: 0},
+                {x: 0.6666666666666666, y: 2, z: 0},
+                {x: 1.3333333333333333, y: 0, z: 0},
+                {x: 1.3333333333333333, y: 0.6666666666666666, z: 0},
+                {x: 1.3333333333333333, y: 1.3333333333333333, z: 0},
+                {x: 1.3333333333333333, y: 2, z: 0},
+                {x: 2, y: 0, z: 0},
+                {x: 2, y: 0.6666666666666666, z: 0},
+                {x: 2, y: 1.3333333333333333, z: 0},
+                {x: 2, y: 2, z: 0},
+            ];
+
+            const result = new Float32Array([
+                0, 0, 0,
+                0, 0.6666666865348816, 0,
+                0, 1.3333333730697632, 0,
+                0, 2, 0,
+                0.6666666865348816, 0, 0,
+                0.6666666865348816, 0.6666666865348816, 0,
+                0.6666666865348816, 1.3333333730697632, 0,
+                0.6666666865348816, 2, 0,
+                1.3333333730697632, 0, 0,
+                1.3333333730697632, 0.6666666865348816, 0,
+                1.3333333730697632, 1.3333333730697632, 0,
+                1.3333333730697632, 2, 0,
+                2, 0, 0,
+                2, 0.6666666865348816, 0,
+                2, 1.3333333730697632, 0,
+                2, 2, 0,
+            ]);
+
+            const values = DimensionTransformer.fromFloatArrayToDimension(result);
+        });
+    });
+});
+
+describe("Edges", () => {
+    describe("getEdges()", () => {
+        it("should filter edges", () => {
+
+            const vert = Mapper.vertices(3, 3);
+            const result = Edges.getEdges(vert);
+
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 3, z: 0},
+                {x: 3, y: 0, z: 0},
+                {x: 3, y: 3, z: 0},
+            ];
+            expect(expected).to.be.deep.equal(result);
+        });
+
+        it("should filter edges with more values", () => {
+            const vert = Mapper.vertices(5, 3);
+            const result = Edges.getEdges(vert);
+
+            const expected = [
+                {x: 0, y: 0, z: 0},
+                {x: 0, y: 3, z: 0},
+                {x: 3, y: 0, z: 0},
+                {x: 3, y: 3, z: 0},
+            ];
+            expect(expected).to.be.deep.equal(result);
+        });
+    });
+});
+
+describe("Indices", () => {
+    describe("calcIndices()", () => {
+        it("should indice with 2", () => {
+            const expected = [
+                0, 2, 1,
+                1, 2, 3,
+            ];
+
+            const actual = Indices.calcIndices(2);
+            expect(expected).to.be.deep.equal(actual);
+        });
+
+        it("should indice with 3", () => {
+            const expected = [
+                0, 3, 1,
+                1, 3, 4,
+                1, 4, 2,
+                2, 4, 5,
+                3, 6, 4,
+                4, 6, 7,
+                4, 7, 5,
+                5, 7, 8,
+            ];
+
+            const actual = Indices.calcIndices(3);
+            expect(expected).to.be.deep.equal(actual);
+        });
+    });
+});
+
+describe("Mapper", () => {
+    describe("uv()", () => {
+        it("should generate uv", () => {
             const result = Mapper.uv(2);
             const expected = [
                 {x: 0, y: 0, z: 0},
                 {x: 0, y: 1, z: 0},
                 {x: 1, y: 0, z: 0},
-                {x: 1, y: 1, z: 0}
+                {x: 1, y: 1, z: 0},
             ];
             expect(expected).to.be.deep.equal(result);
         });
     });
 
-    describe('vertices()', () => {
+    describe("vertices()", () => {
 
-        it('should generate vertices 4', () => {
+        it("should generate vertices 4", () => {
             const expected = [
                 {x: 0, y: 0, z: 0},
-    ​            {
-                x: 0, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {​ x: 2, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ]
+                {x: 0, y: 0.6666666666666666, z: 0},
+                {x: 0, y: 1.3333333333333333, z: 0},
+                {x: 0, y: 2, z: 0},
+                {x: 0.6666666666666666, y: 0, z: 0},
+                {x: 0.6666666666666666, y: 0.6666666666666666, z: 0},
+                {x: 0.6666666666666666, y: 1.3333333333333333, z: 0},
+                {x: 0.6666666666666666, y: 2, z: 0},
+                {x: 1.3333333333333333, y: 0, z: 0},
+                {x: 1.3333333333333333, y: 0.6666666666666666, z: 0},
+                {x: 1.3333333333333333, y: 1.3333333333333333, z: 0},
+                {x: 1.3333333333333333, y: 2, z: 0},
+                {x: 2, y: 0, z: 0},
+                {x: 2, y: 0.6666666666666666, z: 0},
+                {x: 2, y: 1.3333333333333333, z: 0},
+                {x: 2, y: 2, z: 0},
+            ];
             const result = Mapper.vertices(4, 2);
             expect(expected).to.be.deep.equal(result);
         });
     });
 
-    describe('map()', () => {
-        it('should shift vertices one to bottom left', () => {
+    describe("map()", () => {
+        it("should shift vertices one to bottom left", () => {
             const expected = [
                 {x: 0, y: 0, z: 0},
                 {x: 0, y: 1, z: 0},
@@ -163,13 +170,14 @@ describe('Mapper', () => {
                 {x: 3, y: 0, z: 0},
                 {x: 3.3333333333333335, y: 1.3333333333333333, z: 0},
                 {x: 3.6666666666666665, y: 2.6666666666666665, z: 0},
-                {x: 4, y: 4, z: 0}
+                {x: 4, y: 4, z: 0},
             ];
+
             const points = [
                 {x: 0, y: 0, z: 0},
                 {x: 0, y: 3, z: 0},
                 {x: 3, y: 0, z: 0},
-                {x: 4, y: 4, z: 0}
+                {x: 4, y: 4, z: 0},
             ];
 
             const result = Mapper.map(4, points[0], points[1], points[2], points[3]);
@@ -178,7 +186,7 @@ describe('Mapper', () => {
 
         // The tests marc wrote, in hope they work
 
-        it('should shift all vertices', () => {
+        it("should shift all vertices", () => {
             const expected = [
                 {x: -0.28774762049211333, y: -0.4412129844260258, z: 0},
                 {x: -3.357055572407958, y: 1.7345299767992155, z: 0},
@@ -198,21 +206,21 @@ describe('Mapper', () => {
                 {x: 3.668936198854243, y: -3.184406757161736, z: 0},
                 {x: 5.561676102535683, y: -0.29888638620767294, z: 0},
                 {x: 7.454416006217125, y: 2.58663398474639, z: 0},
-                {x: 9.347155909898566, y: 5.472154355700453, z: 0}
+                {x: 9.347155909898566, y: 5.472154355700453, z: 0},
             ];
             const points = [
                 {x: -0.28774762049211333, y: -0.4412129844260258, z: 0},
                 {x: -9.495671476239648, y: 6.0860158992496975, z: 0},
-                //the value above this comment and below this comment must be exchanged with each other!!
+                // the value above this comment and below this comment must be exchanged with each other!!
                 {x: 3.668936198854243, y: -3.184406757161736, z: 0},
-                {x: 9.347155909898566, y: 5.472154355700452, z: 0}
+                {x: 9.347155909898566, y: 5.472154355700452, z: 0},
             ];
 
             const result = Mapper.map(4, points[0], points[1], points[2], points[3]);
             expect(expected).to.be.deep.equal(result);
         });
 
-        it('should shift vertices to other places', () => {
+        it("should shift vertices to other places", () => {
             const expected = [
                 {x: -6.541462572520651, y: 0.24938125206688305, z: 0},
                 {x: -4.156354518219377, y: 0.935231091969464, z: 0},
@@ -232,21 +240,22 @@ describe('Mapper', () => {
                 {x: -3.889234632738535, y: -2.4362630009610884, z: 0},
                 {x: -0.5641510181630323, y: 0.2893975930270227, z: 0},
                 {x: 2.76093259641247, y: 3.015058187015134, z: 0},
-                {x: 6.086016210987972, y: 5.7407187810032445, z: 0}
+                {x: 6.086016210987972, y: 5.7407187810032445, z: 0},
             ];
+
             const points = [
                 {x: -6.541462572520651, y: 0.24938125206688305, z: 0},
                 {x: 0.6138615903831702, y: 2.3069307717746255, z: 0},
-                //the value above this comment and below this comment must be exchanged with each other!!
+                // the value above this comment and below this comment must be exchanged with each other!!
                 {x: -3.889234632738535, y: -2.436263000961088, z: 0},
-                {x: 6.086016210987973, y: 5.740718781003245, z: 0}
+                {x: 6.086016210987973, y: 5.740718781003245, z: 0},
             ];
 
             const result = Mapper.map(4, points[0], points[1], points[2], points[3]);
             expect(expected).to.be.deep.equal(result);
         });
 
-        it('you blody bastard solved it :-)', () => {
+        it("you blody bastard solved it :-)", () => {
             const expected = [
                 {x: -0.11509904819684433, y: 0.01918317323591573, z: 0},
                 {x: -2.7879547229902286, y: -2.1596541900913397, z: 0},
@@ -266,7 +275,7 @@ describe('Mapper', () => {
                 {x: 10.306314644872263, y: 2.7048274262638854, z: 0},
                 {x: 5.312294831442518, y: 4.362624710119447, z: 0},
                 {x: 0.31827501801277336, y: 6.02042199397501, z: 0},
-                {x: -4.675744795416971, y: 7.678219277830571, z: 0}
+                {x: -4.675744795416971, y: 7.678219277830571, z: 0},
             ];
 
             const points = [
