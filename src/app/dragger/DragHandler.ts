@@ -6,6 +6,11 @@ import {SpriteBuilder} from "../material/SpriteBuilder";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 
+
+
+
+
+
 export class DragHandler {
 
     private _id: string;
