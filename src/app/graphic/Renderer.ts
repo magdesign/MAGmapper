@@ -1,15 +1,13 @@
 import {PerspectiveCamera, Scene, WebGLRenderer,} from "three";
 import DragControls from "three-dragcontrols";
-
-import {v4 as uuid} from "uuid";
+import {IDragHandler} from "../dragger/DragHandler";
 import {IVideoMaterial} from "../material/VideoMaterialBuilder";
 import {VideoCutter} from "./video/VideoCutter";
 import {VideoMapper} from "./video/VideoMapper";
 
 class Graphic {
+
     public static init() {
-
-
         const scene: Scene = new Scene();
         const camera: PerspectiveCamera = this.loadCamera(scene);
         const renderer: WebGLRenderer = this.loadRenderer();
@@ -17,19 +15,19 @@ class Graphic {
         const videoMapper: IVideoMaterial = VideoMapper.create("", {x: 0, y: 0, z: 0});
         VideoMapper.addToScene(videoMapper, scene);
 
-        new DragControls(videoMapper.dragHandler.sprites, camera, renderer.domElement)
-            .addEventListener("drag", videoMapper.dragHandlerFn);
+        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, "", {x: 3, y: 0, z: 0});
+        VideoCutter.addToScene(videoCutter, scene);
 
-        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, "",  {x: 3, y: 0, z: 0});
 
-        VideoMapper.addToScene(videoCutter, scene);
 
-        new DragControls(videoCutter.dragHandler.sprites, camera, renderer.domElement)
-            .addEventListener("drag", videoCutter.dragHandlerFn);
+        this.createDragHandler([
+            videoCutter.dragHandler,
+            videoMapper.dragHandler,
+            videoMapper.mover,
+        ], camera, renderer);
 
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
-
         this.rendermagic(renderer, camera, scene);
     }
 
@@ -60,6 +58,10 @@ class Graphic {
         animate();
     }
 
+    private static createDragHandler(dragger: IDragHandler[], camera, renderer) {
+        dragger.forEach((dragHandler) => new DragControls(dragHandler.sprites, camera, renderer.domElement)
+            .addEventListener("drag", dragHandler.fn));
+    }
 }
 
 Graphic.init();

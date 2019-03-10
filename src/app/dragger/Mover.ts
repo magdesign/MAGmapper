@@ -12,7 +12,7 @@ import {DragHandler} from "./DragHandler";
 export class Mover {
     private startPoint: IDimension;
     private sprite: Sprite;
-
+/*
     constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, dragHandles: DragHandler[]) {
 
         const positions = VideoSceneHelper.getEdgesFromScene(scene, id);
@@ -35,9 +35,9 @@ export class Mover {
             .addEventListener("drag", (event) => {
                 this.loadPositions(id, scene, event.object.position, renderer, camera, dragHandles);
             });
-    }
+    }*/
 
-    public visible(toggle: boolean): void {
+/*    public visible(toggle: boolean): void {
         SpriteBuilder.disable([this.sprite], toggle);
     }
 
@@ -60,5 +60,5 @@ export class Mover {
         this.startPoint = {...position};
 
         renderer.render(scene, camera);
-    }
+    }*/
 }
