@@ -1,5 +1,5 @@
 import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
-import DragControls from 'three-dragcontrols';
+import DragControls from "three-dragcontrols";
 import {LineBuilder} from "../material/LineBuilder";
 import {SpriteBuilder} from "../material/SpriteBuilder";
 import {VideoSceneHelper} from "../material/VideoSceneHelper";
@@ -13,7 +13,7 @@ export class UvDragHandler extends DragHandler {
         super(scene, renderer, camera, id, positions);
 
         new DragControls(super.sprites, camera, renderer.domElement)
-            .addEventListener('drag', () => {
+            .addEventListener("drag", () => {
                 this.loadPositions(id, scene, renderer, camera, this.edges, targetId);
             });
     }

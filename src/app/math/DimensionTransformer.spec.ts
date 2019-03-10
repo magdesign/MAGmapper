@@ -1,131 +1,30 @@
-import 'mocha';
-import {DimensionTransformer} from './DimensionTransformer';
+import {Mapper} from "./Mapper";
 
-describe('DimensionTransformer', () => {
-    describe('fromFloatArrayToDimension()', () => {
-        it('should filter edges', () => {
+import {expect} from "chai";
+import "mocha";
+import {DimensionTransformer} from "./DimensionTransformer";
+
+describe("DimensionTransformer", () => {
+    describe("fromFloatArrayToDimension()", () => {
+        it("should filter edges", () => {
             const expected = [
                 {x: 0, y: 0, z: 0},
-    ​            {
-                x: 0, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 0.6666666666666666, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 1.3333333333333333, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                0, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                0.6666666666666666, z;
-            :
-                0;
-            }
-        ,
-            {
-                x: 2, y;
-            :
-                1.3333333333333333, z;
-            :
-                0;
-            }
-        ,
-            {​ x: 2, y;
-            :
-                2, z;
-            :
-                0;
-            }
-        ]
-            ;
+                {x: 0, y: 0.6666666666666666, z: 0},
+                {x: 0, y: 1.3333333333333333, z: 0},
+                {x: 0, y: 2, z: 0},
+                {x: 0.6666666666666666, y: 0, z: 0},
+                {x: 0.6666666666666666, y: 0.6666666666666666, z: 0},
+                {x: 0.6666666666666666, y: 1.3333333333333333, z: 0},
+                {x: 0.6666666666666666, y: 2, z: 0},
+                {x: 1.3333333333333333, y: 0, z: 0},
+                {x: 1.3333333333333333, y: 0.6666666666666666, z: 0},
+                {x: 1.3333333333333333, y: 1.3333333333333333, z: 0},
+                {x: 1.3333333333333333, y: 2, z: 0},
+                {x: 2, y: 0, z: 0},
+                {x: 2, y: 0.6666666666666666, z: 0},
+                {x: 2, y: 1.3333333333333333, z: 0},
+                {x: 2, y: 2, z: 0},
+            ];
 
             const result = new Float32Array([
                 0, 0, 0,
@@ -147,6 +46,8 @@ describe('DimensionTransformer', () => {
             ]);
 
             const values = DimensionTransformer.fromFloatArrayToDimension(result);
+
+            expect(values).to.be.deep.equal(result);
         });
     });
 });

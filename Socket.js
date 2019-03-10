@@ -1,4 +1,4 @@
-var Server = require('ws').Server;
+var Server = require("ws").Server;
 var port = process.env.PORT || 9030;
 var wss = new Server({port: port});
 
@@ -18,19 +18,19 @@ console.log(
     "        \\/            \\/     \\/    \\/                                  \n" +
     "###########################################################################");
 
-var log4js = require('log4js');
+var log4js = require("log4js");
 var logger = log4js.getLogger();
 
-logger.level = 'debug';
+logger.level = "debug";
 
 
 logger.info("Listen on port: " + port);
 
-wss.on('connection', function (w) {
+wss.on("connection", function (w) {
     w.uid = uuid();
     logger.info("client registered: " + w.uid);
 
-    w.on('message', function (msg) {
+    w.on("message", function (msg) {
         logger.debug(msg);
 
         wss.clients.forEach(function (client) {
@@ -41,7 +41,7 @@ wss.on('connection', function (w) {
         })
     });
 
-    w.on('close', function () {
+    w.on("close", function () {
         logger.info("removed client: " + w.uid);
     });
 });

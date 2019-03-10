@@ -14,14 +14,13 @@ import {EventHandler, EventTypes} from "../../event/EventHandler";
 import {DimensionTransformer, IDimension} from "../../math/DimensionTransformer";
 import {Indices} from "../../math/Indices";
 import {Mapper} from "../../math/Mapper";
-import {HtmlVideoMaterial} from '../HtmlVideoMaterial';
+import {HtmlVideoMaterial} from "../HtmlVideoMaterial";
 import {VideoSceneHelper} from "../VideoSceneHelper";
 
 interface IVideoMaterial {
     id: string;
     videoMesh: Mesh;
-    scene: any;
-    draghanlder: DragHandler;
+
 }
 
 export class VideoMaterial {

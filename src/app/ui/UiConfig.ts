@@ -84,13 +84,13 @@ config.map((value: IConfig) => {
 function getKeyCodes(config: IConfig[]): IGuiItem[] {
     return config
         .map((conf: IConfig): IGuiItem[] =>
-            conf.subitems.filter((guiItem: IGuiItem): boolean => 'keycode' in guiItem))
+            conf.subitems.filter((guiItem: IGuiItem): boolean => "keycode" in guiItem))
         .reduce((a, b) => a.concat(b));
 }
 
 const keyItems: IGuiItem[] = getKeyCodes(config);
 
-document.addEventListener('keydown', (event) => {
+document.addEventListener("keydown", (event) => {
     keyItems
         .filter((keyItem: IGuiItem) => keyItem.keycode === event.code)
         .map((keyItem: IGuiItem) => {
