@@ -1,8 +1,8 @@
-import { SpriteMaterial, TextureLoader, Sprite } from "three";
-import { IDimension, DimensionTransformer } from "../math/DimensionTransformer";
+import {Sprite, SpriteMaterial, TextureLoader} from "three";
+import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 
-export class SpriteBuilder{
-    public static generateDragHanldes(edges: IDimension[], source: string, scale: number): Sprite[]{
+export class SpriteBuilder {
+    public static generateDragHanldes(edges: IDimension[], source: string, scale: number): Sprite[] {
         return edges.map((edge: IDimension) => this.makeSprite(edge, source, scale));
     }
 
@@ -19,13 +19,13 @@ export class SpriteBuilder{
         return sprite;
     }
 
-    public static loadSpriteEdges(scene: any, id: string){
+    public static loadSpriteEdges(scene: any, id: string) {
         return scene.children
-                .filter((obj) => obj.type === "Sprite" && obj.name === id)
-                .map((obj) => DimensionTransformer.fromVector3D(obj.position));
+            .filter((obj) => obj.type === "Sprite" && obj.name === id)
+            .map((obj) => DimensionTransformer.fromVector3D(obj.position));
     }
 
-    public static disable(sprites: Sprite[], enable: boolean){
+    public static disable(sprites: Sprite[], enable: boolean) {
         sprites
             .map((sprite: Sprite) => {
                 sprite.visible = enable;

@@ -1,4 +1,3 @@
-
 export class Indices {
     public static calcIndices(items: number): number[] {
         items--;

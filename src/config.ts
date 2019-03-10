@@ -15,4 +15,4 @@ export const Config = {
         scale: 0.4,
         source: "../assets/movehandle.png",
     }
-}
+};

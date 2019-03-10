@@ -1,12 +1,11 @@
-import { DragHandler } from "./DragHandler";
-import { WebGLRenderer, PerspectiveCamera } from "three";
-import { Scene } from "three";
-import { IDimension } from "../math/DimensionTransformer";
+import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import DragControls from 'three-dragcontrols';
-import { LineBuilder } from "../material/LineBuilder";
-import { SpriteBuilder } from "../material/SpriteBuilder";
-import { UvMapper } from "../math/UvMapper";
-import { VideoSceneHelper } from "../material/VideoSceneHelper";
+import {LineBuilder} from "../material/LineBuilder";
+import {SpriteBuilder} from "../material/SpriteBuilder";
+import {VideoSceneHelper} from "../material/VideoSceneHelper";
+import {IDimension} from "../math/DimensionTransformer";
+import {UvMapper} from "../math/UvMapper";
+import {DragHandler} from "./DragHandler";
 
 export class UvDragHandler extends DragHandler {
 
@@ -23,7 +22,7 @@ export class UvDragHandler extends DragHandler {
         const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(scene, id);
         LineBuilder.reorderLines(scene, id, spriteEdges);
 
-        const uve: IDimension[] =  UvMapper.reorderUvMapping(spriteEdges, edges);
+        const uve: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, edges);
         VideoSceneHelper.changeUv(uve, scene, targetId);
         renderer.render(scene, camera);
     }

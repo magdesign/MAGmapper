@@ -1,5 +1,4 @@
-import { Vector3 } from "three";
-import { IDimension } from "./DimensionTransformer";
+import {IDimension} from "./DimensionTransformer";
 
 export class Mapper {
 
@@ -18,7 +17,7 @@ export class Mapper {
             size,
             {x: startPoint.x, y: startPoint.y, z: 0},
             {x: startPoint.x, y: startPoint.y + length, z: 0},
-            {x: startPoint.x + length , y: startPoint.y, z: 0},
+            {x: startPoint.x + length, y: startPoint.y, z: 0},
             {x: startPoint.x + length, y: startPoint.y + length, z: 0},
         );
     }
@@ -28,7 +27,7 @@ export class Mapper {
             size,
             {x: 0, y: 0, z: 0},
             {x: 0, y: length, z: 0},
-            {x: length , y: 0, z: 0},
+            {x: length, y: 0, z: 0},
             {x: length, y: length, z: 0},
         );
     }

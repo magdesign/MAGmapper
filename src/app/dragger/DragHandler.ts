@@ -1,21 +1,10 @@
-import {
-    PerspectiveCamera,
-    Scene,
-    Sprite,
-    WebGLRenderer,
-    Line,
-} from "three";
-import DragControls from "three-dragcontrols";
+import {Line, PerspectiveCamera, Scene, Sprite, WebGLRenderer,} from "three";
 
-import { Mapper } from "../math/Mapper";
-
-import { Config } from "../../config";
-import { VideoSceneHelper } from "../material/VideoSceneHelper";
-import { IDimension, DimensionTransformer } from "../math/DimensionTransformer";
-import { Edges } from "../math/Edges";
-import { UvMapper } from "../math/UvMapper";
-import { SpriteBuilder } from "../material/SpriteBuilder";
-import { LineBuilder } from "../material/LineBuilder";
+import {Config} from "../../config";
+import {LineBuilder} from "../material/LineBuilder";
+import {SpriteBuilder} from "../material/SpriteBuilder";
+import {IDimension} from "../math/DimensionTransformer";
+import {Edges} from "../math/Edges";
 
 export class DragHandler {
 
@@ -58,9 +47,9 @@ export class DragHandler {
 
         const lineGeometry: any = this._line.geometry;
         lineGeometry.vertices.map((vert: IDimension): IDimension => {
-                vert.x = vert.x + vector.x;
-                vert.y = vert.y + vector.y;
-                return vert;
+            vert.x = vert.x + vector.x;
+            vert.y = vert.y + vector.y;
+            return vert;
         });
         lineGeometry.verticesNeedUpdate = true;
     }

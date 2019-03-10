@@ -1,14 +1,12 @@
-import { DragHandler } from "./DragHandler";
-import { WebGLRenderer } from "three";
-import { Scene } from "three";
+import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import DragControls from "three-dragcontrols";
-import { PerspectiveCamera } from "three";
-import { IDimension } from "../math/DimensionTransformer";
-import { SpriteBuilder } from "../material/SpriteBuilder";
-import { LineBuilder } from "../material/LineBuilder";
-import { Mapper } from "../math/Mapper";
-import { Config } from "../../config";
-import { VideoSceneHelper } from "../material/VideoSceneHelper";
+import {Config} from "../../config";
+import {LineBuilder} from "../material/LineBuilder";
+import {SpriteBuilder} from "../material/SpriteBuilder";
+import {VideoSceneHelper} from "../material/VideoSceneHelper";
+import {IDimension} from "../math/DimensionTransformer";
+import {Mapper} from "../math/Mapper";
+import {DragHandler} from "./DragHandler";
 
 export class PositionDragHandler extends DragHandler {
 

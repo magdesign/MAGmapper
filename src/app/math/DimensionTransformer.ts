@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import {Vector3} from "three";
 
 export interface IDimension {
     x: number;
@@ -30,7 +30,7 @@ export class DimensionTransformer {
         const values = Array.from(vertices);
         const dimensions = [];
         for (let index = 0; index < values.length; index += 3) {
-            dimensions.push({x: values[index], y: values[index + 1], z:  values[index + 2]});
+            dimensions.push({x: values[index], y: values[index + 1], z: values[index + 2]});
         }
         return dimensions;
     }

@@ -1,15 +1,13 @@
+import {PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
 import DragControls from "three-dragcontrols";
 
-import { Config } from "../../config";
-import { DragHandler } from "./DragHandler";
+import {Config} from "../../config";
+import {SpriteBuilder} from "../material/SpriteBuilder";
+import {VideoSceneHelper} from "../material/VideoSceneHelper";
+import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 
-import { Edges } from "../math/Edges";
-import { Sprite } from "three";
-import { IDimension, DimensionTransformer } from "../math/DimensionTransformer";
-import { PerspectiveCamera } from "three";
-import { SpriteBuilder } from "../material/SpriteBuilder";
-import { VideoSceneHelper } from "../material/VideoSceneHelper";
-import { WebGLRenderer, Scene } from "three";
+import {Edges} from "../math/Edges";
+import {DragHandler} from "./DragHandler";
 
 export class VideoMover {
     private startPoint: IDimension;

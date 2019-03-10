@@ -1,43 +1,43 @@
-import { Vector3, Scene, Line, Geometry, LineBasicMaterial } from "three";
-import { IDimension } from "../math/DimensionTransformer";
-import { Config } from "../../config";
+import {Geometry, Line, LineBasicMaterial, Scene, Vector3} from "three";
+import {Config} from "../../config";
+import {IDimension} from "../math/DimensionTransformer";
 
 export class LineBuilder {
 
     public static addLines(scene: Scene, id: string, edges: IDimension[]): Line {
 
-        const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line}); 
+        const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line});
         let geometry: Geometry = new Geometry();
 
         geometry.vertices = this.prepareEdges(edges);
 
-        let line = new Line( geometry, material );
+        let line = new Line(geometry, material);
         line.name = id;
         line.visible = false;
 
         return line;
     }
 
-    public static filterLines(scene, id: string): any[]{
+    public static filterLines(scene, id: string): any[] {
         return scene.children
             .filter((child: any) => child.name === id && child.type === "Line");
     }
 
-    public static reorderLines(scene, id: string, edges: IDimension[]){
+    public static reorderLines(scene, id: string, edges: IDimension[]) {
         this.filterLines(scene, id)
             .map((child: any) => {
-                child.geometry.vertices = this.prepareEdges(edges)
-                child.geometry.verticesNeedUpdate = true; 
+                child.geometry.vertices = this.prepareEdges(edges);
+                child.geometry.verticesNeedUpdate = true;
                 return child;
             });
     }
 
-    public static disable(line: Line, enable: boolean){
+    public static disable(line: Line, enable: boolean) {
         line.visible = enable;
         return line;
     }
 
-    private static prepareEdges(edges: IDimension[]): Vector3[]{
+    private static prepareEdges(edges: IDimension[]): Vector3[] {
         return [
             edges[0],
             edges[1],

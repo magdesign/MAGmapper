@@ -1,8 +1,5 @@
 import * as Dat from "dat.gui";
-import { Mapper } from "../math/Mapper";
-import { EventHandler, EventTypes } from "../event/EventHandler";
-import { type } from "os";
-import { exists } from "fs";
+import {EventHandler, EventTypes} from "../event/EventHandler";
 
 interface IGuiItem {
     key: string;
@@ -17,7 +14,6 @@ interface IConfig {
     open: boolean;
     subitems: IGuiItem[];
 }
-
 
 const config: IConfig[] = [
     {
@@ -64,7 +60,7 @@ const initConfig: Dat.GUIParams = {
     closeOnTop: false,
     hideable: false,
     preset: "autoPlace",
-}
+};
 
 // create a gui element
 const gui = new Dat.GUI(initConfig);
@@ -85,12 +81,11 @@ config.map((value: IConfig) => {
     });
 });
 
-
-function getKeyCodes(config: IConfig[]): IGuiItem[]{
+function getKeyCodes(config: IConfig[]): IGuiItem[] {
     return config
-                .map((conf: IConfig): IGuiItem[]  =>
-                    conf.subitems.filter((guiItem: IGuiItem): boolean => 'keycode' in guiItem))
-                .reduce((a, b) => a.concat(b));
+        .map((conf: IConfig): IGuiItem[] =>
+            conf.subitems.filter((guiItem: IGuiItem): boolean => 'keycode' in guiItem))
+        .reduce((a, b) => a.concat(b));
 }
 
 const keyItems: IGuiItem[] = getKeyCodes(config);
@@ -99,16 +94,16 @@ document.addEventListener('keydown', (event) => {
     keyItems
         .filter((keyItem: IGuiItem) => keyItem.keycode === event.code)
         .map((keyItem: IGuiItem) => {
-            keyItem.value  = !keyItem.value;
+            keyItem.value = !keyItem.value;
             return keyItem;
         })
         .map((keyItem: IGuiItem) => {
             config.forEach((conf: IConfig) => {
                 gui.__folders[conf.title].__controllers
-                            .filter(ctrl => ctrl.property === keyItem.key)
-                            .map(ctrl => ctrl.setValue(keyItem.value));
+                    .filter(ctrl => ctrl.property === keyItem.key)
+                    .map(ctrl => ctrl.setValue(keyItem.value));
             });
             keyItem.fn(keyItem.value);
             return keyItem;
-        })
-})
+        });
+});

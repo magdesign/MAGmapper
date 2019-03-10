@@ -1,4 +1,4 @@
-import { Scene } from "three";
+import {Scene} from "three";
 
 export interface IScreen {
     screenId: string;

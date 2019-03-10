@@ -1,6 +1,6 @@
-import { Indices } from "./Indices";
+import {expect} from "chai";
 import "mocha";
-import { expect } from "chai";
+import {Indices} from "./Indices";
 
 describe("Indices", () => {
     describe("calcIndices()", () => {
@@ -15,7 +15,7 @@ describe("Indices", () => {
         });
 
         it("should indice with 3", () => {
-            const expected =  [
+            const expected = [
                 0, 3, 1,
                 1, 3, 4,
                 1, 4, 2,

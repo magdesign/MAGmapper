@@ -1,9 +1,7 @@
-
+import {expect} from "chai";
 import "mocha";
-
-import { expect } from "chai";
-import { Edges } from "./Edges";
-import { Mapper } from "./Mapper";
+import {Edges} from "./Edges";
+import {Mapper} from "./Mapper";
 
 describe("Edges", () => {
     describe("getEdges()", () => {
