@@ -36,13 +36,10 @@ export class VideoSceneHelper {
             }));
     }
 
-    public static changeUv(uve: IDimension[], scene, id: string) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-                elmt.geometry.attributes.uv.needsUpdate = true;
-                elmt.geometry.attributes.uv.array = DimensionTransformer.toFloatArray(Mapper.map(Config.Vertices.size, uve[0], uve[1], uve[2], uve[3]));
-                return elmt;
-            }));
+    public static changeUv(uv: IDimension[], video: any): any {
+        video.geometry.attributes.uv.needsUpdate = true;
+        video.geometry.attributes.uv.array = DimensionTransformer.toFloatArray(Mapper.map(Config.Vertices.size, uv[0], uv[1], uv[2], uv[3]));
+        return video;
     }
 
     public static changeVerticesWithFloatArray(vertices: Float32Array, scene, id: string) {

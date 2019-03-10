@@ -15,16 +15,14 @@ import {Mapper} from "../math/Mapper";
 import {HtmlVideoMaterial} from "./HtmlVideoMaterial";
 
 export interface IVideoMaterial {
-    id: string;
     mesh: Mesh;
-    positions: IDimension[];
     dragHandler?: IDragHandler;
     dragHandlerFn?: () => void;
 }
 
 export class VideoMaterialBuilder {
 
-    public static create(id: string, source: string, startPoint: IDimension): IVideoMaterial {
+    public static create(source: string, startPoint: IDimension): IVideoMaterial {
 
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo();
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
@@ -45,12 +43,10 @@ export class VideoMaterialBuilder {
         texture.minFilter = LinearFilter;
 
         const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
-        videoMesh.name = id;
 
         return {
-            id,
+            dragHandler: DragHandler.create(positions),
             mesh: videoMesh,
-            positions,
         };
     }
 

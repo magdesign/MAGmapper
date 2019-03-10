@@ -1,4 +1,5 @@
-import {PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
+import {Mesh, PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
+import DragControls from "three-dragcontrols";
 import {DragHandler, IDragHandler} from "../../dragger/DragHandler";
 import {LineBuilder} from "../../material/LineBuilder";
 import {SpriteBuilder} from "../../material/SpriteBuilder";
@@ -6,35 +7,31 @@ import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterial
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
-import DragControls from "three-dragcontrols";
 
 export class VideoCutter {
 
-    constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: IDimension, renderer: WebGLRenderer, camera: PerspectiveCamera) {
+    public static create(target: IVideoMaterial, source: string, startPoint: IDimension): IVideoMaterial {
 
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(id, source, startPoint);
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(source, startPoint);
 
-        scene.add(videoMaterial.mesh);
+        videoMaterial.dragHandlerFn = () => {
+            const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
+            LineBuilder.reorderLines(videoMaterial.dragHandler.line, spriteEdges);
 
-        const dragHandler: IDragHandler = DragHandler.create(videoMaterial.positions);
+            const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler.edges);
+            VideoSceneHelper.changeUv(uv, target.mesh);
+        };
 
-        new DragControls(dragHandler.sprites, camera, renderer.domElement)
-            .addEventListener("drag", () => {
-                this.loadPositions(dragHandler, scene, targetId);
-            });
-
-        dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
-        scene.add(dragHandler.line);
+        return videoMaterial;
     }
 
-
-
-    private loadPositions(dragHandler: IDragHandler, scene: any, targetId: string) {
+    private loadPositions(dragHandler: IDragHandler, video: Mesh) {
         const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(dragHandler.sprites);
         LineBuilder.reorderLines(dragHandler.line, spriteEdges);
 
-        const uve: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, dragHandler.edges);
-        VideoSceneHelper.changeUv(uve, scene, targetId);
+        const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, dragHandler.edges);
+        VideoSceneHelper.changeUv(uv, video);
     }
+
 
 }

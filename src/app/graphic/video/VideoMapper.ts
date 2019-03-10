@@ -1,8 +1,6 @@
-import {Mesh, PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
-
-import DragControls from "three-dragcontrols";
+import {Scene, Sprite} from "three";
 import {Config} from "../../../config";
-import {DragHandler, IDragHandler} from "../../dragger/DragHandler";
+import {DragHandler} from "../../dragger/DragHandler";
 import {LineBuilder} from "../../material/LineBuilder";
 import {SpriteBuilder} from "../../material/SpriteBuilder";
 import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";
@@ -12,9 +10,8 @@ import {Mapper} from "../../math/Mapper";
 
 export class VideoMapper {
 
-    public static create(id: string, source: string, startPoint: IDimension): IVideoMaterial {
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(id, source, startPoint);
-        videoMaterial.dragHandler = DragHandler.create(videoMaterial.positions);
+    public static create(source: string, startPoint: IDimension): IVideoMaterial {
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(source, startPoint);
         videoMaterial.dragHandlerFn = () => {
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
 
@@ -27,7 +24,7 @@ export class VideoMapper {
         return videoMaterial;
     }
 
-    public static addToScene(video: IVideoMaterial, scene: Scene): Scene{
+    public static addToScene(video: IVideoMaterial, scene: Scene): Scene {
         scene.add(video.mesh);
         scene.add(video.dragHandler.line);
         video.dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));

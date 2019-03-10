@@ -8,20 +8,24 @@ import {VideoMapper} from "./video/VideoMapper";
 
 class Graphic {
     public static init() {
-        const id = uuid();
+
 
         const scene: Scene = new Scene();
         const camera: PerspectiveCamera = this.loadCamera(scene);
         const renderer: WebGLRenderer = this.loadRenderer();
 
-        const videoMapper: IVideoMaterial = VideoMapper.create(id, "", {x: 0, y: 0, z: 0});
+        const videoMapper: IVideoMaterial = VideoMapper.create("", {x: 0, y: 0, z: 0});
         VideoMapper.addToScene(videoMapper, scene);
 
         new DragControls(videoMapper.dragHandler.sprites, camera, renderer.domElement)
             .addEventListener("drag", videoMapper.dragHandlerFn);
 
-        const id2 = uuid();
-        const video2 = new VideoCutter(id2, id, "", scene, {x: 3, y: 0, z: 0}, renderer, camera);
+        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, "",  {x: 3, y: 0, z: 0});
+
+        VideoMapper.addToScene(videoCutter, scene);
+
+        new DragControls(videoCutter.dragHandler.sprites, camera, renderer.domElement)
+            .addEventListener("drag", videoCutter.dragHandlerFn);
 
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
