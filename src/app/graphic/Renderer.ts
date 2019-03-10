@@ -1,9 +1,10 @@
 import {PerspectiveCamera, Scene, WebGLRenderer,} from "three";
+import DragControls from "three-dragcontrols";
 
 import {v4 as uuid} from "uuid";
+import {IVideoMaterial} from "../material/VideoMaterialBuilder";
 import {VideoCutter} from "./video/VideoCutter";
 import {VideoMapper} from "./video/VideoMapper";
-import {VideoMaterialBuilder} from "../material/VideoMaterialBuilder";
 
 class Graphic {
     public static init() {
@@ -13,12 +14,16 @@ class Graphic {
         const camera: PerspectiveCamera = this.loadCamera(scene);
         const renderer: WebGLRenderer = this.loadRenderer();
 
-        const video1: VideoMaterialBuilder = new VideoMapper(id, "", scene, {x: 0, y: 0, z: 0}, renderer, camera);
+        const videoMapper: IVideoMaterial = VideoMapper.create(id, "", {x: 0, y: 0, z: 0});
+        VideoMapper.addToScene(videoMapper, scene);
+
+        new DragControls(videoMapper.dragHandler.sprites, camera, renderer.domElement)
+            .addEventListener("drag", videoMapper.dragHandlerFn);
 
         const id2 = uuid();
-        const video2: VideoMaterialBuilder = new VideoCutter(id2, id, "", scene, {x: 3, y: 0, z: 0}, renderer, camera);
+        const video2 = new VideoCutter(id2, id, "", scene, {x: 3, y: 0, z: 0}, renderer, camera);
 
-        // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
+        // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
 
         this.rendermagic(renderer, camera, scene);

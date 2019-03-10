@@ -2,6 +2,7 @@ import {Config} from "../../config";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 import {Mapper} from "../math/Mapper";
+import {Mesh} from "three";
 
 /**
  * filters scene elements and changes properties
@@ -53,12 +54,9 @@ export class VideoSceneHelper {
             }));
     }
 
-    public static changeVertices(vertices: IDimension[], scene, id: string) {
-        this.filterVideoScene(scene, id)
-            .map((elmt => {
-                elmt.geometry.attributes.position.needsUpdate = true;
-                elmt.geometry.attributes.position.array = DimensionTransformer.toFloatArray(vertices);
-                return elmt;
-            }));
+    public static changeVertices(vertices: IDimension[], video: any) {
+        video.geometry.attributes.position.needsUpdate = true;
+        video.geometry.attributes.position.array = DimensionTransformer.toFloatArray(vertices);
+        return video;
     }
 }

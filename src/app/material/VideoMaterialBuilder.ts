@@ -4,10 +4,11 @@ import {
     ClampToEdgeWrapping,
     LinearFilter,
     Mesh,
-    MeshBasicMaterial,
+    MeshBasicMaterial, Scene,
     VideoTexture,
 } from "three";
 import {Config} from "../../config";
+import {DragHandler, IDragHandler} from "../dragger/DragHandler";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Indices} from "../math/Indices";
 import {Mapper} from "../math/Mapper";
@@ -17,6 +18,8 @@ export interface IVideoMaterial {
     id: string;
     mesh: Mesh;
     positions: IDimension[];
+    dragHandler?: IDragHandler;
+    dragHandlerFn?: () => void;
 }
 
 export class VideoMaterialBuilder {
@@ -49,16 +52,7 @@ export class VideoMaterialBuilder {
             mesh: videoMesh,
             positions,
         };
-        // this.events(scene);
     }
 
-    /*    private events(scene: any): void {
-            EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
-                VideoSceneHelper.changeWireframe(e.detail.value, scene, this._id);
-            });
 
-            EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-                this._draghanlder.visible(e.detail.value);
-            });
-        }*/
 }

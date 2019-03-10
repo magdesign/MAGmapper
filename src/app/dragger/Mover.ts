@@ -9,7 +9,7 @@ import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 import {DragHandler} from "./DragHandler";
 
-export class VideoMover {
+export class Mover {
     private startPoint: IDimension;
     private sprite: Sprite;
 
@@ -54,7 +54,7 @@ export class VideoMover {
 
         VideoSceneHelper.changeVerticesWithFloatArray(newVertices, scene, id);
 
-        dragHandles.map((dragHandle) => dragHandle.updateByVecotor(delta));
+        // dragHandles.map((dragHandle) => DragHandler.updateByVecotor(delta));
 
         // sets new position for proper delta (i know it is not a proper solution -.-)
         this.startPoint = {...position};

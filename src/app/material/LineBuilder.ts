@@ -4,16 +4,15 @@ import {IDimension} from "../math/DimensionTransformer";
 
 export class LineBuilder {
 
-    public static addLines(scene: Scene, id: string, edges: IDimension[]): Line {
+    public static addLines(edges: IDimension[]): Line {
 
         const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line});
-        let geometry: Geometry = new Geometry();
+        const geometry: Geometry = new Geometry();
 
         geometry.vertices = this.prepareEdges(edges);
 
-        let line = new Line(geometry, material);
-        line.name = id;
-        line.visible = false;
+        const line = new Line(geometry, material);
+        //line.visible = false;
 
         return line;
     }
@@ -23,13 +22,10 @@ export class LineBuilder {
             .filter((child: any) => child.name === id && child.type === "Line");
     }
 
-    public static reorderLines(scene, id: string, edges: IDimension[]) {
-        this.filterLines(scene, id)
-            .map((child: any) => {
-                child.geometry.vertices = this.prepareEdges(edges);
-                child.geometry.verticesNeedUpdate = true;
-                return child;
-            });
+    public static reorderLines(line: any, edges: IDimension[]): Line {
+        line.geometry.vertices = this.prepareEdges(edges);
+        line.geometry.verticesNeedUpdate = true;
+        return line;
     }
 
     public static disable(line: Line, enable: boolean) {

@@ -6,51 +6,33 @@ import {SpriteBuilder} from "../material/SpriteBuilder";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 
-
-
-
-
+export interface IDragHandler {
+    edges: IDimension[];
+    line?: Line;
+    sprites: Sprite[];
+}
 
 export class DragHandler {
 
-    private _id: string;
+    public static create( positions: IDimension[]): IDragHandler {
+        const edges = Edges.getEdges(positions);
+        const sprites = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale)
 
-    private _sprites: Sprite[];
-    private _line: Line;
-
-    private _edges: IDimension[];
-
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[]) {
-        this._id = id;
-        this._edges = Edges.getEdges(positions);
-        this._sprites = SpriteBuilder
-            .generateDragHanldes(this._edges, Config.DragHandler.source, Config.DragHandler.scale)
-            .map((sprite: Sprite) => {
-                scene.add(sprite);
-                sprite.name = id;
-                return sprite;
-            });
-
-        this._line = LineBuilder.addLines(scene, id, this._edges);
-        scene.add(this._line);
+        return {
+            edges,
+            line: LineBuilder.addLines(edges),
+            sprites,
+        };
     }
 
-    public get sprites() {
-        return this._sprites;
-    }
-
-    public get edges() {
-        return this._edges;
-    }
-
-    public updateByVecotor(vector: IDimension): void {
-        this._sprites.map((sprite: Sprite) => {
+    public static updateByVecotor(dragHandle: IDragHandler, vector: IDimension): void {
+        dragHandle.sprites.map((sprite: Sprite): Sprite => {
             sprite.position.setX(sprite.position.x + vector.x);
             sprite.position.setY(sprite.position.y + vector.y);
             return sprite;
         });
 
-        const lineGeometry: any = this._line.geometry;
+        const lineGeometry: any = dragHandle.line.geometry;
         lineGeometry.vertices.map((vert: IDimension): IDimension => {
             vert.x = vert.x + vector.x;
             vert.y = vert.y + vector.y;
@@ -59,8 +41,8 @@ export class DragHandler {
         lineGeometry.verticesNeedUpdate = true;
     }
 
-    public visible(toggle: boolean): void {
-        SpriteBuilder.disable(this.sprites, toggle);
-        LineBuilder.disable(this._line, toggle);
+    public static visible(dragHandle: IDragHandler, toggle: boolean): void {
+        SpriteBuilder.disable(dragHandle.sprites, toggle);
+        LineBuilder.disable(dragHandle.line, toggle);
     }
 }

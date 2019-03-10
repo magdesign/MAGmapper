@@ -1,32 +1,36 @@
-import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
-import {PositionDragHandler} from "../../dragger/PositionDragHandler";
-import {VideoMover} from "../../dragger/VideoMover";
-import {EventHandler, EventTypes} from "../../event/EventHandler";
+import {Mesh, PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
+
+import DragControls from "three-dragcontrols";
+import {Config} from "../../../config";
+import {DragHandler, IDragHandler} from "../../dragger/DragHandler";
+import {LineBuilder} from "../../material/LineBuilder";
+import {SpriteBuilder} from "../../material/SpriteBuilder";
 import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
+import {Mapper} from "../../math/Mapper";
 
 export class VideoMapper {
-    constructor(id: string, source: string, scene: Scene, startPoint: IDimension, renderer: WebGLRenderer, camera: PerspectiveCamera) {
 
+    public static create(id: string, source: string, startPoint: IDimension): IVideoMaterial {
         const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(id, source, startPoint);
-        scene.add(videoMaterial.mesh);
+        videoMaterial.dragHandler = DragHandler.create(videoMaterial.positions);
+        videoMaterial.dragHandlerFn = () => {
+            const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
 
+            LineBuilder.reorderLines(videoMaterial.dragHandler.line, spriteEdges);
 
-        const draghanlder = new PositionDragHandler(scene, renderer, camera, videoMaterial.id, videoMaterial.positions);
-        const mover: VideoMover = new VideoMover(scene, renderer, camera, videoMaterial.id, [draghanlder]);
+            const vertices = Mapper.map(Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
+            VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
+        };
 
-        EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-            mover.visible(e.detail.value);
-        });
+        return videoMaterial;
+    }
 
-
-        EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
-            VideoSceneHelper.changeWireframe(e.detail.value, scene, id);
-        });
-
-        EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-            draghanlder.visible(e.detail.value);
-        });
+    public static addToScene(video: IVideoMaterial, scene: Scene): Scene{
+        scene.add(video.mesh);
+        scene.add(video.dragHandler.line);
+        video.dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
+        return scene;
     }
 }

@@ -10,7 +10,6 @@ export class EventHandler {
     public static addEventListener(type: EventTypes, fn: (val: any) => void): void {
         this.getEventHandler()
             .addEventListener(type, fn, false);
-        ;
     }
 
     public static throwEvent(type: EventTypes, value: any): void {
