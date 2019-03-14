@@ -30,12 +30,12 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 ### Basics
 - [x] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
-- [ ] Play / Pause
+- [ ] Play / Pause (15.3.2019)
 - [x] Enable/Disable Wireframe mode
 - [x] Center Point to move entire surface
 - [ ] Handle to scale entire surface
 - [x] Show mode: to hide handles
-- [ ] Controller to increase/decrease resolution
+- [ ] Controller to increase/decrease resolution (15.3.2019)
 - [ ] Add more quads, delete selected quad
 - [x] Define uvw read input for texture coverage
 - [x] Define UI/UX, when calling it must be an overlay
