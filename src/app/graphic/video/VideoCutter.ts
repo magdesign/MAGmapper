@@ -5,13 +5,12 @@ import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterial
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
-import {DragHandlerTypes} from "../../dragger/DragHandler";
 
 export class VideoCutter {
 
     public static create(target: IVideoMaterial, video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint, DragHandlerTypes.Cutter, () => {
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint, () => {
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
             LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
 

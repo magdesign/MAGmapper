@@ -8,15 +8,8 @@ import {VideoSceneHelper} from "../material/VideoSceneHelper";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 
-export enum DragHandlerTypes {
-    Mover = "move",
-    Mapper = "drag",
-    Cutter = "cut",
-}
-
 export interface IDragHandler {
     id?: string;
-    type?: DragHandlerTypes;
     edges: IDimension[];
     line?: Line;
     sprites: Sprite[];
@@ -25,7 +18,7 @@ export interface IDragHandler {
 
 export class DragHandler {
 
-    public static create(type: DragHandlerTypes, positions: IDimension[], fn: () => void): IDragHandler {
+    public static create(positions: IDimension[], fn: () => void): IDragHandler {
         const edges = Edges.getEdges(positions);
         const sprites = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale);
 
@@ -34,7 +27,6 @@ export class DragHandler {
             fn,
             line: LineBuilder.addLines(edges),
             sprites,
-            type,
         };
     }
 
@@ -56,7 +48,6 @@ export class DragHandler {
             edges,
             fn,
             sprites: [SpriteBuilder.makeSprite(startPoint, Config.MoveHandler.source, Config.MoveHandler.scale)],
-            type: DragHandlerTypes.Mover,
         };
     }
 

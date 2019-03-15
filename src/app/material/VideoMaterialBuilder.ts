@@ -4,15 +4,14 @@ import {
     ClampToEdgeWrapping,
     LinearFilter,
     Mesh,
-    MeshBasicMaterial, Scene,
+    MeshBasicMaterial,
     VideoTexture,
 } from "three";
 import {Config} from "../../config";
-import {DragHandler, DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
+import {DragHandler,  IDragHandler} from "../dragger/DragHandler";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Indices} from "../math/Indices";
 import {Mapper} from "../math/Mapper";
-import {HtmlVideoMaterial} from "./HtmlVideoMaterial";
 
 export interface IVideoMaterial {
     mesh: Mesh;
@@ -22,7 +21,7 @@ export interface IVideoMaterial {
 
 export class VideoMaterialBuilder {
 
-    public static create(video: HTMLVideoElement, startPoint: IDimension, type: DragHandlerTypes, fn: () => void): IVideoMaterial {
+    public static create(video: HTMLVideoElement, startPoint: IDimension, fn: () => void): IVideoMaterial {
 
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
 
@@ -37,7 +36,7 @@ export class VideoMaterialBuilder {
 
         return {
             dragHandler: [
-                DragHandler.create(type, positions, fn),
+                DragHandler.create(positions, fn),
             ],
             mesh: videoMesh,
             positions,
