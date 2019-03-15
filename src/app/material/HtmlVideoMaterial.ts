@@ -15,8 +15,8 @@ export class HtmlVideoMaterial {
         {qualifiedName: "style", value: "display:none"},
     ];
 
-    public static loadVideo(id: string, src: string): HTMLVideoElement {
-        const video = this.init(id, src);
+    public static loadVideo(src: string): HTMLVideoElement {
+        const video = this.init(src);
 
         document
             .getElementsByTagName("body")[0]
@@ -32,14 +32,13 @@ export class HtmlVideoMaterial {
         return video;
     }
 
-    private static init(id: string, src: string): HTMLVideoElement {
+    private static init(src: string): HTMLVideoElement {
         const video: HTMLVideoElement = document.createElement("video");
 
         this.attributes.map((attr: IAttribute) => {
             video.setAttribute(attr.qualifiedName, attr.value);
         });
 
-        video.setAttribute("id", id);
         video.setAttribute("src", src);
 
         return video;
