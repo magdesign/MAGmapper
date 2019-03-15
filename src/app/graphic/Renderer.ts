@@ -1,10 +1,11 @@
-import {PerspectiveCamera, Scene, WebGLRenderer,} from "three";
+import {ColorKeywords, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import DragControls from "three-dragcontrols";
 import {IDragHandler} from "../dragger/DragHandler";
 import {EventManager} from "../event/EventManager";
 import {IVideoMaterial} from "../material/VideoMaterialBuilder";
 import {VideoCutter} from "./video/VideoCutter";
 import {VideoMapper} from "./video/VideoMapper";
+import {HtmlVideoMaterial} from "../material/HtmlVideoMaterial";
 
 class Renderer {
 
@@ -12,19 +13,16 @@ class Renderer {
         const scene: Scene = new Scene();
         const renderer: WebGLRenderer = this.loadRenderer();
         const camera: PerspectiveCamera = this.loadCamera(scene, renderer);
+        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo("assets/testvideo.mp4");
 
-        const videoMapper: IVideoMaterial = VideoMapper.create("assets/testvideo.mp4", {x: 0, y: 0, z: 0});
+        const videoMapper: IVideoMaterial = VideoMapper.create(video, {x: 0, y: 0, z: 0});
 
-        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, "assets/testvideo.mp4", {x: 3, y: 0, z: 0});
+        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, video, {x: 3, y: 0, z: 0});
 
         VideoMapper.addToScene(videoMapper, scene);
         VideoCutter.addToScene(videoCutter, scene);
 
-        this.createDragHandler([
-            videoCutter.dragHandler,
-            videoMapper.dragHandler,
-            videoMapper.mover,
-        ], camera, renderer);
+        this.createDragHandler([videoMapper, videoCutter], camera, renderer);
 
         EventManager.init(videoCutter, videoMapper);
 
@@ -57,7 +55,7 @@ class Renderer {
         return camera;
     }
 
-    private static rendermagic(renderer: WebGLRenderer, camera: PerspectiveCamera, scene: any) {
+    private static rendermagic(renderer: WebGLRenderer, camera: PerspectiveCamera, scene: any): void {
         function animate(): void {
             requestAnimationFrame(animate);
             render();
@@ -70,10 +68,24 @@ class Renderer {
         animate();
     }
 
-    private static createDragHandler(dragger: IDragHandler[], camera, renderer) {
-        dragger
-            .forEach((dragHandler) => new DragControls(dragHandler.sprites, camera, renderer.domElement)
-                .addEventListener("drag", dragHandler.fn));
+    private static createDragHandler(materials: IVideoMaterial[], camera, renderer) {
+        const dragHandler: IDragHandler[] = materials.map((material: IVideoMaterial) =>
+            material.dragHandler.map((dh: IDragHandler) => dh))
+            .reduce((a, b) => a.concat(b));
+
+        const sprites = dragHandler.map(dh => dh.sprites)
+            .reduce((a, b) => a.concat(b));
+
+
+        new DragControls(sprites, camera, renderer.domElement)
+            .addEventListener("drag", (value) => {
+                dragHandler
+                    .filter((dh) =>
+                        dh.sprites.filter((sprite) =>
+                            sprite.uuid === value.object.uuid).length > 0)
+                    .map((dh) =>
+                        dh.fn(value));
+            });
     }
 }
 

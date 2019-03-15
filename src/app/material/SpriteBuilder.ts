@@ -14,7 +14,10 @@ export class SpriteBuilder {
         const sprite: Sprite = new Sprite(material);
 
         sprite.position.set(point.x, point.y, point.z);
-        sprite.scale.set(scale, scale, 1);
+
+        const randomZ = Math.random() * 10;
+        sprite.scale.set(scale, scale, randomZ);
+
         return sprite;
     }
 

@@ -5,16 +5,17 @@ import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterial
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
+import {DragHandlerTypes} from "../../dragger/DragHandler";
 
 export class VideoCutter {
 
-    public static create(target: IVideoMaterial, source: string, startPoint: IDimension): IVideoMaterial {
+    public static create(target: IVideoMaterial, video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(source, startPoint, () => {
-            const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
-            LineBuilder.reorderLines(videoMaterial.dragHandler.line, spriteEdges);
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint, DragHandlerTypes.Cutter, () => {
+            const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
+            LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
 
-            const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler.edges);
+            const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler[0].edges);
             VideoSceneHelper.changeUv(uv, target.mesh);
         });
         return videoMaterial;
@@ -22,9 +23,9 @@ export class VideoCutter {
 
     public static addToScene(video: IVideoMaterial, scene: Scene): Scene {
         scene.add(video.mesh);
-        scene.add(video.dragHandler.line);
+        scene.add(video.dragHandler[0].line);
 
-        video.dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
+        video.dragHandler[0].sprites.forEach((sprite: Sprite) => scene.add(sprite));
 
         return scene;
     }

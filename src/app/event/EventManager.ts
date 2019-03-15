@@ -10,7 +10,7 @@ export class EventManager {
 
         EventHandler.addEventListener(EventTypes.Cutter, (value) => {
             VideoSceneHelper.changeVisibility(videoCutter.mesh, value.detail.value);
-            DragHandler.visible(videoCutter.dragHandler, value.detail.value);
+            DragHandler.visible(videoCutter.dragHandler[0], value.detail.value);
         });
 
         EventHandler.addEventListener(EventTypes.Wireframe, (value) => {
@@ -19,8 +19,8 @@ export class EventManager {
         });
 
         EventHandler.addEventListener(EventTypes.Outlines, (value) => {
-            DragHandler.visible(videoMapper.dragHandler, value.detail.value);
-            SpriteBuilder.disable(videoMapper.mover.sprites, value.detail.value);
+            DragHandler.visible(videoMapper.dragHandler[0], value.detail.value);
+            SpriteBuilder.disable(videoMapper.dragHandler[1].sprites, value.detail.value);
         });
 
     }

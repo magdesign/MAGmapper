@@ -8,7 +8,7 @@ import {
     VideoTexture,
 } from "three";
 import {Config} from "../../config";
-import {DragHandler, IDragHandler} from "../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Indices} from "../math/Indices";
 import {Mapper} from "../math/Mapper";
@@ -17,15 +17,13 @@ import {HtmlVideoMaterial} from "./HtmlVideoMaterial";
 export interface IVideoMaterial {
     mesh: Mesh;
     positions: IDimension[];
-    mover?: IDragHandler;
-    dragHandler?: IDragHandler;
+    dragHandler?: IDragHandler[];
 }
 
 export class VideoMaterialBuilder {
 
-    public static create(source: string, startPoint: IDimension, fn: () => void): IVideoMaterial {
+    public static create(video: HTMLVideoElement, startPoint: IDimension, type: DragHandlerTypes, fn: () => void): IVideoMaterial {
 
-        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo(source);
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
 
         const positions = Mapper.verticesWithStartPoint(Config.Vertices.size, 2, startPoint);
@@ -38,7 +36,9 @@ export class VideoMaterialBuilder {
         const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
 
         return {
-            dragHandler: DragHandler.create(positions, fn),
+            dragHandler: [
+                DragHandler.create(type, positions, fn),
+            ],
             mesh: videoMesh,
             positions,
         };
