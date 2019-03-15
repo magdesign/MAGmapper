@@ -69,8 +69,8 @@ class Renderer {
     }
 
     private static createDragHandler(materials: IVideoMaterial[], camera, renderer) {
-        const dragHandler: IDragHandler[] = materials.map((material: IVideoMaterial) =>
-            material.dragHandler.map((dh: IDragHandler) => dh))
+        const dragHandler: IDragHandler[] = materials
+            .map((material: IVideoMaterial) => material.dragHandler)
             .reduce((a, b) => a.concat(b));
 
         const sprites = dragHandler.map(dh => dh.sprites)
@@ -83,8 +83,7 @@ class Renderer {
                     .filter((dh) =>
                         dh.sprites.filter((sprite) =>
                             sprite.uuid === value.object.uuid).length > 0)
-                    .map((dh) =>
-                        dh.fn(value));
+                    .map((dh) => dh.fn(value));
             });
     }
 }
