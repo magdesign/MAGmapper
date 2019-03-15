@@ -1,3 +1,5 @@
+import {Sprite} from "three";
+
 interface IAttribute {
     qualifiedName: string;
     value: string;

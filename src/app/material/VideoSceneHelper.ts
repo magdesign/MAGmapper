@@ -14,25 +14,26 @@ export class VideoSceneHelper {
 
     }
 
-    public static changeWireframe(wireframe: boolean, video: any) {
+    public static changeWireframe(video: any, wireframe: boolean) {
         video.material.wireframe = wireframe;
         return video;
     }
 
-    public static changeVisibility(wireframe: boolean, video: any) {
-        video.visible = wireframe;
+    public static changeVisibility(video: any, visible: boolean) {
+        video.visible = visible;
         return video;
     }
 
     public static changeUv(uv: IDimension[], video: any): any {
-        video.geometry.attributes.uv.needsUpdate = true;
         video.geometry.attributes.uv.array = DimensionTransformer.toFloatArray(Mapper.map(Config.Vertices.size, uv[0], uv[1], uv[2], uv[3]));
+        video.geometry.attributes.uv.needsUpdate = true;
         return video;
     }
 
     public static changeVerticesWithFloatArray(vertices: Float32Array, video: any) {
-        video.geometry.attributes.position.needsUpdate = true;
         video.geometry.attributes.position.array = vertices;
+        video.geometry.attributes.position.needsUpdate = true;
+
         return video;
     }
 

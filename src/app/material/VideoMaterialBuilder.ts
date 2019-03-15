@@ -32,17 +32,8 @@ export class VideoMaterialBuilder {
 
         const uvs = Mapper.uv(Config.Vertices.size);
 
-        const geometry = new BufferGeometry();
-
-        geometry.setIndex(indices);
-        geometry.addAttribute("position", new BufferAttribute(DimensionTransformer.toFloatArray(positions), 3));
-        geometry.addAttribute("uv", new BufferAttribute(DimensionTransformer.toFloatArray(uvs), 3));
-
-        const texture = new VideoTexture(video);
-
-        texture.generateMipmaps = false;
-        texture.wrapS = texture.wrapT = ClampToEdgeWrapping;
-        texture.minFilter = LinearFilter;
+        const texture = this.loadTexture(video);
+        const geometry = this.loadGeometry(indices, uvs, positions);
 
         const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
 
@@ -53,4 +44,19 @@ export class VideoMaterialBuilder {
         };
     }
 
+    private static loadGeometry(indices, uvs, positions): BufferGeometry {
+        const geometry = new BufferGeometry();
+        geometry.setIndex(indices);
+        geometry.addAttribute("position", new BufferAttribute(DimensionTransformer.toFloatArray(positions), 3));
+        geometry.addAttribute("uv", new BufferAttribute(DimensionTransformer.toFloatArray(uvs), 3));
+        return geometry;
+    }
+
+    private static loadTexture(video: HTMLVideoElement): VideoTexture {
+        const texture = new VideoTexture(video);
+        texture.generateMipmaps = false;
+        texture.wrapS = texture.wrapT = ClampToEdgeWrapping;
+        texture.minFilter = LinearFilter;
+        return texture;
+    }
 }

@@ -11,10 +11,7 @@ export class LineBuilder {
 
         geometry.vertices = this.prepareEdges(edges);
 
-        const line = new Line(geometry, material);
-        //line.visible = false;
-
-        return line;
+        return  new Line(geometry, material);
     }
 
     public static filterLines(scene, id: string): any[] {
@@ -28,7 +25,7 @@ export class LineBuilder {
         return line;
     }
 
-    public static disable(line: Line, enable: boolean) {
+    public static disable(line: Line, enable: boolean): Line {
         line.visible = enable;
         return line;
     }
@@ -40,7 +37,7 @@ export class LineBuilder {
             edges[3],
             edges[2],
             edges[0],
-        ].map(edge => new Vector3(edge.x, edge.y, edge.z));
+        ].map((edge: IDimension) => new Vector3(edge.x, edge.y, edge.z));
     }
 
 }

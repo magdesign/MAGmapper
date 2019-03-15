@@ -18,6 +18,7 @@ export class VideoCutter {
             VideoSceneHelper.changeUv(uv, target.mesh);
         });
 
+
         return videoMaterial;
     }
 
@@ -29,4 +30,10 @@ export class VideoCutter {
 
         return scene;
     }
+
+    public static view(video: any, value: boolean) {
+        video.visible = value;
+        video.visible = value;
+    }
+
 }

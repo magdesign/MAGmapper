@@ -20,8 +20,6 @@ export class VideoMapper {
             VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
         });
 
-
-
         let refPoint = {
             x: 1,
             y: 1,
