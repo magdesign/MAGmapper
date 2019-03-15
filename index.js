@@ -52138,7 +52138,8 @@ class Renderer {
         animate();
     }
     static createDragHandler(materials, camera, renderer) {
-        const dragHandler = materials.map((material) => material.dragHandler.map((dh) => dh))
+        const dragHandler = materials
+            .map((material) => material.dragHandler)
             .reduce((a, b) => a.concat(b));
         const sprites = dragHandler.map(dh => dh.sprites)
             .reduce((a, b) => a.concat(b));
