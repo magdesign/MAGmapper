@@ -44,7 +44,6 @@ const config: IConfig[] = [
                 keycode: "32",
                 default: true,
                 fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
-
             }
         ],
     },
@@ -64,15 +63,19 @@ const controller = config
 
 // todo: MAG should hide frame
 const initConfig: Dat.GUIParams = {
-    closed: true,
-    closeOnTop: false,
-    hideable: false,
-    preset: "autoPlace",
+    //closed: true,
+    //closeOnTop: false,
+    //hideable: false,
+    //preset: "autoPlace",
+    //dat.GUI.toggleHide() //this shoud do the trick
+    
 };
 
 // create a gui element
-const gui = new Dat.GUI(initConfig);
 
+
+
+const gui = new Dat.GUI(initConfig);
 config.map((value: IConfig) => {
     const subfolder = gui.addFolder(value.title);
     if (value.open) {

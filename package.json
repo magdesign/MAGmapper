@@ -29,7 +29,6 @@
     "webpack-dev-server": "^3.2.1"
   },
   "dependencies": {
-    "@types/dat.gui": "^0.7.2",
     "@types/three": "^0.93.26",
     "@types/uuid": "^3.4.4",
     "dat.gui": "^0.7.5",
