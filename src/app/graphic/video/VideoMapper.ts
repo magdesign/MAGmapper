@@ -15,7 +15,6 @@ export class VideoMapper {
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
 
             LineBuilder.reorderLines(videoMaterial.dragHandler.line, spriteEdges);
-
             const vertices = Mapper.map(Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
             VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
         });
