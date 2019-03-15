@@ -3,6 +3,7 @@ export enum EventTypes {
     Cutter = "cutter",
     Outlines = "outlines",
     Screen = "screen",
+    PlayVideo = "PlayVideo", 
 }
 
 export class EventHandler {
@@ -20,4 +21,6 @@ export class EventHandler {
     private static getEventHandler(): any {
         return document.getElementsByTagName("body")[0];
     }
+
+ 
 }

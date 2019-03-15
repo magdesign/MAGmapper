@@ -38,6 +38,14 @@ const config: IConfig[] = [
                 keycode: "KeyC",
                 fn: (value: any) => EventHandler.throwEvent(EventTypes.Cutter, value),
             },
+            {
+                key: "Play/Pause",
+                value: true,
+                keycode: "32",
+                default: true,
+                fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
+
+            }
         ],
     },
 ];
