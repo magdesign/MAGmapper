@@ -1,31 +1,31 @@
-import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
-import {UvDragHandler} from "../../dragger/UvDragHandler";
-import {EventHandler, EventTypes} from "../../event/EventHandler";
+import {Scene, Sprite} from "three";
+import {LineBuilder} from "../../material/LineBuilder";
+import {SpriteBuilder} from "../../material/SpriteBuilder";
 import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
+import {UvMapper} from "../../math/UvMapper";
 
 export class VideoCutter {
 
-    constructor(id: string, targetId: string, source: string, scene: Scene, startPoint: IDimension, renderer: WebGLRenderer, camera: PerspectiveCamera) {
+    public static create(target: IVideoMaterial, source: string, startPoint: IDimension): IVideoMaterial {
 
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(id, source, startPoint);
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(source, startPoint, () => {
+            const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler.sprites);
+            LineBuilder.reorderLines(videoMaterial.dragHandler.line, spriteEdges);
 
-        scene.add(videoMaterial.mesh);
-
-        const draghanlder = new UvDragHandler(scene, renderer, camera, videoMaterial.id, videoMaterial.positions, targetId);
-
-        EventHandler.addEventListener(EventTypes.Cutter, (e) => {
-            VideoSceneHelper.changeVisibility(e.detail.value, scene, videoMaterial.id);
-            draghanlder.visible(e.detail.value);
+            const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler.edges);
+            VideoSceneHelper.changeUv(uv, target.mesh);
         });
+        return videoMaterial;
+    }
 
-        EventHandler.addEventListener(EventTypes.Wireframe, (e) => {
-            VideoSceneHelper.changeWireframe(e.detail.value, scene, id);
-        });
+    public static addToScene(video: IVideoMaterial, scene: Scene): Scene {
+        scene.add(video.mesh);
+        scene.add(video.dragHandler.line);
 
-        EventHandler.addEventListener(EventTypes.Outlines, (e) => {
-            draghanlder.visible(e.detail.value);
-        });
+        video.dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
+
+        return scene;
     }
 }

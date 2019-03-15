@@ -3,64 +3,72 @@ import {Line, PerspectiveCamera, Scene, Sprite, WebGLRenderer,} from "three";
 import {Config} from "../../config";
 import {LineBuilder} from "../material/LineBuilder";
 import {SpriteBuilder} from "../material/SpriteBuilder";
+import {IVideoMaterial} from "../material/VideoMaterialBuilder";
+import {VideoSceneHelper} from "../material/VideoSceneHelper";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 
-
-
-
-
+export interface IDragHandler {
+    edges: IDimension[];
+    line?: Line;
+    sprites: Sprite[];
+    fn: (event?: any) => void;
+}
 
 export class DragHandler {
 
-    private _id: string;
+    public static create(positions: IDimension[], fn: () => void): IDragHandler {
+        const edges = Edges.getEdges(positions);
+        const sprites = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale);
 
-    private _sprites: Sprite[];
-    private _line: Line;
-
-    private _edges: IDimension[];
-
-    constructor(scene: Scene, renderer: WebGLRenderer, camera: PerspectiveCamera, id: string, positions: IDimension[]) {
-        this._id = id;
-        this._edges = Edges.getEdges(positions);
-        this._sprites = SpriteBuilder
-            .generateDragHanldes(this._edges, Config.DragHandler.source, Config.DragHandler.scale)
-            .map((sprite: Sprite) => {
-                scene.add(sprite);
-                sprite.name = id;
-                return sprite;
-            });
-
-        this._line = LineBuilder.addLines(scene, id, this._edges);
-        scene.add(this._line);
+        return {
+            edges,
+            fn,
+            line: LineBuilder.addLines(edges),
+            sprites,
+        };
     }
 
-    public get sprites() {
-        return this._sprites;
+    public static createMover(video: IVideoMaterial, fn: (event) => void): IDragHandler {
+        const positions = VideoSceneHelper.getEdgesFromScene(video.mesh);
+        const edges = Edges.getEdges(positions);
+
+        const calcDelta =
+            (x1: number, x2: number): number =>
+                (x2 - x1) / 2 + x1;
+
+        const startPoint = {
+            x: calcDelta(edges[0].x, edges[3].x),
+            y: calcDelta(edges[0].y, edges[3].y),
+            z: 0,
+        };
+
+        return {
+            edges,
+            fn,
+            sprites: [SpriteBuilder.makeSprite(startPoint, Config.MoveHandler.source, Config.MoveHandler.scale)],
+        };
     }
 
-    public get edges() {
-        return this._edges;
-    }
-
-    public updateByVecotor(vector: IDimension): void {
-        this._sprites.map((sprite: Sprite) => {
+    public static updateByVecotor(dragHandle: IDragHandler, vector: IDimension): IDragHandler {
+        dragHandle.sprites.map((sprite: Sprite): Sprite => {
             sprite.position.setX(sprite.position.x + vector.x);
             sprite.position.setY(sprite.position.y + vector.y);
             return sprite;
         });
 
-        const lineGeometry: any = this._line.geometry;
+        const lineGeometry: any = dragHandle.line.geometry;
         lineGeometry.vertices.map((vert: IDimension): IDimension => {
             vert.x = vert.x + vector.x;
             vert.y = vert.y + vector.y;
             return vert;
         });
         lineGeometry.verticesNeedUpdate = true;
+        return dragHandle;
     }
 
-    public visible(toggle: boolean): void {
-        SpriteBuilder.disable(this.sprites, toggle);
-        LineBuilder.disable(this._line, toggle);
+    public static visible(dragHandle: IDragHandler, toggle: boolean): void {
+        SpriteBuilder.disable(dragHandle.sprites, toggle);
+        LineBuilder.disable(dragHandle.line, toggle);
     }
 }

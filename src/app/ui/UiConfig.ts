@@ -92,10 +92,10 @@ config.map((value: IConfig) => {
     });
 });
 
-function getKeyCodes(config: IConfig[]): IGuiItem[] {
-    return config
-        .map((conf: IConfig): IGuiItem[] =>
-            conf.subitems.filter((guiItem: IGuiItem): boolean => "keycode" in guiItem))
+function getKeyCodes(conf: IConfig[]): IGuiItem[] {
+    return conf
+        .map((subconf: IConfig): IGuiItem[] =>
+            subconf.subitems.filter((guiItem: IGuiItem): boolean => "keycode" in guiItem))
         .reduce((a, b) => a.concat(b));
 }
 

@@ -11,17 +11,15 @@ export class SpriteBuilder {
         const texture = new TextureLoader().load(source);
 
         const material: SpriteMaterial = new SpriteMaterial({map: texture});
-        let sprite: Sprite = new Sprite(material);
+        const sprite: Sprite = new Sprite(material);
 
         sprite.position.set(point.x, point.y, point.z);
         sprite.scale.set(scale, scale, 1);
-        sprite.visible = false;
         return sprite;
     }
 
-    public static loadSpriteEdges(scene: any, id: string) {
-        return scene.children
-            .filter((obj) => obj.type === "Sprite" && obj.name === id)
+    public static loadSpriteEdges(sprites: Sprite[]) {
+        return sprites
             .map((obj) => DimensionTransformer.fromVector3D(obj.position));
     }
 

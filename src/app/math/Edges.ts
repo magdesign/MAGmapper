@@ -1,5 +1,12 @@
 import {IDimension} from "./DimensionTransformer";
 
+export interface IEdges {
+    topLeft: IDimension;
+    bottomRight: IDimension;
+    topRight: IDimension;
+    bottomLeft: IDimension;
+}
+
 export class Edges {
     public static isEdge(length: number, index: number): boolean {
         return index === 0 ||
