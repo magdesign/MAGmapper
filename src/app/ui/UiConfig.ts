@@ -41,7 +41,7 @@ const config: IConfig[] = [
             {
                 key: "Play/Pause",
                 value: true,
-                keycode: "32",
+                keycode: "Space",
                 default: true,
                 fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
             }
