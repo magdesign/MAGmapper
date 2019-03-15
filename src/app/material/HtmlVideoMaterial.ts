@@ -14,6 +14,7 @@ export class HtmlVideoMaterial {
         {qualifiedName: "autoplay", value: "autoplay"},
         {qualifiedName: "loop", value: "loop"},
         //{qualifiedName: "src", value: "assets/testvideo.mp4"},
+        //{qualifiedName: "controls", value: "controls"},
         {qualifiedName: "codecs", value: "avc1.42E01E, mp4a.40.2"},
         {qualifiedName: "style", value: "display:none"},
     ];
@@ -26,14 +27,10 @@ export class HtmlVideoMaterial {
             .appendChild(video);
 
         EventHandler.addEventListener(EventTypes.PlayVideo, (value) => {
-            let val: any = document.getElementById(id);
-
-
-            if (value.detail){
-                val.play(); // wenn value.details
-                console.log(val)
+            if (value.detail.value){
+                video.play(); // wenn value.details
             } else {
-                val.pause();
+                video.pause();
             }
         })
         return video;
