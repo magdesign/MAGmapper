@@ -23,7 +23,7 @@ export class VideoMaterialBuilder {
 
     public static create(id: string, source: string, startPoint: IDimension): IVideoMaterial {
 
-        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo();
+        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo(id, source);
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
 
         const positions = Mapper.verticesWithStartPoint(Config.Vertices.size, 2, startPoint);

@@ -13,10 +13,10 @@ class Graphic {
         const camera: PerspectiveCamera = this.loadCamera(scene);
         const renderer: WebGLRenderer = this.loadRenderer();
 
-        const video1: VideoMaterialBuilder = new VideoMapper(id, "", scene, {x: 0, y: 0, z: 0}, renderer, camera);
+        const video1: VideoMaterialBuilder = new VideoMapper(id, "assets/testvideo.mp4", scene, {x: 0, y: 0, z: 0}, renderer, camera);
 
         const id2 = uuid();
-        const video2: VideoMaterialBuilder = new VideoCutter(id2, id, "", scene, {x: 3, y: 0, z: 0}, renderer, camera);
+        const video2: VideoMaterialBuilder = new VideoCutter(id2, id, "assets/testvideo.mp4", scene, {x: 3, y: 0, z: 0}, renderer, camera);
 
         // let dragHanldes: UvDragHandler = new UvDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
