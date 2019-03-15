@@ -51947,14 +51947,8 @@ const LineBuilder_1 = __webpack_require__(/*! ../material/LineBuilder */ "./src/
 const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
-var DragHandlerTypes;
-(function (DragHandlerTypes) {
-    DragHandlerTypes["Mover"] = "move";
-    DragHandlerTypes["Mapper"] = "drag";
-    DragHandlerTypes["Cutter"] = "cut";
-})(DragHandlerTypes = exports.DragHandlerTypes || (exports.DragHandlerTypes = {}));
 class DragHandler {
-    static create(type, positions, fn) {
+    static create(positions, fn) {
         const edges = Edges_1.Edges.getEdges(positions);
         const sprites = SpriteBuilder_1.SpriteBuilder.generateDragHanldes(edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
         return {
@@ -51962,7 +51956,6 @@ class DragHandler {
             fn,
             line: LineBuilder_1.LineBuilder.addLines(edges),
             sprites,
-            type,
         };
     }
     static createMover(video, fn) {
@@ -51978,7 +51971,6 @@ class DragHandler {
             edges,
             fn,
             sprites: [SpriteBuilder_1.SpriteBuilder.makeSprite(startPoint, config_1.Config.MoveHandler.source, config_1.Config.MoveHandler.scale)],
-            type: DragHandlerTypes.Mover,
         };
     }
     static updateByVecotor(dragHandle, vector) {
@@ -52171,10 +52163,9 @@ const SpriteBuilder_1 = __webpack_require__(/*! ../../material/SpriteBuilder */ 
 const VideoMaterialBuilder_1 = __webpack_require__(/*! ../../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const UvMapper_1 = __webpack_require__(/*! ../../math/UvMapper */ "./src/app/math/UvMapper.ts");
-const DragHandler_1 = __webpack_require__(/*! ../../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
 class VideoCutter {
     static create(target, video, startPoint) {
-        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, DragHandler_1.DragHandlerTypes.Cutter, () => {
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, () => {
             const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
             LineBuilder_1.LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
             const uv = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler[0].edges);
@@ -52214,7 +52205,7 @@ const DimensionTransformer_1 = __webpack_require__(/*! ../../math/DimensionTrans
 const Mapper_1 = __webpack_require__(/*! ../../math/Mapper */ "./src/app/math/Mapper.ts");
 class VideoMapper {
     static create(video, startPoint) {
-        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, DragHandler_1.DragHandlerTypes.Mapper, () => {
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, () => {
             const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
             LineBuilder_1.LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
             const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
@@ -52407,7 +52398,7 @@ const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransfor
 const Indices_1 = __webpack_require__(/*! ../math/Indices */ "./src/app/math/Indices.ts");
 const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
 class VideoMaterialBuilder {
-    static create(video, startPoint, type, fn) {
+    static create(video, startPoint, fn) {
         const indices = Indices_1.Indices.calcIndices(config_1.Config.Vertices.size);
         const positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
         const uvs = Mapper_1.Mapper.uv(config_1.Config.Vertices.size);
@@ -52416,7 +52407,7 @@ class VideoMaterialBuilder {
         const videoMesh = new three_1.Mesh(geometry, new three_1.MeshBasicMaterial({ map: texture, wireframe: false }));
         return {
             dragHandler: [
-                DragHandler_1.DragHandler.create(type, positions, fn),
+                DragHandler_1.DragHandler.create(positions, fn),
             ],
             mesh: videoMesh,
             positions,
