@@ -1,15 +1,93 @@
-<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
- <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
- <g>
-  <title>background</title>
-  <rect fill="#fff" id="canvas_background" height="18" width="18" y="-1" x="-1"/>
-  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
-   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (unknown)"
+   sodipodi:docname="favicon2.svg">
+  <defs
+     id="defs2">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3586">
+      <path
+         d="M 0,1080 H 1920 V 0 H 0 Z"
+         id="path3588"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.582651"
+     inkscape:cx="42.266402"
+     inkscape:cy="29.224198"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="3834"
+     inkscape:window-height="1503"
+     inkscape:window-x="0"
+     inkscape:window-y="49"
+     inkscape:window-maximized="1"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:object-nodes="false"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-280.06667)">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot936"
+       style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.26458333,0,0,0.26458333,-121.13719,237.00996)"><flowRegion
+         id="flowRegion938"><rect
+           id="rect940"
+           width="2851.4285"
+           height="397.14285"
+           x="-437.14285"
+           y="-136.76041" /></flowRegion><flowPara
+         id="flowPara942" /></flowRoot>    <path
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.75px;line-height:1.25;font-family:Tachyon;-inkscape-font-specification:Tachyon;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.16879784"
+       d="m 0.02583822,280.09871 v 12.65517 c 0,2.34045 1.87496508,4.25367 4.23371688,4.25367 H 16.940146 v -12.65517 c 0,-2.34044 -1.874965,-4.25367 -4.233717,-4.25367 z m 2.80226108,2.84962 h 4.2537622 c 0,3.73671 0,7.47342 0,11.21012 H 4.2595551 c -0.7862506,0 -1.4114102,-0.6312 -1.4114102,-1.40457 0.023829,-3.2223 -0.022658,-6.73683 -0.020046,-9.80555 z m 7.0560234,0 h 2.8223063 c 0.786251,0 1.41141,0.63069 1.41141,1.40405 -0.02299,3.28836 0.02004,6.53832 0.02004,9.80607 H 9.8841227 c 0,-3.7367 0,-7.47341 0,-11.21012 z"
+       id="path1044-7-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccsccsccccsccccscccc" />
   </g>
- </g>
- <g>
-  <title>Layer 1</title>
-  <rect id="svg_2" height="72.616065" width="95.109931" y="-14.371615" x="-17.061101" stroke-width="1.5" fill="#000000"/>
-  <text transform="matrix(0.732462, 0, 0, 0.713279, -1.22232, 10.5252)" xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_3" y="1.765289" x="5.945763" stroke-width="0" fill="#ffffff">&gt;</text>
- </g>
 </svg>
