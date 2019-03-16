@@ -7,10 +7,18 @@ import {IVideoMaterial} from "../material/VideoMaterialBuilder";
 import {VideoSceneHelper} from "../material/VideoSceneHelper";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
+import uuid = require("uuid");
+
+export enum DragHandlerTypes {
+    Mover = "move",
+    Mapper = "drag",
+    Cutter = "cut",
+}
 
 export interface IDragHandler {
-    id?: string;
+    id: string;
     edges: IDimension[];
+    type?: DragHandlerTypes;
     line?: Line;
     sprites: Sprite[];
     fn: (event?: any) => void;
@@ -18,19 +26,25 @@ export interface IDragHandler {
 
 export class DragHandler {
 
-    public static create(positions: IDimension[], fn: () => void): IDragHandler {
+    public static create(positions: IDimension[], type: DragHandlerTypes, fn: (event: any) => void): IDragHandler {
+
+        const id = uuid();
         const edges = Edges.getEdges(positions);
-        const sprites = SpriteBuilder.generateDragHanldes(edges, Config.DragHandler.source, Config.DragHandler.scale);
+        const sprites = SpriteBuilder.generateDragHanldes(id, edges, Config.DragHandler.source, Config.DragHandler.scale);
 
         return {
             edges,
             fn,
-            line: LineBuilder.addLines(edges),
+            id,
+            line: LineBuilder.addLines(id, edges),
             sprites,
+            type,
         };
     }
 
     public static createMover(video: IVideoMaterial, fn: (event) => void): IDragHandler {
+        const id = uuid();
+
         const positions = VideoSceneHelper.getEdgesFromScene(video.mesh);
         const edges = Edges.getEdges(positions);
 
@@ -47,7 +61,9 @@ export class DragHandler {
         return {
             edges,
             fn,
-            sprites: [SpriteBuilder.makeSprite(startPoint, Config.MoveHandler.source, Config.MoveHandler.scale)],
+            id,
+            sprites: [SpriteBuilder.makeSprite(id, startPoint, Config.MoveHandler.source, Config.MoveHandler.scale)],
+            type: DragHandlerTypes.Mover,
         };
     }
 

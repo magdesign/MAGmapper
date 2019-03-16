@@ -4,14 +4,19 @@ import {IDimension} from "../math/DimensionTransformer";
 
 export class LineBuilder {
 
-    public static addLines(edges: IDimension[]): Line {
+    public static addLines(name: string, edges: IDimension[]): Line {
 
-        const material = new LineBasicMaterial({color: 255255255255255255, linewidth: Config.DragHandler.line});
+        const material = new LineBasicMaterial({
+            color: 255255255255255255,
+            linewidth: Config.DragHandler.line,
+        });
         const geometry: Geometry = new Geometry();
 
         geometry.vertices = this.prepareEdges(edges);
 
-        return  new Line(geometry, material);
+        const line = new Line(geometry, material);
+        line.name = name;
+        return line;
     }
 
     public static filterLines(scene, id: string): any[] {

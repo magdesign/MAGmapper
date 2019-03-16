@@ -1,6 +1,6 @@
 import {Scene, Sprite} from "three";
 import {Config} from "../../../config";
-import {DragHandler, IDragHandler} from "../../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "../../dragger/DragHandler";
 import {LineBuilder} from "../../material/LineBuilder";
 import {SpriteBuilder} from "../../material/SpriteBuilder";
 import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";
@@ -10,15 +10,20 @@ import {Mapper} from "../../math/Mapper";
 
 export class VideoMapper {
 
+
     public static create(video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
-        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint, () => {
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint);
+
+        videoMaterial.dragHandler.push(DragHandler.create(videoMaterial.positions, DragHandlerTypes.Mapper, () => {
+
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
 
             LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
             const vertices = Mapper.map(Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
 
             VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
-        });
+        }));
+
 
         let refPoint = {
             x: 1,

@@ -16,12 +16,12 @@ import {Mapper} from "../math/Mapper";
 export interface IVideoMaterial {
     mesh: Mesh;
     positions: IDimension[];
-    dragHandler?: IDragHandler[];
+    dragHandler: IDragHandler[];
 }
 
 export class VideoMaterialBuilder {
 
-    public static create(video: HTMLVideoElement, startPoint: IDimension, fn: () => void): IVideoMaterial {
+    public static create(video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
         const indices: number[] = Indices.calcIndices(Config.Vertices.size);
 
@@ -35,9 +35,7 @@ export class VideoMaterialBuilder {
         const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
 
         return {
-            dragHandler: [
-                DragHandler.create(positions, fn),
-            ],
+            dragHandler: [],
             mesh: videoMesh,
             positions,
         };
