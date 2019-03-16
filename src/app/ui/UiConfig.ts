@@ -43,8 +43,19 @@ const config: IConfig[] = [
                 value: true,
                 keycode: "Space",
                 default: true,
-                fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
+                fn: (value: any ) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
             }
+            /*
+            I need an option to input 2 values under value, the min. and the max. range, how to this object based?
+            {
+                key: "Speed",
+                value:  0, 2,
+                default: 1,
+                fn: (value: any ) => EventHandler.throwEvent(EventTypes.VideoSpeed, value),
+            }
+            */
+
+
         ],
     },
 ];

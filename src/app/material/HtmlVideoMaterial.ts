@@ -21,7 +21,7 @@ export class HtmlVideoMaterial {
         document
             .getElementsByTagName("body")[0]
             .appendChild(video);
-
+//das Teil macht play oder pause
         EventHandler.addEventListener(EventTypes.PlayVideo, (value) => {
             if (value.detail.value) {
                 video.play(); // wenn value.details
@@ -31,6 +31,21 @@ export class HtmlVideoMaterial {
         });
         return video;
     }
+    and
+
+//das Teil macht Geschwindigkeit
+        /*EventHandler.addEventListener(EventTypes.VideoSpeed, (value) => {
+            if (value) == 1{
+                video.playbackRate(1); 
+            } 
+            if (value) == 0.5 {
+                video.playbackRate(0.5);
+            }
+        });
+        
+        return video;
+}
+*/
 
     private static init(src: string): HTMLVideoElement {
         const video: HTMLVideoElement = document.createElement("video");

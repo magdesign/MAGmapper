@@ -4,6 +4,7 @@ export enum EventTypes {
     Outlines = "outlines",
     Screen = "screen",
     PlayVideo = "PlayVideo", 
+    VideoSpeed = "VideoSpeed",
 }
 
 export class EventHandler {
