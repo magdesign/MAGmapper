@@ -1,7 +1,6 @@
-import {Scene, Sprite} from "three";
 import {LineBuilder} from "../../material/LineBuilder";
 import {SpriteBuilder} from "../../material/SpriteBuilder";
-import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";
+import {IVideoMaterial, VideoMaterialBuilder, VideoType} from "../../material/VideoMaterialBuilder";
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
@@ -9,27 +8,23 @@ import {DragHandler, DragHandlerTypes, IDragHandler} from "../../dragger/DragHan
 
 export class VideoCutter {
 
-    public static addToScene(video: IVideoMaterial, scene: Scene): Scene {
-        scene.add(video.mesh);
-
-        video.dragHandler.forEach((dh: IDragHandler) => {
-            scene.add(dh.line);
-            dh.sprites.forEach((sprite: Sprite) => scene.add(sprite));
-        });
-
-        return scene;
-    }
-
     public static create(targets: IVideoMaterial[], video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
         const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint);
-
+        videoMaterial.type = VideoType.Cutter;
         targets.forEach((target) => {
             videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
         });
 
         return videoMaterial;
     }
+
+
+    public static addVideoCutterOutlines(videoMaterial: IVideoMaterial, target: IVideoMaterial): IVideoMaterial {
+        videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
+        return videoMaterial;
+    }
+
 
     private static createCutterDragHandle(videoMaterial: IVideoMaterial, target: IVideoMaterial): IDragHandler {
         return DragHandler.create(videoMaterial.positions, DragHandlerTypes.Cutter, (event) => {

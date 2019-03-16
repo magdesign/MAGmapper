@@ -2,10 +2,12 @@ import {PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
 import DragControls from "three-dragcontrols";
 import {IDragHandler} from "../dragger/DragHandler";
 import {EventManager} from "../event/EventManager";
-import {IVideoMaterial} from "../material/VideoMaterialBuilder";
+import {IVideoMaterial, VideoType} from "../material/VideoMaterialBuilder";
 import {VideoCutter} from "./video/VideoCutter";
 import {VideoMapper} from "./video/VideoMapper";
 import {HtmlVideoMaterial} from "../material/HtmlVideoMaterial";
+import {EventHandler, EventTypes} from "../event/EventHandler";
+import {SceneManager} from "./SceneManager";
 
 class Renderer {
 
@@ -15,28 +17,42 @@ class Renderer {
         const camera: PerspectiveCamera = this.loadCamera(scene, renderer);
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo("assets/testvideo.mp4");
 
+        const videoMapper = [
+            VideoMapper.create(video, {x: 0, y: 0, z: 0}),
+        ];
 
-        const videoMapper: IVideoMaterial = VideoMapper.create(video, {x: 0, y: 0, z: 0});
-        const videoMapper1: IVideoMaterial = VideoMapper.create(video, {x: 0, y: 0, z: 0});
-        const videoMapper2: IVideoMaterial = VideoMapper.create(video, {x: 0, y: 0, z: 0});
-
-        const videoCutter: IVideoMaterial = VideoCutter.create([videoMapper, videoMapper1, videoMapper2], video, {
+        const videoCutter: IVideoMaterial = VideoCutter.create(videoMapper, video, {
             x: 3,
             y: 0,
             z: 0,
         });
 
-        VideoMapper.addToScene(videoMapper, scene);
-        VideoMapper.addToScene(videoMapper1, scene);
-        VideoMapper.addToScene(videoMapper2, scene);
+        videoMapper.push(videoCutter);
+        SceneManager.addToScene(videoMapper, scene);
+        let dragControls = this.createDragHandler(videoMapper, camera, renderer);
+
+        EventHandler.addEventListener(EventTypes.NewQuad, () => {
+
+            dragControls.dispose();
+
+            const newVideo = VideoMapper.create(video, {x: 0, y: 0, z: 0});
+
+            SceneManager.addVideoToScene(newVideo, scene);
+
+            const vidCutter = videoMapper.filter(video => video.type === VideoType.Cutter)[0];
+            console.log(vidCutter);
 
 
-        VideoCutter.addToScene(videoCutter, scene);
+            VideoCutter.addVideoCutterOutlines(vidCutter, newVideo);
+
+            videoMapper.push(newVideo);
 
 
-        this.createDragHandler([videoMapper, videoMapper1, videoMapper2, videoCutter], camera, renderer);
+            dragControls = this.createDragHandler(videoMapper, camera, renderer);
+        });
 
-        EventManager.init([videoMapper, videoMapper1, videoMapper2, videoCutter]);
+
+        EventManager.init(videoMapper);
 
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
@@ -80,29 +96,31 @@ class Renderer {
         animate();
     }
 
-    private static createDragHandler(materials: IVideoMaterial[], camera, renderer) {
+    private static createDragHandler(materials: IVideoMaterial[], camera, renderer): DragControls {
         const dragHandler: IDragHandler[] = materials
             .map((material: IVideoMaterial) => {
                 return material.dragHandler;
             })
             .reduce((a, b) => a.concat(b));
 
-        const sprites = dragHandler.map(dh => {
-            return dh.sprites.map((sprite: Sprite) => {
-                return sprite;
-            });
-        })
+        const sprites = dragHandler
+            .map((dh) => {
+                return dh.sprites.map((sprite: Sprite) => {
+                    return sprite;
+                });
+            })
             .reduce((a, b) => a.concat(b));
 
+        const dragControls = new DragControls(sprites, camera, renderer.domElement);
 
-        return new DragControls(sprites, camera, renderer.domElement)
-            .addEventListener("drag", (value) => {
-                dragHandler
-                    .filter((dh) =>
-                        dh.sprites.filter((sprite) =>
-                            sprite.uuid === value.object.uuid).length > 0)
-                    .map((dh) => dh.fn(value));
-            });
+        dragControls.addEventListener("drag", (value) => {
+            dragHandler
+                .filter((dh) =>
+                    dh.sprites.filter((sprite) =>
+                        sprite.uuid === value.object.uuid).length > 0)
+                .map((dh) => dh.fn(value));
+        });
+        return dragControls;
     }
 }
 

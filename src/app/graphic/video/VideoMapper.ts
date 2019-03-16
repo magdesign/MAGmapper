@@ -53,12 +53,5 @@ export class VideoMapper {
         return videoMaterial;
     }
 
-    public static addToScene(video: IVideoMaterial, scene: Scene): Scene {
-        scene.add(video.mesh);
-        scene.add(video.dragHandler[0].line);
 
-        video.dragHandler.forEach((dh: IDragHandler) => dh.sprites.forEach((sprite: Sprite) => scene.add(sprite)));
-
-        return scene;
-    }
 }

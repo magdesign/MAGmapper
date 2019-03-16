@@ -4,17 +4,23 @@ import {
     ClampToEdgeWrapping,
     LinearFilter,
     Mesh,
-    MeshBasicMaterial,
+    MeshBasicMaterial, Scene, Sprite,
     VideoTexture,
 } from "three";
 import {Config} from "../../config";
-import {DragHandler,  IDragHandler} from "../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Indices} from "../math/Indices";
 import {Mapper} from "../math/Mapper";
 
+export enum VideoType {
+    Cutter,
+    Mapper,
+}
+
 export interface IVideoMaterial {
     mesh: Mesh;
+    type?: VideoType;
     positions: IDimension[];
     dragHandler: IDragHandler[];
 }
