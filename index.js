@@ -52015,6 +52015,7 @@ var EventTypes;
     EventTypes["Outlines"] = "outlines";
     EventTypes["Screen"] = "screen";
     EventTypes["PlayVideo"] = "PlayVideo";
+    EventTypes["VideoSpeed"] = "VideoSpeed";
 })(EventTypes = exports.EventTypes || (exports.EventTypes = {}));
 class EventHandler {
     static addEventListener(type, fn) {
@@ -52261,6 +52262,7 @@ class HtmlVideoMaterial {
         document
             .getElementsByTagName("body")[0]
             .appendChild(video);
+        //das Teil macht play oder pause
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.PlayVideo, (value) => {
             if (value.detail.value) {
                 video.play(); // wenn value.details
@@ -52271,6 +52273,19 @@ class HtmlVideoMaterial {
         });
         return video;
     }
+    //das Teil macht Geschwindigkeit
+    /*EventHandler.addEventListener(EventTypes.VideoSpeed, (value) => {
+        if (value) == 1{
+            video.playbackRate(1);
+        }
+        if (value) == 0.5 {
+            video.playbackRate(0.5);
+        }
+    });
+    
+    return video;
+}
+*/
     static init(src) {
         const video = document.createElement("video");
         this.attributes.map((attr) => {
@@ -52752,6 +52767,15 @@ const config = [
                 default: true,
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.PlayVideo, value),
             }
+            /*
+            I need an option to input 2 values under value, the min. and the max. range, how to this object based?
+            {
+                key: "Speed",
+                value:  0, 2,
+                default: 1,
+                fn: (value: any ) => EventHandler.throwEvent(EventTypes.VideoSpeed, value),
+            }
+            */
         ],
     },
 ];
