@@ -17,7 +17,7 @@ class Renderer {
         const camera: PerspectiveCamera = this.loadCamera(scene, renderer);
         const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo("assets/testvideo.mp4");
 
-        const videoMapper = [
+        const videoMapper: IVideoMaterial[] = [
             VideoMapper.create(video, {x: 0, y: 0, z: 0}),
         ];
 
@@ -39,15 +39,16 @@ class Renderer {
 
             SceneManager.addVideoToScene(newVideo, scene);
 
-            const vidCutter = videoMapper.filter(video => video.type === VideoType.Cutter)[0];
-            console.log(vidCutter);
+            videoMapper
+                .filter((video: IVideoMaterial): boolean => video.type === VideoType.Cutter)
+                .forEach((video: IVideoMaterial) => {
+                    VideoCutter.addVideoCutterOutlines(video, newVideo);
+                    SceneManager.addDragHandlesToScene(video, scene);
 
+                });
 
-            VideoCutter.addVideoCutterOutlines(vidCutter, newVideo);
 
             videoMapper.push(newVideo);
-
-
             dragControls = this.createDragHandler(videoMapper, camera, renderer);
         });
 
