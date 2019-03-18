@@ -48,6 +48,7 @@ export class EventManager {
                             DragHandler.visible(dh, value.detail.value);
                             break;
                         case  DragHandlerTypes.Mover:
+                        case  DragHandlerTypes.Delete:
                             SpriteBuilder.disable(dh.sprites, value.detail.value);
                             break;
                     }
