@@ -2,9 +2,9 @@ export enum EventTypes {
     Wireframe = "wireframe",
     Cutter = "cutter",
     Outlines = "outlines",
-    Screen = "screen",
-    PlayVideo = "PlayVideo", 
-    VideoSpeed = "VideoSpeed",
+    PlayVideo = "PlayVideo",
+    NewQuad = "newQuad",
+    RemoveQuad = "removeQuad",
 }
 
 export class EventHandler {
@@ -23,5 +23,5 @@ export class EventHandler {
         return document.getElementsByTagName("body")[0];
     }
 
- 
+
 }

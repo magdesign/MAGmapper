@@ -1,13 +1,13 @@
-import {PerspectiveCamera, Scene, Sprite, WebGLRenderer} from "three";
-import DragControls from "three-dragcontrols";
-import {IDragHandler} from "../dragger/DragHandler";
-import {EventManager} from "../event/EventManager";
+import {PerspectiveCamera, Scene, WebGLRenderer} from "three";
+import {EventManager} from "./EventManager";
 import {IVideoMaterial, VideoType} from "../material/VideoMaterialBuilder";
 import {VideoCutter} from "./video/VideoCutter";
 import {VideoMapper} from "./video/VideoMapper";
 import {HtmlVideoMaterial} from "../material/HtmlVideoMaterial";
 import {EventHandler, EventTypes} from "../event/EventHandler";
 import {SceneManager} from "./SceneManager";
+import {DragManager} from "./DragManager";
+import {Config} from "../../config";
 
 class Renderer {
 
@@ -15,7 +15,7 @@ class Renderer {
         const scene: Scene = new Scene();
         const renderer: WebGLRenderer = this.loadRenderer();
         const camera: PerspectiveCamera = this.loadCamera(scene, renderer);
-        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo("assets/testvideo.mp4");
+        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo(Config.Video.source);
 
         const videoMapper: IVideoMaterial[] = [
             VideoMapper.create(video, {x: 0, y: 0, z: 0}),
@@ -29,7 +29,9 @@ class Renderer {
 
         videoMapper.push(videoCutter);
         SceneManager.addToScene(videoMapper, scene);
-        let dragControls = this.createDragHandler(videoMapper, camera, renderer);
+
+
+        let dragControls = DragManager.createDragHandler(videoMapper, camera, renderer);
 
         EventHandler.addEventListener(EventTypes.NewQuad, () => {
 
@@ -44,12 +46,10 @@ class Renderer {
                 .forEach((video: IVideoMaterial) => {
                     VideoCutter.addVideoCutterOutlines(video, newVideo);
                     SceneManager.addDragHandlesToScene(video, scene);
-
                 });
 
-
             videoMapper.push(newVideo);
-            dragControls = this.createDragHandler(videoMapper, camera, renderer);
+            dragControls = DragManager.createDragHandler(videoMapper, camera, renderer);
         });
 
 
@@ -80,7 +80,6 @@ class Renderer {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }, false);
-
         return camera;
     }
 
@@ -95,33 +94,6 @@ class Renderer {
         }
 
         animate();
-    }
-
-    private static createDragHandler(materials: IVideoMaterial[], camera, renderer): DragControls {
-        const dragHandler: IDragHandler[] = materials
-            .map((material: IVideoMaterial) => {
-                return material.dragHandler;
-            })
-            .reduce((a, b) => a.concat(b));
-
-        const sprites = dragHandler
-            .map((dh) => {
-                return dh.sprites.map((sprite: Sprite) => {
-                    return sprite;
-                });
-            })
-            .reduce((a, b) => a.concat(b));
-
-        const dragControls = new DragControls(sprites, camera, renderer.domElement);
-
-        dragControls.addEventListener("drag", (value) => {
-            dragHandler
-                .filter((dh) =>
-                    dh.sprites.filter((sprite) =>
-                        sprite.uuid === value.object.uuid).length > 0)
-                .map((dh) => dh.fn(value));
-        });
-        return dragControls;
     }
 }
 

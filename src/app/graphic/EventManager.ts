@@ -1,15 +1,13 @@
 import {DragHandler, DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
 import {SpriteBuilder} from "../material/SpriteBuilder";
-import {IVideoMaterial, VideoType} from "../material/VideoMaterialBuilder";
+import {IVideoMaterial} from "../material/VideoMaterialBuilder";
 import {VideoSceneHelper} from "../material/VideoSceneHelper";
-import {EventHandler, EventTypes} from "./EventHandler";
-import {VideoMapper} from "../graphic/video/VideoMapper";
-import {SceneManager} from "../graphic/SceneManager";
-import {VideoCutter} from "../graphic/video/VideoCutter";
+import {EventHandler, EventTypes} from "../event/EventHandler";
 
 export class EventManager {
 
     public static init(videos: IVideoMaterial[]): void {
+
 
         EventHandler.addEventListener(EventTypes.Cutter, (value) => {
             videos.forEach((video: IVideoMaterial) => {

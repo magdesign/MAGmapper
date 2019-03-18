@@ -7,8 +7,9 @@ export class SceneManager {
     public static addDragHandlesToScene(video: IVideoMaterial, scene: Scene): Scene {
         video.dragHandler.forEach((dragHandler: IDragHandler) => {
             dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
+
             if (dragHandler.type === DragHandlerTypes.Mapper ||
-                dragHandler.type === DragHandlerTypes.Cutter) {
+                dragHandler.type === DragHandlerTypes.Cutter ) {
                 scene.add(dragHandler.line);
             }
         });
@@ -27,4 +28,5 @@ export class SceneManager {
         });
         return scene;
     }
+
 }

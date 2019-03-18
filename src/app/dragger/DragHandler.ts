@@ -11,8 +11,13 @@ import uuid = require("uuid");
 
 export enum DragHandlerTypes {
     Mover = "move",
-    Mapper = "drag",
+    Delete = "delete",
+    Mapper = "mapper",
     Cutter = "cut",
+}
+
+export enum DragEventType {
+    Click, Drag,
 }
 
 export interface IDragHandler {
@@ -22,6 +27,7 @@ export interface IDragHandler {
     line?: Line;
     sprites: Sprite[];
     fn: (event?: any) => void;
+    dragEventType: DragEventType;
 }
 
 export class DragHandler {
@@ -33,6 +39,7 @@ export class DragHandler {
         const sprites = SpriteBuilder.generateDragHanldes(id, edges, Config.DragHandler.source, Config.DragHandler.scale);
 
         return {
+            dragEventType: DragEventType.Drag,
             edges,
             fn,
             id,
@@ -59,11 +66,42 @@ export class DragHandler {
         };
 
         return {
+            dragEventType: DragEventType.Drag,
             edges,
             fn,
             id,
-            sprites: [SpriteBuilder.makeSprite(id, startPoint, Config.MoveHandler.source, Config.MoveHandler.scale)],
+            sprites: [
+                SpriteBuilder.makeSprite(id, startPoint, Config.MoveHandler.source, Config.MoveHandler.scale),
+            ],
             type: DragHandlerTypes.Mover,
+        };
+    }
+
+    public static createDelete(video: IVideoMaterial, fn: (event) => void): IDragHandler {
+        const id = uuid();
+
+        const positions = VideoSceneHelper.getEdgesFromScene(video.mesh);
+        const edges = Edges.getEdges(positions);
+
+        const calcDelta =
+            (x1: number, x2: number): number =>
+                (x2 - x1) / 2 + x1;
+
+        const startPoint = {
+            x: calcDelta(edges[0].x, edges[3].x) + 0.4,
+            y: calcDelta(edges[0].y, edges[3].y),
+            z: 0,
+        };
+
+        return {
+            dragEventType: DragEventType.Click,
+            edges,
+            fn,
+            id,
+            sprites: [
+                SpriteBuilder.makeSprite(id, startPoint, Config.DeleteHandler.source, Config.DeleteHandler.scale),
+            ],
+            type: DragHandlerTypes.Delete,
         };
     }
 
