@@ -24,6 +24,4 @@ export class EventHandler {
     private static getEventHandler(): any {
         return document.getElementsByTagName("body")[0];
     }
-
-
 }
