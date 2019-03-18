@@ -52443,6 +52443,7 @@ class EventManager {
                             DragHandler_1.DragHandler.visible(dh, value.detail.value);
                             break;
                         case DragHandler_1.DragHandlerTypes.Mover:
+                        case DragHandler_1.DragHandlerTypes.Delete:
                             SpriteBuilder_1.SpriteBuilder.disable(dh.sprites, value.detail.value);
                             break;
                     }
