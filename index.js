@@ -51932,6 +51932,265 @@ function LensFlare() {
 
 /***/ }),
 
+/***/ "./node_modules/uuid/index.js":
+/*!************************************!*\
+  !*** ./node_modules/uuid/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var v1 = __webpack_require__(/*! ./v1 */ "./node_modules/uuid/v1.js");
+var v4 = __webpack_require__(/*! ./v4 */ "./node_modules/uuid/v4.js");
+
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+
+module.exports = uuid;
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/lib/bytesToUuid.js":
+/*!**********************************************!*\
+  !*** ./node_modules/uuid/lib/bytesToUuid.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([bth[buf[i++]], bth[buf[i++]], 
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]]]).join('');
+}
+
+module.exports = bytesToUuid;
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/lib/rng-browser.js":
+/*!**********************************************!*\
+  !*** ./node_modules/uuid/lib/rng-browser.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/v1.js":
+/*!*********************************!*\
+  !*** ./node_modules/uuid/v1.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(/*! ./lib/rng */ "./node_modules/uuid/lib/rng-browser.js");
+var bytesToUuid = __webpack_require__(/*! ./lib/bytesToUuid */ "./node_modules/uuid/lib/bytesToUuid.js");
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+var _clockseq;
+
+// Previous uuid creation time
+var _lastMSecs = 0;
+var _lastNSecs = 0;
+
+// See https://github.com/broofa/node-uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : bytesToUuid(b);
+}
+
+module.exports = v1;
+
+
+/***/ }),
+
+/***/ "./node_modules/uuid/v4.js":
+/*!*********************************!*\
+  !*** ./node_modules/uuid/v4.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(/*! ./lib/rng */ "./node_modules/uuid/lib/rng-browser.js");
+var bytesToUuid = __webpack_require__(/*! ./lib/bytesToUuid */ "./node_modules/uuid/lib/bytesToUuid.js");
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
+
+/***/ }),
+
 /***/ "./src/app/dragger/DragHandler.ts":
 /*!****************************************!*\
   !*** ./src/app/dragger/DragHandler.ts ***!
@@ -51947,18 +52206,36 @@ const LineBuilder_1 = __webpack_require__(/*! ../material/LineBuilder */ "./src/
 const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const Edges_1 = __webpack_require__(/*! ../math/Edges */ "./src/app/math/Edges.ts");
+const uuid = __webpack_require__(/*! uuid */ "./node_modules/uuid/index.js");
+var DragHandlerTypes;
+(function (DragHandlerTypes) {
+    DragHandlerTypes["Mover"] = "move";
+    DragHandlerTypes["Delete"] = "delete";
+    DragHandlerTypes["Mapper"] = "mapper";
+    DragHandlerTypes["Cutter"] = "cut";
+})(DragHandlerTypes = exports.DragHandlerTypes || (exports.DragHandlerTypes = {}));
+var DragEventType;
+(function (DragEventType) {
+    DragEventType[DragEventType["Click"] = 0] = "Click";
+    DragEventType[DragEventType["Drag"] = 1] = "Drag";
+})(DragEventType = exports.DragEventType || (exports.DragEventType = {}));
 class DragHandler {
-    static create(positions, fn) {
+    static create(positions, type, fn) {
+        const id = uuid();
         const edges = Edges_1.Edges.getEdges(positions);
-        const sprites = SpriteBuilder_1.SpriteBuilder.generateDragHanldes(edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
+        const sprites = SpriteBuilder_1.SpriteBuilder.generateDragHanldes(id, edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
         return {
+            dragEventType: DragEventType.Drag,
             edges,
             fn,
-            line: LineBuilder_1.LineBuilder.addLines(edges),
+            id,
+            line: LineBuilder_1.LineBuilder.addLines(id, edges),
             sprites,
+            type,
         };
     }
     static createMover(video, fn) {
+        const id = uuid();
         const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(video.mesh);
         const edges = Edges_1.Edges.getEdges(positions);
         const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
@@ -51968,9 +52245,35 @@ class DragHandler {
             z: 0,
         };
         return {
+            dragEventType: DragEventType.Drag,
             edges,
             fn,
-            sprites: [SpriteBuilder_1.SpriteBuilder.makeSprite(startPoint, config_1.Config.MoveHandler.source, config_1.Config.MoveHandler.scale)],
+            id,
+            sprites: [
+                SpriteBuilder_1.SpriteBuilder.makeSprite(id, startPoint, config_1.Config.MoveHandler.source, config_1.Config.MoveHandler.scale),
+            ],
+            type: DragHandlerTypes.Mover,
+        };
+    }
+    static createDelete(video, fn) {
+        const id = uuid();
+        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(video.mesh);
+        const edges = Edges_1.Edges.getEdges(positions);
+        const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
+        const startPoint = {
+            x: calcDelta(edges[0].x, edges[3].x) + 0.4,
+            y: calcDelta(edges[0].y, edges[3].y),
+            z: 0,
+        };
+        return {
+            dragEventType: DragEventType.Click,
+            edges,
+            fn,
+            id,
+            sprites: [
+                SpriteBuilder_1.SpriteBuilder.makeSprite(id, startPoint, config_1.Config.DeleteHandler.source, config_1.Config.DeleteHandler.scale),
+            ],
+            type: DragHandlerTypes.Delete,
         };
     }
     static updateByVecotor(dragHandle, vector) {
@@ -52013,9 +52316,11 @@ var EventTypes;
     EventTypes["Wireframe"] = "wireframe";
     EventTypes["Cutter"] = "cutter";
     EventTypes["Outlines"] = "outlines";
-    EventTypes["Screen"] = "screen";
     EventTypes["PlayVideo"] = "PlayVideo";
-    EventTypes["VideoSpeed"] = "VideoSpeed";
+    EventTypes["NewQuad"] = "newQuad";
+    EventTypes["RemoveQuad"] = "removeQuad";
+    EventTypes["DragQuad"] = "dragQuad";
+    EventTypes["MoveQuad"] = "moveQuad";
 })(EventTypes = exports.EventTypes || (exports.EventTypes = {}));
 class EventHandler {
     static addEventListener(type, fn) {
@@ -52035,10 +52340,62 @@ exports.EventHandler = EventHandler;
 
 /***/ }),
 
-/***/ "./src/app/event/EventManager.ts":
-/*!***************************************!*\
-  !*** ./src/app/event/EventManager.ts ***!
-  \***************************************/
+/***/ "./src/app/graphic/DragManager.ts":
+/*!****************************************!*\
+  !*** ./src/app/graphic/DragManager.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const DragHandler_1 = __webpack_require__(/*! ../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
+const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
+var Event;
+(function (Event) {
+    Event["Drag"] = "drag";
+    Event["DragStart"] = "dragstart";
+})(Event || (Event = {}));
+class DragManager {
+    static loadDragHandler(materials, eventType) {
+        return materials
+            .map((material) => material.dragHandler
+            .filter((dh) => dh.dragEventType === eventType))
+            .reduce((a, b) => a.concat(b));
+    }
+    static loadSprites(dragHandler) {
+        return dragHandler
+            .map((dh) => dh.sprites)
+            .reduce((a, b) => a.concat(b));
+    }
+    static initDragHandler(dragHandler, event, camera, renderer) {
+        const sprites = this.loadSprites(dragHandler);
+        const dragControls = new three_dragcontrols_1.default(sprites, camera, renderer.domElement);
+        dragControls.addEventListener(event, (value) => {
+            // Filter handles event only on same quad
+            dragHandler
+                .filter((dh) => dh.sprites.filter((sprite) => sprite.uuid === value.object.uuid).length > 0)
+                .map((dh) => dh.fn(value));
+        });
+        return dragControls;
+    }
+    static createDragHandler(materials, camera, renderer) {
+        const dragHandler = this.loadDragHandler(materials, DragHandler_1.DragEventType.Drag);
+        const clickHandler = this.loadDragHandler(materials, DragHandler_1.DragEventType.Click);
+        this.initDragHandler(clickHandler, Event.DragStart, camera, renderer);
+        return this.initDragHandler(dragHandler, Event.Drag, camera, renderer);
+    }
+}
+exports.DragManager = DragManager;
+
+
+/***/ }),
+
+/***/ "./src/app/graphic/EventManager.ts":
+/*!*****************************************!*\
+  !*** ./src/app/graphic/EventManager.ts ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -52048,20 +52405,49 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DragHandler_1 = __webpack_require__(/*! ../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
 const SpriteBuilder_1 = __webpack_require__(/*! ../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
-const EventHandler_1 = __webpack_require__(/*! ./EventHandler */ "./src/app/event/EventHandler.ts");
+const EventHandler_1 = __webpack_require__(/*! ../event/EventHandler */ "./src/app/event/EventHandler.ts");
+const VideoCutter_1 = __webpack_require__(/*! ./video/VideoCutter */ "./src/app/graphic/video/VideoCutter.ts");
 class EventManager {
-    static init(videoCutter, videoMapper) {
+    static init(videos, scene) {
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.RemoveQuad, (event) => {
+            const video = event.detail.value;
+            scene.remove(video.mesh);
+            video.dragHandler.forEach((dh) => {
+                scene.remove(dh.line);
+                dh.sprites.forEach((sprite) => {
+                    scene.remove(sprite);
+                });
+            });
+            VideoCutter_1.VideoCutter.removeCutterItem(videos, video, scene);
+            videos.splice(videos.indexOf(video), 1);
+        });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (value) => {
-            VideoSceneHelper_1.VideoSceneHelper.changeVisibility(videoCutter.mesh, value.detail.value);
-            DragHandler_1.DragHandler.visible(videoCutter.dragHandler[0], value.detail.value);
+            videos.forEach((video) => {
+                video.dragHandler.forEach((dh) => {
+                    switch (dh.type) {
+                        case DragHandler_1.DragHandlerTypes.Cutter:
+                            DragHandler_1.DragHandler.visible(dh, value.detail.value);
+                            VideoSceneHelper_1.VideoSceneHelper.changeVisibility(video.mesh, value.detail.value);
+                    }
+                });
+            });
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Wireframe, (value) => {
-            VideoSceneHelper_1.VideoSceneHelper.changeWireframe(videoMapper.mesh, value.detail.value);
-            VideoSceneHelper_1.VideoSceneHelper.changeWireframe(videoCutter.mesh, value.detail.value);
+            videos.forEach((video) => VideoSceneHelper_1.VideoSceneHelper.changeWireframe(video.mesh, value.detail.value));
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Outlines, (value) => {
-            DragHandler_1.DragHandler.visible(videoMapper.dragHandler[0], value.detail.value);
-            SpriteBuilder_1.SpriteBuilder.disable(videoMapper.dragHandler[1].sprites, value.detail.value);
+            videos.forEach((video) => {
+                video.dragHandler.forEach((dh) => {
+                    switch (dh.type) {
+                        case DragHandler_1.DragHandlerTypes.Mapper:
+                            DragHandler_1.DragHandler.visible(dh, value.detail.value);
+                            break;
+                        case DragHandler_1.DragHandlerTypes.Mover:
+                            SpriteBuilder_1.SpriteBuilder.disable(dh.sprites, value.detail.value);
+                            break;
+                    }
+                });
+            });
         });
     }
 }
@@ -52081,23 +52467,46 @@ exports.EventManager = EventManager;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const three_dragcontrols_1 = __webpack_require__(/*! three-dragcontrols */ "./node_modules/three-dragcontrols/lib/index.module.js");
-const EventManager_1 = __webpack_require__(/*! ../event/EventManager */ "./src/app/event/EventManager.ts");
+const EventManager_1 = __webpack_require__(/*! ./EventManager */ "./src/app/graphic/EventManager.ts");
+const VideoMaterialBuilder_1 = __webpack_require__(/*! ../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
 const VideoCutter_1 = __webpack_require__(/*! ./video/VideoCutter */ "./src/app/graphic/video/VideoCutter.ts");
 const VideoMapper_1 = __webpack_require__(/*! ./video/VideoMapper */ "./src/app/graphic/video/VideoMapper.ts");
 const HtmlVideoMaterial_1 = __webpack_require__(/*! ../material/HtmlVideoMaterial */ "./src/app/material/HtmlVideoMaterial.ts");
+const EventHandler_1 = __webpack_require__(/*! ../event/EventHandler */ "./src/app/event/EventHandler.ts");
+const SceneManager_1 = __webpack_require__(/*! ./SceneManager */ "./src/app/graphic/SceneManager.ts");
+const DragManager_1 = __webpack_require__(/*! ./DragManager */ "./src/app/graphic/DragManager.ts");
+const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 class Renderer {
     static init() {
         const scene = new three_1.Scene();
         const renderer = this.loadRenderer();
         const camera = this.loadCamera(scene, renderer);
-        const video = HtmlVideoMaterial_1.HtmlVideoMaterial.loadVideo("assets/testvideo.mp4");
-        const videoMapper = VideoMapper_1.VideoMapper.create(video, { x: 0, y: 0, z: 0 });
-        const videoCutter = VideoCutter_1.VideoCutter.create(videoMapper, video, { x: 3, y: 0, z: 0 });
-        VideoMapper_1.VideoMapper.addToScene(videoMapper, scene);
-        VideoCutter_1.VideoCutter.addToScene(videoCutter, scene);
-        this.createDragHandler([videoMapper, videoCutter], camera, renderer);
-        EventManager_1.EventManager.init(videoCutter, videoMapper);
+        const video = HtmlVideoMaterial_1.HtmlVideoMaterial.loadVideo(config_1.Config.Video.source);
+        const videoMapper = [
+            VideoMapper_1.VideoMapper.create(video, { x: 0, y: 0, z: 0 }),
+        ];
+        const videoCutter = VideoCutter_1.VideoCutter.create(videoMapper, video, {
+            x: 3,
+            y: 0,
+            z: 0,
+        });
+        videoMapper.push(videoCutter);
+        SceneManager_1.SceneManager.addToScene(videoMapper, scene);
+        let dragControls = DragManager_1.DragManager.createDragHandler(videoMapper, camera, renderer);
+        EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.NewQuad, () => {
+            dragControls.dispose();
+            const newVideo = VideoMapper_1.VideoMapper.create(video, { x: 0, y: 0, z: 0 });
+            SceneManager_1.SceneManager.addVideoToScene(newVideo, scene);
+            videoMapper
+                .filter((video) => video.type === VideoMaterialBuilder_1.VideoType.Cutter)
+                .forEach((video) => {
+                VideoCutter_1.VideoCutter.addVideoCutterOutlines(video, newVideo);
+                SceneManager_1.SceneManager.addDragHandlesToScene(video, scene);
+            });
+            videoMapper.push(newVideo);
+            dragControls = DragManager_1.DragManager.createDragHandler(videoMapper, camera, renderer);
+        });
+        EventManager_1.EventManager.init(videoMapper, scene);
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);
         this.rendermagic(renderer, camera, scene);
@@ -52130,21 +52539,47 @@ class Renderer {
         }
         animate();
     }
-    static createDragHandler(materials, camera, renderer) {
-        const dragHandler = materials
-            .map((material) => material.dragHandler)
-            .reduce((a, b) => a.concat(b));
-        const sprites = dragHandler.map(dh => dh.sprites)
-            .reduce((a, b) => a.concat(b));
-        new three_dragcontrols_1.default(sprites, camera, renderer.domElement)
-            .addEventListener("drag", (value) => {
-            dragHandler
-                .filter((dh) => dh.sprites.filter((sprite) => sprite.uuid === value.object.uuid).length > 0)
-                .map((dh) => dh.fn(value));
-        });
-    }
 }
 Renderer.init();
+
+
+/***/ }),
+
+/***/ "./src/app/graphic/SceneManager.ts":
+/*!*****************************************!*\
+  !*** ./src/app/graphic/SceneManager.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const DragHandler_1 = __webpack_require__(/*! ../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
+class SceneManager {
+    static addDragHandlesToScene(video, scene) {
+        video.dragHandler.forEach((dragHandler) => {
+            dragHandler.sprites.forEach((sprite) => scene.add(sprite));
+            if (dragHandler.type === DragHandler_1.DragHandlerTypes.Mapper ||
+                dragHandler.type === DragHandler_1.DragHandlerTypes.Cutter) {
+                scene.add(dragHandler.line);
+            }
+        });
+        return scene;
+    }
+    static addVideoToScene(video, scene) {
+        scene.add(video.mesh);
+        this.addDragHandlesToScene(video, scene);
+        return scene;
+    }
+    static addToScene(videos, scene) {
+        videos.forEach((video) => {
+            this.addVideoToScene(video, scene);
+        });
+        return scene;
+    }
+}
+exports.SceneManager = SceneManager;
 
 
 /***/ }),
@@ -52164,21 +52599,46 @@ const SpriteBuilder_1 = __webpack_require__(/*! ../../material/SpriteBuilder */ 
 const VideoMaterialBuilder_1 = __webpack_require__(/*! ../../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
 const UvMapper_1 = __webpack_require__(/*! ../../math/UvMapper */ "./src/app/math/UvMapper.ts");
+const DragHandler_1 = __webpack_require__(/*! ../../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
 class VideoCutter {
-    static create(target, video, startPoint) {
-        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, () => {
-            const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
-            LineBuilder_1.LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
-            const uv = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, videoMaterial.dragHandler[0].edges);
-            VideoSceneHelper_1.VideoSceneHelper.changeUv(uv, target.mesh);
+    static create(targets, video, startPoint) {
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint);
+        videoMaterial.type = VideoMaterialBuilder_1.VideoType.Cutter;
+        targets.forEach((target) => {
+            videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
         });
         return videoMaterial;
     }
-    static addToScene(video, scene) {
-        scene.add(video.mesh);
-        scene.add(video.dragHandler[0].line);
-        video.dragHandler[0].sprites.forEach((sprite) => scene.add(sprite));
-        return scene;
+    static addVideoCutterOutlines(videoMaterial, target) {
+        videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
+        return videoMaterial;
+    }
+    static createCutterDragHandle(videoMaterial, target) {
+        const cutter = DragHandler_1.DragHandler.create(videoMaterial.positions, DragHandler_1.DragHandlerTypes.Cutter, (event) => {
+            const activeDragHandler = videoMaterial.dragHandler.filter((dh) => dh.id === event.object.name)[0];
+            const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
+            LineBuilder_1.LineBuilder.reorderLines(activeDragHandler.line, spriteEdges);
+            const uv = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, activeDragHandler.edges);
+            VideoSceneHelper_1.VideoSceneHelper.changeUv(uv, target.mesh);
+        });
+        cutter.targetId = target.id;
+        return cutter;
+    }
+    static removeCutterItem(videoMaterial, target, scene) {
+        videoMaterial
+            .filter((video) => video.type === VideoMaterialBuilder_1.VideoType.Cutter)
+            .map((video) => {
+            video.dragHandler
+                .filter((dh) => target.id === dh.targetId)
+                .map((dh) => {
+                scene.remove(dh.line);
+                dh.sprites.forEach((sprite) => {
+                    scene.remove(sprite);
+                });
+                // removes draghandler from list
+                video.dragHandler.splice(video.dragHandler.indexOf(dh), 1);
+            });
+        });
     }
 }
 exports.VideoCutter = VideoCutter;
@@ -52196,48 +52656,20 @@ exports.VideoCutter = VideoCutter;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __webpack_require__(/*! ../../../config */ "./src/config.ts");
 const DragHandler_1 = __webpack_require__(/*! ../../dragger/DragHandler */ "./src/app/dragger/DragHandler.ts");
-const LineBuilder_1 = __webpack_require__(/*! ../../material/LineBuilder */ "./src/app/material/LineBuilder.ts");
-const SpriteBuilder_1 = __webpack_require__(/*! ../../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
 const VideoMaterialBuilder_1 = __webpack_require__(/*! ../../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
-const VideoSceneHelper_1 = __webpack_require__(/*! ../../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
-const DimensionTransformer_1 = __webpack_require__(/*! ../../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
-const Mapper_1 = __webpack_require__(/*! ../../math/Mapper */ "./src/app/math/Mapper.ts");
+const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
 class VideoMapper {
     static create(video, startPoint) {
-        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint, () => {
-            const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(videoMaterial.dragHandler[0].sprites);
-            LineBuilder_1.LineBuilder.reorderLines(videoMaterial.dragHandler[0].line, spriteEdges);
-            const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
-            VideoSceneHelper_1.VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint);
+        [
+            DragHandler_1.DragHandler.create(videoMaterial.positions, DragHandler_1.DragHandlerTypes.Mapper, VideoMaterialBuilder_1.VideoMaterialBuilder.dragVideo(videoMaterial)),
+            DragHandler_1.DragHandler.createMover(videoMaterial, VideoMaterialBuilder_1.VideoMaterialBuilder.moveVideo(videoMaterial, { x: 1, y: 1, z: 0 })),
+            DragHandler_1.DragHandler.createDelete(videoMaterial, () => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.RemoveQuad, videoMaterial)),
+        ].forEach((dh) => {
+            videoMaterial.dragHandler.push(dh);
         });
-        let refPoint = {
-            x: 1,
-            y: 1,
-        };
-        videoMaterial.dragHandler.push(DragHandler_1.DragHandler.createMover(videoMaterial, (event) => {
-            const delta = {
-                x: event.object.position.x - (refPoint.x),
-                y: event.object.position.y - (refPoint.y),
-                z: 0,
-            };
-            const geometry = videoMaterial.mesh.geometry;
-            const oldVertices = geometry.attributes.position.array;
-            const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
-            VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, videoMaterial.mesh);
-            // todo filter correct value
-            DragHandler_1.DragHandler.updateByVecotor(videoMaterial.dragHandler[0], delta);
-            // sets new position for proper delta (i know it is not a proper solution -.-)
-            refPoint = Object.assign({}, event.object.position);
-        }));
         return videoMaterial;
-    }
-    static addToScene(video, scene) {
-        scene.add(video.mesh);
-        scene.add(video.dragHandler[0].line);
-        video.dragHandler.forEach((dh) => dh.sprites.forEach((sprite) => scene.add(sprite)));
-        return scene;
     }
 }
 exports.VideoMapper = VideoMapper;
@@ -52320,11 +52752,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const config_1 = __webpack_require__(/*! ../../config */ "./src/config.ts");
 class LineBuilder {
-    static addLines(edges) {
-        const material = new three_1.LineBasicMaterial({ color: 255255255255255255, linewidth: config_1.Config.DragHandler.line });
+    static addLines(name, edges) {
+        const material = new three_1.LineBasicMaterial({
+            color: 255255255255255255,
+            linewidth: config_1.Config.DragHandler.line,
+        });
         const geometry = new three_1.Geometry();
         geometry.vertices = this.prepareEdges(edges);
-        return new three_1.Line(geometry, material);
+        const line = new three_1.Line(geometry, material);
+        line.name = name;
+        return line;
     }
     static filterLines(scene, id) {
         return scene.children
@@ -52367,14 +52804,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
 class SpriteBuilder {
-    static generateDragHanldes(edges, source, scale) {
-        return edges.map((edge) => this.makeSprite(edge, source, scale));
+    static generateDragHanldes(name, edges, source, scale) {
+        return edges.map((edge) => this.makeSprite(name, edge, source, scale));
     }
-    static makeSprite(point, source, scale) {
+    static makeSprite(name, point, source, scale) {
         const texture = new three_1.TextureLoader().load(source);
         const material = new three_1.SpriteMaterial({ map: texture });
         const sprite = new three_1.Sprite(material);
         sprite.position.set(point.x, point.y, point.z);
+        sprite.name = name;
         const randomZ = Math.random() * 10;
         sprite.scale.set(scale, scale, randomZ);
         return sprite;
@@ -52412,8 +52850,17 @@ const DragHandler_1 = __webpack_require__(/*! ../dragger/DragHandler */ "./src/a
 const DimensionTransformer_1 = __webpack_require__(/*! ../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
 const Indices_1 = __webpack_require__(/*! ../math/Indices */ "./src/app/math/Indices.ts");
 const Mapper_1 = __webpack_require__(/*! ../math/Mapper */ "./src/app/math/Mapper.ts");
+const SpriteBuilder_1 = __webpack_require__(/*! ./SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
+const LineBuilder_1 = __webpack_require__(/*! ./LineBuilder */ "./src/app/material/LineBuilder.ts");
+const VideoSceneHelper_1 = __webpack_require__(/*! ./VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const uuid = __webpack_require__(/*! uuid */ "./node_modules/uuid/index.js");
+var VideoType;
+(function (VideoType) {
+    VideoType[VideoType["Cutter"] = 0] = "Cutter";
+    VideoType[VideoType["Mapper"] = 1] = "Mapper";
+})(VideoType = exports.VideoType || (exports.VideoType = {}));
 class VideoMaterialBuilder {
-    static create(video, startPoint, fn) {
+    static create(video, startPoint) {
         const indices = Indices_1.Indices.calcIndices(config_1.Config.Vertices.size);
         const positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
         const uvs = Mapper_1.Mapper.uv(config_1.Config.Vertices.size);
@@ -52421,9 +52868,8 @@ class VideoMaterialBuilder {
         const geometry = this.loadGeometry(indices, uvs, positions);
         const videoMesh = new three_1.Mesh(geometry, new three_1.MeshBasicMaterial({ map: texture, wireframe: false }));
         return {
-            dragHandler: [
-                DragHandler_1.DragHandler.create(positions, fn),
-            ],
+            id: uuid(),
+            dragHandler: [],
             mesh: videoMesh,
             positions,
         };
@@ -52441,6 +52887,46 @@ class VideoMaterialBuilder {
         texture.wrapS = texture.wrapT = three_1.ClampToEdgeWrapping;
         texture.minFilter = three_1.LinearFilter;
         return texture;
+    }
+    static dragVideo(videoMaterial) {
+        return () => {
+            videoMaterial.dragHandler
+                .filter((dh) => dh.type === DragHandler_1.DragHandlerTypes.Mapper)
+                .map((dh) => {
+                const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(dh.sprites);
+                LineBuilder_1.LineBuilder.reorderLines(dh.line, spriteEdges);
+                const vertices = Mapper_1.Mapper.map(config_1.Config.Vertices.size, spriteEdges[0], spriteEdges[1], spriteEdges[2], spriteEdges[3]);
+                VideoSceneHelper_1.VideoSceneHelper.changeVertices(vertices, videoMaterial.mesh);
+            });
+        };
+    }
+    static moveVideo(videoMaterial, refPoint) {
+        return (event) => {
+            const delta = {
+                x: event.object.position.x - (refPoint.x),
+                y: event.object.position.y - (refPoint.y),
+                z: 0,
+            };
+            const geometry = videoMaterial.mesh.geometry;
+            const oldVertices = geometry.attributes.position.array;
+            const newVertices = DimensionTransformer_1.DimensionTransformer.vectorizeFloatArray(oldVertices, delta);
+            VideoSceneHelper_1.VideoSceneHelper.changeVerticesWithFloatArray(newVertices, videoMaterial.mesh);
+            videoMaterial.dragHandler
+                .filter((dh) => dh.type === DragHandler_1.DragHandlerTypes.Mapper)
+                .map((dh) => {
+                DragHandler_1.DragHandler.updateByVecotor(dh, delta);
+            });
+            videoMaterial.dragHandler
+                .filter((dh) => dh.type === DragHandler_1.DragHandlerTypes.Delete)
+                .map((dh) => {
+                dh.sprites.map((sprite) => {
+                    sprite.position.setX(sprite.position.x + delta.x);
+                    sprite.position.setY(sprite.position.y + delta.y);
+                });
+            });
+            // sets new position for proper delta (i know it is not a proper solution -.-)
+            refPoint = Object.assign({}, event.object.position);
+        };
     }
 }
 exports.VideoMaterialBuilder = VideoMaterialBuilder;
@@ -52741,7 +53227,7 @@ const config = [
     {
         title: "Sync",
         open: true,
-        subitems: [
+        subitemsValues: [
             {
                 key: "Wireframe",
                 value: false,
@@ -52756,39 +53242,46 @@ const config = [
             },
             {
                 key: "Cutter",
-                value: true,
                 keycode: "KeyC",
+                value: true,
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.Cutter, value),
             },
             {
                 key: "Play/Pause",
-                value: true,
                 keycode: "Space",
-                default: true,
+                value: true,
                 fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.PlayVideo, value),
-            }
-            /*
-            I need an option to input 2 values under value, the min. and the max. range, how to this object based?
-            {
-                key: "Speed",
-                value:  0, 2,
-                default: 1,
-                fn: (value: any ) => EventHandler.throwEvent(EventTypes.VideoSpeed, value),
-            }
-            */
+            },
         ],
+        subitemsButtons: [
+            {
+                key: "Add",
+                value: true,
+                fn: (value) => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.NewQuad, value),
+            },
+        ]
     },
 ];
-const controller = config
-    .map((val) => val.subitems)
-    .reduce((a, b) => a.concat(b))
-    .map((val) => {
+class ConfigManager {
+    static generateConfig(config, fnSubitem, fnValue) {
+        return config
+            .map(fnSubitem)
+            .reduce((a, b) => a.concat(b))
+            .map(fnValue)
+            .reduce((a, b) => {
+            return Object.assign({}, a, b);
+        });
+    }
+}
+const controller = ConfigManager.generateConfig(config, (val) => val.subitemsValues, (val) => {
     const obj = {};
     obj[val.key] = val.value;
     return obj;
-})
-    .reduce((a, b) => {
-    return Object.assign({}, a, b);
+});
+const controllerButton = ConfigManager.generateConfig(config, (val) => val.subitemsButtons, (val) => {
+    const obj = {};
+    obj[val.key] = val.fn;
+    return obj;
 });
 // todo: MAG should hide frame
 const initConfig = {
@@ -52805,7 +53298,7 @@ config.map((value) => {
     if (value.open) {
         subfolder.open();
     }
-    value.subitems.map((subitem) => {
+    value.subitemsValues.map((subitem) => {
         switch (typeof controller[subitem.key]) {
             case "object":
                 subfolder.add(controller, subitem.key, subitem.value).onChange(subitem.fn);
@@ -52813,10 +53306,13 @@ config.map((value) => {
                 subfolder.add(controller, subitem.key).onChange(subitem.fn);
         }
     });
+    value.subitemsButtons.map((subitem) => {
+        subfolder.add(controllerButton, subitem.key);
+    });
 });
 function getKeyCodes(conf) {
     return conf
-        .map((subconf) => subconf.subitems.filter((guiItem) => "keycode" in guiItem))
+        .map((subconf) => subconf.subitemsValues.filter((guiItem) => "keycode" in guiItem))
         .reduce((a, b) => a.concat(b));
 }
 const keyItems = getKeyCodes(config);
@@ -52852,10 +53348,13 @@ document.addEventListener("keydown", (event) => {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Config = {
-    Vertices: {
-        length: 2,
-        size: 30,
-        wireframe: false,
+    Video: {
+        source: "assets/testvideo.mp4",
+    },
+    DeleteHandler: {
+        line: 3,
+        scale: 0.2,
+        source: "../assets/deletehandle.png",
     },
     DragHandler: {
         line: 2,
@@ -52866,7 +53365,12 @@ exports.Config = {
         line: 3,
         scale: 0.4,
         source: "../assets/movehandle.png",
-    }
+    },
+    Vertices: {
+        length: 2,
+        size: 30,
+        wireframe: false,
+    },
 };
 
 
