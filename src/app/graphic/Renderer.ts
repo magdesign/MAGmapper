@@ -53,7 +53,7 @@ class Renderer {
         });
 
 
-        EventManager.init(videoMapper);
+        EventManager.init(videoMapper, scene);
 
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);

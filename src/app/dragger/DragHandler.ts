@@ -28,6 +28,7 @@ export interface IDragHandler {
     sprites: Sprite[];
     fn: (event?: any) => void;
     dragEventType: DragEventType;
+    targetId?: string;
 }
 
 export class DragHandler {

@@ -5,6 +5,7 @@ import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
 import {DragHandler, DragHandlerTypes, IDragHandler} from "../../dragger/DragHandler";
+import {Scene, Sprite} from "three";
 
 export class VideoCutter {
 
@@ -27,8 +28,7 @@ export class VideoCutter {
 
 
     private static createCutterDragHandle(videoMaterial: IVideoMaterial, target: IVideoMaterial): IDragHandler {
-        return DragHandler.create(videoMaterial.positions, DragHandlerTypes.Cutter, (event) => {
-
+        const cutter = DragHandler.create(videoMaterial.positions, DragHandlerTypes.Cutter, (event) => {
             const activeDragHandler = videoMaterial.dragHandler.filter((dh: IDragHandler) => dh.id === event.object.name)[0];
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
             LineBuilder.reorderLines(activeDragHandler.line, spriteEdges);
@@ -36,5 +36,28 @@ export class VideoCutter {
             const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, activeDragHandler.edges);
             VideoSceneHelper.changeUv(uv, target.mesh);
         });
+
+        cutter.targetId = target.id;
+        return cutter;
+    }
+
+    public static removeCutterItem(videoMaterial: IVideoMaterial[], target: IVideoMaterial, scene: Scene) {
+        videoMaterial
+            .filter((video: IVideoMaterial) => video.type === VideoType.Cutter)
+            .map((video: IVideoMaterial) => {
+
+                video.dragHandler
+                    .filter((dh: IDragHandler) => target.id === dh.targetId)
+                    .map((dh: IDragHandler) => {
+
+                        scene.remove(dh.line);
+                        dh.sprites.forEach((sprite: Sprite) => {
+                            scene.remove(sprite);
+                        });
+                        // removes draghandler from list
+                        video.dragHandler.splice( video.dragHandler.indexOf(dh), 1 );
+                    });
+            });
+
     }
 }

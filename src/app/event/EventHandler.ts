@@ -5,6 +5,8 @@ export enum EventTypes {
     PlayVideo = "PlayVideo",
     NewQuad = "newQuad",
     RemoveQuad = "removeQuad",
+    DragQuad = "dragQuad",
+    MoveQuad = "moveQuad",
 }
 
 export class EventHandler {
