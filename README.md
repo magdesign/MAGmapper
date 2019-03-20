@@ -19,7 +19,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] hide menu by default (see comment in UiConfig.ts)
 - [ ] cutter in fullscreen
 - [ ] save current state
-
+- [ ] Auto Snatch Draghandles
+- [ ] Show only draghandles for selected quad
 
 ## To Do Tasklist
 
