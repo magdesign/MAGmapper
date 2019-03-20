@@ -1,8 +1,12 @@
 Copyright ©2019 by MAG Design,
 Marc-André Gasser and Jan Kuonen, Switzerland.
+
+https://magmapper.ch
 https://mapper.jku.one
 
 You may use this software as long as it is in a non-commercial and open-source manner.
+
+If you use this software in one of your projects, you should consider making a donation and at least send us some pictures of your project.
 
 The software is provided "as is", without warranty of any kind.
 If you use it and/or add functions, you should contribute your additions.
