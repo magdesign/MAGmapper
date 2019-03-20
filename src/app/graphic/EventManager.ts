@@ -9,9 +9,6 @@ import {LocalStorage} from "../store/LocalStorage";
 import {SceneManager} from "./SceneManager";
 import {DragManager} from "./DragManager";
 import {VideoMapper} from "./video/VideoMapper";
-import {HtmlVideoMaterial} from "../material/HtmlVideoMaterial";
-
-
 
 
 export class EventManager {
@@ -54,23 +51,23 @@ export class EventManager {
         EventHandler.addEventListener(EventTypes.RemoveQuad, (event) => {
             const video: IVideoMaterial = event.detail.value;
 
+            videos.filter((vid) => vid.id === video.id)
+                .map((vid: IVideoMaterial) => {
+                    scene.remove(vid.mesh);
+                    vid.dragHandler.map((dh: IDragHandler) => {
+                        scene.remove(dh.line);
 
-            scene.remove(video.mesh);
-            video.dragHandler.forEach((dh: IDragHandler) => {
-                scene.remove(dh.line);
-                dh.sprites.forEach((sprite: Sprite) => {
-                    scene.remove(sprite);
+                        dh.sprites.forEach((sprite: Sprite) => {
+                            scene.remove(sprite);
+                        });
+                    });
+
+                    VideoCutter.removeCutterItem(videos, vid, scene);
+
                 });
 
-            });
-
-            VideoCutter.removeCutterItem(videos, video, scene);
-
-            console.log(video.id);
-            console.log(videos);
-
-            console.log(videos);
-
+            videos = videos.filter((vid) => vid.id !== video.id);
+            dragControls = DragManager.createDragHandler(videos, camera, renderer);
         });
 
         EventHandler.addEventListener(EventTypes.Cutter, (value) => {

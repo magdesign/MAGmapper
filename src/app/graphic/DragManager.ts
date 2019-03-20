@@ -13,6 +13,7 @@ export interface IDragHandles {
     move: DragControls;
 }
 
+
 export class DragManager {
 
     private static loadDragHandler(materials: IVideoMaterial[], eventType: DragEventType): IDragHandler[] {

@@ -9,6 +9,10 @@ import {Scene, Sprite} from "three";
 
 export class VideoCutter {
 
+    public static load(obj){
+
+    }
+
     public static create(targets: IVideoMaterial[], video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
         const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint);
@@ -45,7 +49,6 @@ export class VideoCutter {
         videoMaterial
             .filter((video: IVideoMaterial) => video.type === VideoType.Cutter)
             .map((video: IVideoMaterial) => {
-
                 video.dragHandler
                     .filter((dh: IDragHandler) => target.id === dh.targetId)
                     .map((dh: IDragHandler) => {
@@ -55,9 +58,8 @@ export class VideoCutter {
                             scene.remove(sprite);
                         });
                         // removes draghandler from list
-                        video.dragHandler.splice( video.dragHandler.indexOf(dh), 1 );
+                        video.dragHandler = video.dragHandler.filter((drag) => drag.id !== dh.id);
                     });
             });
-
     }
 }
