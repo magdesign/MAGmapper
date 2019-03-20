@@ -7,7 +7,9 @@ A Videomapper based on three.js</br>
 Should run on any plattform using Chrome or Firefox.
 See [example](https://mapper.jku.one/)
 
-Feel free to contribute or donate :-)
+Feel free to contribute or donate :-)</br>
+https://magmapper.ch</br>
+
 If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
 
 ![Alt text](https://github.com/magdesign/MAGmapper/blob/master/doc/Layout/Layout_01_MappingMode.png?raw=true "Optional Title")
