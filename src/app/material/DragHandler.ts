@@ -1,10 +1,10 @@
-import {Line, PerspectiveCamera, Scene, Sprite, WebGLRenderer,} from "three";
+import {Line, Sprite} from "three";
 
 import {Config} from "../../config";
-import {LineBuilder} from "../material/LineBuilder";
-import {SpriteBuilder} from "../material/SpriteBuilder";
-import {IVideoMaterial} from "../material/VideoMaterialBuilder";
-import {VideoSceneHelper} from "../material/VideoSceneHelper";
+import {LineBuilder} from "./LineBuilder";
+import {SpriteBuilder} from "./SpriteBuilder";
+import {IVideoMaterial} from "./VideoMaterialBuilder";
+import {VideoSceneHelper} from "./VideoSceneHelper";
 import {IDimension} from "../math/DimensionTransformer";
 import {Edges} from "../math/Edges";
 import uuid = require("uuid");

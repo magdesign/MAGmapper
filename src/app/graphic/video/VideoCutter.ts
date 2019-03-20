@@ -4,7 +4,7 @@ import {IVideoMaterial, VideoMaterialBuilder, VideoType} from "../../material/Vi
 import {VideoSceneHelper} from "../../material/VideoSceneHelper";
 import {IDimension} from "../../math/DimensionTransformer";
 import {UvMapper} from "../../math/UvMapper";
-import {DragHandler, DragHandlerTypes, IDragHandler} from "../../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "../../material/DragHandler";
 import {Scene, Sprite} from "three";
 
 export class VideoCutter {

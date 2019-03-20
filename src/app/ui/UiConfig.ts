@@ -39,20 +39,49 @@ const config: IConfig[] = [
                 value: true,
                 fn: (value: any) => EventHandler.throwEvent(EventTypes.Cutter, value),
             },
-            {
-                key: "Play/Pause",
-                keycode: "Space",
-                value: true,
-                fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
-            },
+
         ],
+        subitemsButtons: [],
+    },
+    {
+        title: "Quads",
+        open: true,
+        subitemsValues: [],
         subitemsButtons: [
             {
                 key: "Add",
                 value: true,
                 fn: (value: any) => EventHandler.throwEvent(EventTypes.NewQuad, value),
             },
-        ]
+            {
+                key: "Save",
+                value: true,
+                fn: (value: any) => EventHandler.throwEvent(EventTypes.Save, value),
+            },
+            {
+                key: "Load",
+                value: true,
+                fn: (value: any) => EventHandler.throwEvent(EventTypes.Load, value),
+            },
+        ],
+    },
+    {
+        title: "Video",
+        open: true,
+        subitemsValues: [
+            {
+                key: "Play/Pause",
+                keycode: "Space",
+                value: true,
+                fn: (value: any) => EventHandler.throwEvent(EventTypes.PlayVideo, value),
+            },
+            {
+                key: "Speed",
+                value: 1,
+                fn: (value: any) => EventHandler.throwEvent(EventTypes.VideoSpeed, value),
+            },
+        ],
+        subitemsButtons: [],
     },
 ];
 
@@ -83,7 +112,6 @@ const controllerButton = ConfigManager.generateConfig(config,
         obj[val.key] = val.fn;
         return obj;
     });
-
 
 
 // todo: MAG should hide frame

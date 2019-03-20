@@ -1,5 +1,5 @@
 import {Config} from "../../../config";
-import {DragHandler, DragHandlerTypes, IDragHandler} from "../../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "../../material/DragHandler";
 import {LineBuilder} from "../../material/LineBuilder";
 import {SpriteBuilder} from "../../material/SpriteBuilder";
 import {IVideoMaterial, VideoMaterialBuilder} from "../../material/VideoMaterialBuilder";

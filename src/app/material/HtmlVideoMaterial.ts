@@ -1,4 +1,5 @@
 import {EventHandler, EventTypes} from "../event/EventHandler";
+import doc = Mocha.reporters.doc;
 
 interface IAttribute {
     qualifiedName: string;
@@ -15,39 +16,43 @@ export class HtmlVideoMaterial {
         {qualifiedName: "style", value: "display:none"},
     ];
 
-    public static loadVideo(src: string): HTMLVideoElement {
-        const video = this.init(src);
+    public static loadVideo(src: string): any {
+        return document
+            .getElementsByName("video");
+    }
+
+
+    public static initVideo(src: string): HTMLVideoElement {
+        const video: HTMLVideoElement = this.createVideoElement(src);
+        video.setAttribute("id", src);
+
 
         document
             .getElementsByTagName("body")[0]
             .appendChild(video);
-//das Teil macht play oder pause
-        EventHandler.addEventListener(EventTypes.PlayVideo, (value) => {
-            if (value.detail.value) {
-                video.play(); // wenn value.details
+
+        // das Teil macht play oder pause
+
+        this.handleEvents(video);
+        return video;
+    }
+
+    private static handleEvents(video: HTMLVideoElement) {
+        EventHandler.addEventListener(EventTypes.PlayVideo, (event) => {
+            if (event.detail.value) {
+                video.play(); // wenn value.details.value true ist
             } else {
                 video.pause();
             }
         });
-        return video;
-    }
-    and
 
-//das Teil macht Geschwindigkeit
-        /*EventHandler.addEventListener(EventTypes.VideoSpeed, (value) => {
-            if (value) == 1{
-                video.playbackRate(1); 
-            } 
-            if (value) == 0.5 {
-                video.playbackRate(0.5);
-            }
+        EventHandler.addEventListener(EventTypes.VideoSpeed, (event) => {
+            video.playbackRate = event.detail.value;
         });
-        
-        return video;
-}
-*/
+    }
 
-    private static init(src: string): HTMLVideoElement {
+
+    private static createVideoElement(src: string): HTMLVideoElement {
         const video: HTMLVideoElement = document.createElement("video");
 
         this.attributes.map((attr: IAttribute) => {
