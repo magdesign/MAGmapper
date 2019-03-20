@@ -8,7 +8,7 @@ import {
     VideoTexture,
 } from "three";
 import {Config} from "../../config";
-import {DragHandler, DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
+import {DragHandler, DragHandlerTypes, IDragHandler} from "./DragHandler";
 import {DimensionTransformer, IDimension} from "../math/DimensionTransformer";
 import {Indices} from "../math/Indices";
 import {Mapper} from "../math/Mapper";
@@ -41,7 +41,7 @@ export class VideoMaterialBuilder {
         const uvs = Mapper.uv(Config.Vertices.size);
 
         const texture = this.loadTexture(video);
-        const geometry = this.loadGeometry(indices, uvs, positions);
+        const geometry = this.loadGeometry(indices, DimensionTransformer.toFloatArray(uvs), DimensionTransformer.toFloatArray(positions));
 
         const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
 
@@ -53,11 +53,11 @@ export class VideoMaterialBuilder {
         };
     }
 
-    private static loadGeometry(indices, uvs, positions): BufferGeometry {
+    private static loadGeometry(indices, uvs: Float32Array, positions: Float32Array): BufferGeometry {
         const geometry = new BufferGeometry();
         geometry.setIndex(indices);
-        geometry.addAttribute("position", new BufferAttribute(DimensionTransformer.toFloatArray(positions), 3));
-        geometry.addAttribute("uv", new BufferAttribute(DimensionTransformer.toFloatArray(uvs), 3));
+        geometry.addAttribute("position", new BufferAttribute(positions, 3));
+        geometry.addAttribute("uv", new BufferAttribute(uvs, 3));
         return geometry;
     }
 

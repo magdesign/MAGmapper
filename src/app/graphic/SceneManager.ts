@@ -1,6 +1,6 @@
 import {Scene, Sprite} from "three";
 import {IVideoMaterial} from "../material/VideoMaterialBuilder";
-import {DragHandlerTypes, IDragHandler} from "../dragger/DragHandler";
+import {DragHandlerTypes, IDragHandler} from "../material/DragHandler";
 
 export class SceneManager {
 
@@ -9,7 +9,7 @@ export class SceneManager {
             dragHandler.sprites.forEach((sprite: Sprite) => scene.add(sprite));
 
             if (dragHandler.type === DragHandlerTypes.Mapper ||
-                dragHandler.type === DragHandlerTypes.Cutter ) {
+                dragHandler.type === DragHandlerTypes.Cutter) {
                 scene.add(dragHandler.line);
             }
         });

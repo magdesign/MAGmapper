@@ -9,13 +9,29 @@ import {SceneManager} from "./SceneManager";
 import {DragManager} from "./DragManager";
 import {Config} from "../../config";
 
+
+export interface IRenderItems {
+    scene: Scene;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
+}
+
+
+export interface IScene {
+    videoMaterial: IVideoMaterial[];
+    htmlVideoElement: HTMLVideoElement;
+}
+
 class Renderer {
 
     public static init() {
+
+
+
         const scene: Scene = new Scene();
         const renderer: WebGLRenderer = this.loadRenderer();
         const camera: PerspectiveCamera = this.loadCamera(scene, renderer);
-        const video: HTMLVideoElement = HtmlVideoMaterial.loadVideo(Config.Video.source);
+        const video: HTMLVideoElement = HtmlVideoMaterial.initVideo(Config.Video.source);
 
         const videoMapper: IVideoMaterial[] = [
             VideoMapper.create(video, {x: 0, y: 0, z: 0}),
@@ -31,29 +47,9 @@ class Renderer {
         SceneManager.addToScene(videoMapper, scene);
 
 
-        let dragControls = DragManager.createDragHandler(videoMapper, camera, renderer);
-
-        EventHandler.addEventListener(EventTypes.NewQuad, () => {
-
-            dragControls.dispose();
-
-            const newVideo = VideoMapper.create(video, {x: 0, y: 0, z: 0});
-
-            SceneManager.addVideoToScene(newVideo, scene);
-
-            videoMapper
-                .filter((video: IVideoMaterial): boolean => video.type === VideoType.Cutter)
-                .forEach((video: IVideoMaterial) => {
-                    VideoCutter.addVideoCutterOutlines(video, newVideo);
-                    SceneManager.addDragHandlesToScene(video, scene);
-                });
-
-            videoMapper.push(newVideo);
-            dragControls = DragManager.createDragHandler(videoMapper, camera, renderer);
-        });
 
 
-        EventManager.init(videoMapper, scene);
+        EventManager.init(videoMapper, scene, renderer, camera, video);
 
         // let dragHanldes: CutterDragHandler = new CutterDragHandler(scene, renderer, camera, video2, id);
         // PositionDragHandler.initVertices(scene, renderer, camera, video);

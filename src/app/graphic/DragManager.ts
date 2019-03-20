@@ -1,5 +1,5 @@
 import {IVideoMaterial} from "../material/VideoMaterialBuilder";
-import {DragEventType, IDragHandler} from "../dragger/DragHandler";
+import {DragEventType, IDragHandler} from "../material/DragHandler";
 import DragControls from "three-dragcontrols";
 import {Sprite} from "three";
 
@@ -7,6 +7,12 @@ enum Event {
     Drag = "drag",
     DragStart = "dragstart",
 }
+
+export interface IDragHandles {
+    click: DragControls;
+    move: DragControls;
+}
+
 
 export class DragManager {
 
