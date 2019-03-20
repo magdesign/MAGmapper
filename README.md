@@ -17,10 +17,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 ## Next important fixes
 
 - [ ] hide menu by default (see comment in UiConfig.ts)
-- [ ] get autoplay loop somehow working, it really sucks, do we have to place it in a html to get it working?
-- [ ] move handle new with movehandle.png and also hides when unticking outlines 
 - [ ] cutter in fullscreen
-- [ ] resize refresh of browser resizing [see here](https://stackoverflow.com/questions/20290402/three-js-resizing-canvas)
 - [ ] save current state
 
 
