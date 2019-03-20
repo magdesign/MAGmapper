@@ -15,7 +15,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 ![Alt text](https://github.com/magdesign/MAGmapper/blob/master/doc/Layout/Layout_01_MappingMode.png?raw=true "Optional Title")
 
 ## Next important fixes
-
+- [ ] curb mapper.jku.one to magmapper.ch/mapper
 - [ ] hide menu by default (see comment in UiConfig.ts)
 - [ ] cutter in fullscreen
 - [ ] save current state
