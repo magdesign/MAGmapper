@@ -70,20 +70,14 @@ Node.js must be installed on the system.
 $ npm install
 ```
 
-### Serve
+### Start Local Instance
 ```sh
 $ npm run start
 ```
 
-### Websockets
-```sh
-$ npm run ws
-```
-
-
 ### Run Tests
 ```sh
-$ mocha-webpack "test/**/*.js"
+$ npm run test
 ```
 
 
