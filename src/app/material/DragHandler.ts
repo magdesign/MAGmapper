@@ -35,8 +35,13 @@ export class DragHandler {
 
     public static create(positions: IDimension[], type: DragHandlerTypes, fn: (event: any) => void): IDragHandler {
 
-        const id = uuid();
         const edges = Edges.getEdges(positions);
+        return this.init(edges, type, fn);
+    }
+
+
+    public static init(edges: IDimension[], type: DragHandlerTypes, fn: (event: any) => void): IDragHandler {
+        const id = uuid();
         const sprites = SpriteBuilder.generateDragHanldes(id, edges, Config.DragHandler.source, Config.DragHandler.scale);
 
         return {
@@ -50,21 +55,25 @@ export class DragHandler {
         };
     }
 
+    public static calcStartPoint(edges: IDimension[]): IDimension {
+        const calcDelta =
+            (x1: number, x2: number): number =>
+                (x2 - x1) / 2 + x1;
+
+        return {
+            x: calcDelta(edges[0].x, edges[3].x),
+            y: calcDelta(edges[0].y, edges[3].y),
+            z: 0,
+        };
+    }
+
     public static createMover(video: IVideoMaterial, fn: (event) => void): IDragHandler {
         const id = uuid();
 
         const positions = VideoSceneHelper.getEdgesFromScene(video.mesh);
         const edges = Edges.getEdges(positions);
 
-        const calcDelta =
-            (x1: number, x2: number): number =>
-                (x2 - x1) / 2 + x1;
-
-        const startPoint = {
-            x: calcDelta(edges[0].x, edges[3].x),
-            y: calcDelta(edges[0].y, edges[3].y),
-            z: 0,
-        };
+        const startPoint = this.calcStartPoint(edges);
 
         return {
             dragEventType: DragEventType.Drag,

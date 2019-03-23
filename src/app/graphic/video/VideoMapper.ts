@@ -2,6 +2,7 @@ import {DragHandler, DragHandlerTypes, IDragHandler} from "../../material/DragHa
 import {IVideoMaterial, VideoMaterialBuilder, VideoType} from "../../material/VideoMaterialBuilder";
 import {IDimension} from "../../math/DimensionTransformer";
 import {EventHandler, EventTypes} from "../../event/EventHandler";
+import {Edges} from "../../math/Edges";
 
 export class VideoMapper {
 
@@ -23,9 +24,11 @@ export class VideoMapper {
     }
 
     private static addDragHandles(videoMaterial: IVideoMaterial): void {
+        const startPoint = DragHandler.calcStartPoint(Edges.getEdges(videoMaterial.positions));
+
         [
             DragHandler.create(videoMaterial.positions, DragHandlerTypes.Mapper, VideoMaterialBuilder.dragVideo(videoMaterial)),
-            DragHandler.createMover(videoMaterial, VideoMaterialBuilder.moveVideo(videoMaterial, {x: 1, y: 1, z: 0})),
+            DragHandler.createMover(videoMaterial, VideoMaterialBuilder.moveVideo(videoMaterial, startPoint)),
             DragHandler.createDelete(videoMaterial, () => EventHandler.throwEvent(EventTypes.RemoveQuad, videoMaterial)),
         ].forEach((dh: IDragHandler) => {
             videoMaterial.dragHandler.push(dh);

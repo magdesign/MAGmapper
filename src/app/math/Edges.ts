@@ -15,6 +15,20 @@ export class Edges {
             index === length - 1;
     }
 
+    /**
+     * @JKU dirty hack for cutter save function
+     * needs to be rewritten in a clean way.
+     * @param edges
+     */
+    public static reorderLineEdgesForSprites(edges: IDimension[]){
+        return [
+            edges[0],
+            edges[1],
+            edges[3],
+            edges[2],
+        ];
+    }
+
     public static getEdges(vertices: IDimension[]): IDimension[] {
         return vertices.filter((_, i): boolean => this.isEdge(vertices.length, i));
     }
