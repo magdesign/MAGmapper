@@ -16,11 +16,10 @@ export class VideoCutter {
         const videoMaterial: IVideoMaterial = VideoMaterialBuilder.init(videoSource, src);
 
         videoMaterial.type = VideoType.Cutter;
-        targets.forEach((target) => {
-            this.initCutterDragHandle(videoMaterial, src.dragHandler, target)
-                .forEach((res) => {
-                    videoMaterial.dragHandler.push(res);
-                });
+        targets.forEach((target, i) => {
+            // draghandler[i] => grund dafür ist, dass paralel 2 listen abgearbeitet werden
+            const result: IDragHandler = this.initCutterDragHandle(videoMaterial, src.dragHandler[i], target);
+            videoMaterial.dragHandler.push(result);
         });
 
         return videoMaterial;
@@ -43,28 +42,25 @@ export class VideoCutter {
     }
 
 
-    private static initCutterDragHandle(videoMaterial: IVideoMaterial, source: IDragHandler[], target: IVideoMaterial): IDragHandler[] {
+    private static initCutterDragHandle(videoMaterial: IVideoMaterial, dragger: IDragHandler, target: IVideoMaterial): IDragHandler {
+        const line: any = dragger.line;
 
-        return source
-            .filter((dh: IDragHandler) => dh.type === DragHandlerTypes.Cutter)
-            .map((dragger: IDragHandler) => {
+        const spriteEdges = Edges.reorderLineEdgesForSprites(DimensionTransformer.fromFloatArrayToDimension(line.geometries[0].data.vertices));
 
+        const edges = Edges.getEdges(videoMaterial.positions);
 
-                const line: any = dragger.line;
+        return DragHandler.init(spriteEdges, DragHandlerTypes.Cutter, (event) => {
+            const activeDragHandler = videoMaterial.dragHandler.filter((dh: IDragHandler) => dh.id === event.object.name)[0];
 
+            // this line makes trouble because ref is not on the video edges
 
-                const dimensions = Edges.reorderLineEdgesForSprites(DimensionTransformer.fromFloatArrayToDimension(line.geometries[0].data.vertices));
+            const activeEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
+            LineBuilder.reorderLines(activeDragHandler.line, activeEdges);
 
-                return DragHandler.init(dimensions, DragHandlerTypes.Cutter, (event) => {
-                    const activeDragHandler = videoMaterial.dragHandler.filter((dh: IDragHandler) => dh.id === event.object.name)[0];
-                    const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
-                    LineBuilder.reorderLines(activeDragHandler.line, spriteEdges);
+            const uv: IDimension[] = UvMapper.reorderUvMapping(activeEdges, edges);
+            VideoSceneHelper.changeUv(uv, target.mesh);
 
-                    const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, activeDragHandler.edges);
-                    VideoSceneHelper.changeUv(uv, target.mesh);
-
-                });
-            });
+        });
     }
 
 
@@ -72,9 +68,12 @@ export class VideoCutter {
         const cutter = DragHandler.create(videoMaterial.positions, DragHandlerTypes.Cutter, (event) => {
             const activeDragHandler = videoMaterial.dragHandler.filter((dh: IDragHandler) => dh.id === event.object.name)[0];
             const spriteEdges: IDimension[] = SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
+
             LineBuilder.reorderLines(activeDragHandler.line, spriteEdges);
 
             const uv: IDimension[] = UvMapper.reorderUvMapping(spriteEdges, activeDragHandler.edges);
+
+            console.log(uv);
             VideoSceneHelper.changeUv(uv, target.mesh);
         });
 

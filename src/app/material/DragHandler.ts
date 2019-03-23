@@ -42,6 +42,7 @@ export class DragHandler {
 
     public static init(edges: IDimension[], type: DragHandlerTypes, fn: (event: any) => void): IDragHandler {
         const id = uuid();
+
         const sprites = SpriteBuilder.generateDragHanldes(id, edges, Config.DragHandler.source, Config.DragHandler.scale);
 
         return {
