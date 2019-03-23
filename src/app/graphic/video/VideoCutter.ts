@@ -17,12 +17,14 @@ export class VideoCutter {
 
         videoMaterial.type = VideoType.Cutter;
         targets.forEach((target) => {
-            videoMaterial.dragHandler.push(this.initCutterDragHandle(videoMaterial, src.dragHandler, target));
+            this.initCutterDragHandle(videoMaterial, src.dragHandler, target)
+                .forEach((res) => {
+                    videoMaterial.dragHandler.push(res);
+                });
         });
 
         return videoMaterial;
     }
-
 
     public static create(targets: IVideoMaterial[], video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
         const videoMaterial: IVideoMaterial = VideoMaterialBuilder.create(video, startPoint);
@@ -41,7 +43,7 @@ export class VideoCutter {
     }
 
 
-    private static initCutterDragHandle(videoMaterial: IVideoMaterial, source: IDragHandler[], target: IVideoMaterial): IDragHandler {
+    private static initCutterDragHandle(videoMaterial: IVideoMaterial, source: IDragHandler[], target: IVideoMaterial): IDragHandler[] {
 
         return source
             .filter((dh: IDragHandler) => dh.type === DragHandlerTypes.Cutter)
@@ -52,7 +54,6 @@ export class VideoCutter {
 
 
                 const dimensions = Edges.reorderLineEdgesForSprites(DimensionTransformer.fromFloatArrayToDimension(line.geometries[0].data.vertices));
-                console.log(dimensions);
 
                 return DragHandler.init(dimensions, DragHandlerTypes.Cutter, (event) => {
                     const activeDragHandler = videoMaterial.dragHandler.filter((dh: IDragHandler) => dh.id === event.object.name)[0];
@@ -63,7 +64,7 @@ export class VideoCutter {
                     VideoSceneHelper.changeUv(uv, target.mesh);
 
                 });
-            })[0];
+            });
     }
 
 
