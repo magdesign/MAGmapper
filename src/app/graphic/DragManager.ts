@@ -8,11 +8,10 @@ enum Event {
     DragStart = "dragstart",
 }
 
-export interface IDragHandles {
+export interface IDragManager {
     click: DragControls;
     move: DragControls;
 }
-
 
 export class DragManager {
 
@@ -45,11 +44,18 @@ export class DragManager {
         return dragControls;
     }
 
-    public static createDragHandler(materials: IVideoMaterial[], camera, renderer): DragControls {
+    public static createDragManager(materials: IVideoMaterial[], camera, renderer): IDragManager {
         const dragHandler: IDragHandler[] = this.loadDragHandler(materials, DragEventType.Drag);
         const clickHandler: IDragHandler[] = this.loadDragHandler(materials, DragEventType.Click);
 
-        this.initDragHandler(clickHandler, Event.DragStart, camera, renderer);
-        return this.initDragHandler(dragHandler, Event.Drag, camera, renderer);
+        return {
+            click: this.initDragHandler(clickHandler, Event.DragStart, camera, renderer),
+            move: this.initDragHandler(dragHandler, Event.Drag, camera, renderer),
+        };
+    }
+
+    public static resetDragManager(dragmanager: IDragManager): void {
+        dragmanager.click.dispose();
+        dragmanager.move.dispose();
     }
 }

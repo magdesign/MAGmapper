@@ -7,44 +7,63 @@ import {Scene, Sprite} from "three";
 import {VideoCutter} from "./video/VideoCutter";
 import {LocalStorage} from "../store/LocalStorage";
 import {SceneManager} from "./SceneManager";
-import {DragManager} from "./DragManager";
+import {DragManager, IDragManager} from "./DragManager";
 import {VideoMapper} from "./video/VideoMapper";
 
 
 export class EventManager {
 
+
     public static init(videos: IVideoMaterial[], scene: Scene, renderer, camera, htmlVideo: HTMLVideoElement): void {
 
-
-        let dragControls = DragManager.createDragHandler(videos, camera, renderer);
+        let dragControls: IDragManager = DragManager.createDragManager(videos, camera, renderer);
 
         EventHandler.addEventListener(EventTypes.NewQuad, () => {
-            dragControls.dispose();
+            DragManager.resetDragManager(dragControls);
 
             const newVideo = VideoMapper.create(htmlVideo, {x: 0, y: 0, z: 0});
 
             SceneManager.addVideoToScene(newVideo, scene);
 
-            videos.filter((vid: IVideoMaterial): boolean => vid.type === VideoType.Cutter)
+            videos
+                .filter((vid: IVideoMaterial): boolean => vid.type === VideoType.Cutter)
                 .forEach((vid: IVideoMaterial) => {
                     VideoCutter.addVideoCutterOutlines(vid, newVideo);
                     SceneManager.addDragHandlesToScene(vid, scene);
                 });
 
             videos.push(newVideo);
-            dragControls = DragManager.createDragHandler(videos, camera, renderer);
+            dragControls = DragManager.createDragManager(videos, camera, renderer);
         });
 
 
         EventHandler.addEventListener(EventTypes.Save, () => {
-            LocalStorage.save(scene.toJSON());
+            LocalStorage.save(videos);
+
         });
 
         EventHandler.addEventListener(EventTypes.Load, () => {
-            scene.children = [];
-            const saveScene = LocalStorage.load();
+            DragManager.resetDragManager(dragControls);
 
-            scene.add(saveScene);
+            const saveState: IVideoMaterial[] = LocalStorage.load();
+
+            const videoMapper: IVideoMaterial[] = saveState
+                .filter((video) => video.type === VideoType.Mapper)
+                .map((video) => VideoMapper.init(htmlVideo, video));
+
+            const videoCutter = saveState
+                .filter((video) => video.type === VideoType.Cutter)
+                .map((cutter) => VideoCutter.init(htmlVideo, cutter, videoMapper));
+
+            videos = videoMapper.concat(videoCutter);
+
+            scene.children = [];
+            DragManager.resetDragManager(dragControls);
+            dragControls = DragManager.createDragManager(videos, camera, renderer);
+
+
+
+            SceneManager.addToScene(videos, scene);
 
         });
 
@@ -56,7 +75,6 @@ export class EventManager {
                     scene.remove(vid.mesh);
                     vid.dragHandler.map((dh: IDragHandler) => {
                         scene.remove(dh.line);
-
                         dh.sprites.forEach((sprite: Sprite) => {
                             scene.remove(sprite);
                         });
@@ -67,7 +85,7 @@ export class EventManager {
                 });
 
             videos = videos.filter((vid) => vid.id !== video.id);
-            dragControls = DragManager.createDragHandler(videos, camera, renderer);
+            dragControls = DragManager.createDragManager(videos, camera, renderer);
         });
 
         EventHandler.addEventListener(EventTypes.Cutter, (value) => {

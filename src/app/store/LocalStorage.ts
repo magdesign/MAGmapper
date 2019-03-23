@@ -2,6 +2,9 @@ export class LocalStorage {
 
     public static save(value: any) {
 
+
+
+
         console.log(value);
         localStorage.setItem("mapper", JSON.stringify(value));
     }
