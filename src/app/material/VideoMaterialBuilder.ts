@@ -16,6 +16,7 @@ import {SpriteBuilder} from "./SpriteBuilder";
 import {LineBuilder} from "./LineBuilder";
 import {VideoSceneHelper} from "./VideoSceneHelper";
 import uuid = require("uuid");
+import {isNegativeNumberLiteral} from "tslint";
 
 export enum VideoType {
     Cutter,
@@ -31,6 +32,32 @@ export interface IVideoMaterial {
 }
 
 export class VideoMaterialBuilder {
+
+    public static init(video: HTMLVideoElement, src: IVideoMaterial): IVideoMaterial {
+
+
+        const mesh: any = src.mesh;
+
+
+        const texture = this.loadTexture(video);
+
+        const index = mesh.geometries[0].data.index.array;
+        const uv = new Float32Array(mesh.geometries[0].data.attributes.uv.array);
+        const position = new Float32Array(mesh.geometries[0].data.attributes.position.array);
+
+        const geometry = this.loadGeometry(index, uv, position);
+
+        const videoMesh = new Mesh(geometry, new MeshBasicMaterial({map: texture, wireframe: false}));
+
+        return {
+            id: src.id,
+            type: src.type,
+            dragHandler: [],
+            mesh: videoMesh,
+            positions: DimensionTransformer.fromFloatArrayToDimension(position),
+        };
+    }
+
 
     public static create(video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
@@ -53,7 +80,7 @@ export class VideoMaterialBuilder {
         };
     }
 
-    private static loadGeometry(indices, uvs: Float32Array, positions: Float32Array): BufferGeometry {
+    private static loadGeometry(indices: number[], uvs: Float32Array, positions: Float32Array): BufferGeometry {
         const geometry = new BufferGeometry();
         geometry.setIndex(indices);
         geometry.addAttribute("position", new BufferAttribute(positions, 3));
@@ -68,8 +95,6 @@ export class VideoMaterialBuilder {
         texture.minFilter = LinearFilter;
         return texture;
     }
-
-
 
     public static dragVideo(videoMaterial: IVideoMaterial) {
         return () => {

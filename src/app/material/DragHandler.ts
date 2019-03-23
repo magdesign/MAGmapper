@@ -28,7 +28,7 @@ export interface IDragHandler {
     sprites: Sprite[];
     fn: (event?: any) => void;
     dragEventType: DragEventType;
-    targetId?: string;
+    targetId?: string; // only for cutter
 }
 
 export class DragHandler {

@@ -9,9 +9,21 @@ import {Scene, Sprite} from "three";
 
 export class VideoCutter {
 
-    public static load(obj){
 
+
+    public static init(videoSource: HTMLVideoElement, src: IVideoMaterial, targets: IVideoMaterial[]): IVideoMaterial {
+
+        const videoMaterial: IVideoMaterial = VideoMaterialBuilder.init(videoSource, src);
+
+        videoMaterial.type = VideoType.Cutter;
+        targets.forEach((target) => {
+            videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
+        });
+
+        return videoMaterial;
     }
+
+
 
     public static create(targets: IVideoMaterial[], video: HTMLVideoElement, startPoint: IDimension): IVideoMaterial {
 
