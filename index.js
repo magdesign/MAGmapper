@@ -52273,11 +52273,17 @@ class DragManager {
         });
         return dragControls;
     }
-    static createDragHandler(materials, camera, renderer) {
+    static createDragManager(materials, camera, renderer) {
         const dragHandler = this.loadDragHandler(materials, DragHandler_1.DragEventType.Drag);
         const clickHandler = this.loadDragHandler(materials, DragHandler_1.DragEventType.Click);
-        this.initDragHandler(clickHandler, Event.DragStart, camera, renderer);
-        return this.initDragHandler(dragHandler, Event.Drag, camera, renderer);
+        return {
+            click: this.initDragHandler(clickHandler, Event.DragStart, camera, renderer),
+            move: this.initDragHandler(dragHandler, Event.Drag, camera, renderer),
+        };
+    }
+    static resetDragManager(dragmanager) {
+        dragmanager.click.dispose();
+        dragmanager.move.dispose();
     }
 }
 exports.DragManager = DragManager;
@@ -52307,26 +52313,37 @@ const DragManager_1 = __webpack_require__(/*! ./DragManager */ "./src/app/graphi
 const VideoMapper_1 = __webpack_require__(/*! ./video/VideoMapper */ "./src/app/graphic/video/VideoMapper.ts");
 class EventManager {
     static init(videos, scene, renderer, camera, htmlVideo) {
-        let dragControls = DragManager_1.DragManager.createDragHandler(videos, camera, renderer);
+        let dragControls = DragManager_1.DragManager.createDragManager(videos, camera, renderer);
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.NewQuad, () => {
-            dragControls.dispose();
+            DragManager_1.DragManager.resetDragManager(dragControls);
             const newVideo = VideoMapper_1.VideoMapper.create(htmlVideo, { x: 0, y: 0, z: 0 });
             SceneManager_1.SceneManager.addVideoToScene(newVideo, scene);
-            videos.filter((vid) => vid.type === VideoMaterialBuilder_1.VideoType.Cutter)
+            videos
+                .filter((vid) => vid.type === VideoMaterialBuilder_1.VideoType.Cutter)
                 .forEach((vid) => {
                 VideoCutter_1.VideoCutter.addVideoCutterOutlines(vid, newVideo);
                 SceneManager_1.SceneManager.addDragHandlesToScene(vid, scene);
             });
             videos.push(newVideo);
-            dragControls = DragManager_1.DragManager.createDragHandler(videos, camera, renderer);
+            dragControls = DragManager_1.DragManager.createDragManager(videos, camera, renderer);
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Save, () => {
-            LocalStorage_1.LocalStorage.save(scene.toJSON());
+            LocalStorage_1.LocalStorage.save(videos);
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Load, () => {
+            DragManager_1.DragManager.resetDragManager(dragControls);
+            const saveState = LocalStorage_1.LocalStorage.load();
+            const videoMapper = saveState
+                .filter((video) => video.type === VideoMaterialBuilder_1.VideoType.Mapper)
+                .map((video) => VideoMapper_1.VideoMapper.init(htmlVideo, video));
+            const videoCutter = saveState
+                .filter((video) => video.type === VideoMaterialBuilder_1.VideoType.Cutter)
+                .map((cutter) => VideoCutter_1.VideoCutter.init(htmlVideo, cutter, videoMapper));
+            videos = videoMapper.concat(videoCutter);
             scene.children = [];
-            const saveScene = LocalStorage_1.LocalStorage.load();
-            scene.add(saveScene);
+            DragManager_1.DragManager.resetDragManager(dragControls);
+            dragControls = DragManager_1.DragManager.createDragManager(videos, camera, renderer);
+            SceneManager_1.SceneManager.addToScene(videos, scene);
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.RemoveQuad, (event) => {
             const video = event.detail.value;
@@ -52342,7 +52359,7 @@ class EventManager {
                 VideoCutter_1.VideoCutter.removeCutterItem(videos, vid, scene);
             });
             videos = videos.filter((vid) => vid.id !== video.id);
-            dragControls = DragManager_1.DragManager.createDragHandler(videos, camera, renderer);
+            dragControls = DragManager_1.DragManager.createDragManager(videos, camera, renderer);
         });
         EventHandler_1.EventHandler.addEventListener(EventHandler_1.EventTypes.Cutter, (value) => {
             videos.forEach((video) => {
@@ -52505,10 +52522,20 @@ const LineBuilder_1 = __webpack_require__(/*! ../../material/LineBuilder */ "./s
 const SpriteBuilder_1 = __webpack_require__(/*! ../../material/SpriteBuilder */ "./src/app/material/SpriteBuilder.ts");
 const VideoMaterialBuilder_1 = __webpack_require__(/*! ../../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
 const VideoSceneHelper_1 = __webpack_require__(/*! ../../material/VideoSceneHelper */ "./src/app/material/VideoSceneHelper.ts");
+const DimensionTransformer_1 = __webpack_require__(/*! ../../math/DimensionTransformer */ "./src/app/math/DimensionTransformer.ts");
 const UvMapper_1 = __webpack_require__(/*! ../../math/UvMapper */ "./src/app/math/UvMapper.ts");
 const DragHandler_1 = __webpack_require__(/*! ../../material/DragHandler */ "./src/app/material/DragHandler.ts");
+const Edges_1 = __webpack_require__(/*! ../../math/Edges */ "./src/app/math/Edges.ts");
 class VideoCutter {
-    static load(obj) {
+    static init(videoSource, src, targets) {
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.init(videoSource, src);
+        videoMaterial.type = VideoMaterialBuilder_1.VideoType.Cutter;
+        targets.forEach((target, i) => {
+            // draghandler[i] => grund dafür ist, dass paralel 2 listen abgearbeitet werden
+            const result = this.initCutterDragHandle(videoMaterial, src.dragHandler[i], target);
+            videoMaterial.dragHandler.push(result);
+        });
+        return videoMaterial;
     }
     static create(targets, video, startPoint) {
         const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint);
@@ -52522,12 +52549,26 @@ class VideoCutter {
         videoMaterial.dragHandler.push(this.createCutterDragHandle(videoMaterial, target));
         return videoMaterial;
     }
+    static initCutterDragHandle(videoMaterial, dragger, target) {
+        const line = dragger.line;
+        const spriteEdges = Edges_1.Edges.reorderLineEdgesForSprites(DimensionTransformer_1.DimensionTransformer.fromFloatArrayToDimension(line.geometries[0].data.vertices));
+        const edges = Edges_1.Edges.getEdges(videoMaterial.positions);
+        return DragHandler_1.DragHandler.init(spriteEdges, DragHandler_1.DragHandlerTypes.Cutter, (event) => {
+            const activeDragHandler = videoMaterial.dragHandler.filter((dh) => dh.id === event.object.name)[0];
+            // this line makes trouble because ref is not on the video edges
+            const activeEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
+            LineBuilder_1.LineBuilder.reorderLines(activeDragHandler.line, activeEdges);
+            const uv = UvMapper_1.UvMapper.reorderUvMapping(activeEdges, edges);
+            VideoSceneHelper_1.VideoSceneHelper.changeUv(uv, target.mesh);
+        });
+    }
     static createCutterDragHandle(videoMaterial, target) {
         const cutter = DragHandler_1.DragHandler.create(videoMaterial.positions, DragHandler_1.DragHandlerTypes.Cutter, (event) => {
             const activeDragHandler = videoMaterial.dragHandler.filter((dh) => dh.id === event.object.name)[0];
             const spriteEdges = SpriteBuilder_1.SpriteBuilder.loadSpriteEdges(activeDragHandler.sprites);
             LineBuilder_1.LineBuilder.reorderLines(activeDragHandler.line, spriteEdges);
             const uv = UvMapper_1.UvMapper.reorderUvMapping(spriteEdges, activeDragHandler.edges);
+            console.log(uv);
             VideoSceneHelper_1.VideoSceneHelper.changeUv(uv, target.mesh);
         });
         cutter.targetId = target.id;
@@ -52568,17 +52609,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DragHandler_1 = __webpack_require__(/*! ../../material/DragHandler */ "./src/app/material/DragHandler.ts");
 const VideoMaterialBuilder_1 = __webpack_require__(/*! ../../material/VideoMaterialBuilder */ "./src/app/material/VideoMaterialBuilder.ts");
 const EventHandler_1 = __webpack_require__(/*! ../../event/EventHandler */ "./src/app/event/EventHandler.ts");
+const Edges_1 = __webpack_require__(/*! ../../math/Edges */ "./src/app/math/Edges.ts");
 class VideoMapper {
+    static init(videoSource, src) {
+        const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.init(videoSource, src);
+        this.addDragHandles(videoMaterial);
+        videoMaterial.type = VideoMaterialBuilder_1.VideoType.Mapper;
+        return videoMaterial;
+    }
     static create(video, startPoint) {
         const videoMaterial = VideoMaterialBuilder_1.VideoMaterialBuilder.create(video, startPoint);
+        this.addDragHandles(videoMaterial);
+        videoMaterial.type = VideoMaterialBuilder_1.VideoType.Mapper;
+        return videoMaterial;
+    }
+    static addDragHandles(videoMaterial) {
+        const startPoint = DragHandler_1.DragHandler.calcStartPoint(Edges_1.Edges.getEdges(videoMaterial.positions));
         [
             DragHandler_1.DragHandler.create(videoMaterial.positions, DragHandler_1.DragHandlerTypes.Mapper, VideoMaterialBuilder_1.VideoMaterialBuilder.dragVideo(videoMaterial)),
-            DragHandler_1.DragHandler.createMover(videoMaterial, VideoMaterialBuilder_1.VideoMaterialBuilder.moveVideo(videoMaterial, { x: 1, y: 1, z: 0 })),
+            DragHandler_1.DragHandler.createMover(videoMaterial, VideoMaterialBuilder_1.VideoMaterialBuilder.moveVideo(videoMaterial, startPoint)),
             DragHandler_1.DragHandler.createDelete(videoMaterial, () => EventHandler_1.EventHandler.throwEvent(EventHandler_1.EventTypes.RemoveQuad, videoMaterial)),
         ].forEach((dh) => {
             videoMaterial.dragHandler.push(dh);
         });
-        return videoMaterial;
     }
 }
 exports.VideoMapper = VideoMapper;
@@ -52616,8 +52669,11 @@ var DragEventType;
 })(DragEventType = exports.DragEventType || (exports.DragEventType = {}));
 class DragHandler {
     static create(positions, type, fn) {
-        const id = uuid();
         const edges = Edges_1.Edges.getEdges(positions);
+        return this.init(edges, type, fn);
+    }
+    static init(edges, type, fn) {
+        const id = uuid();
         const sprites = SpriteBuilder_1.SpriteBuilder.generateDragHanldes(id, edges, config_1.Config.DragHandler.source, config_1.Config.DragHandler.scale);
         return {
             dragEventType: DragEventType.Drag,
@@ -52629,16 +52685,19 @@ class DragHandler {
             type,
         };
     }
-    static createMover(video, fn) {
-        const id = uuid();
-        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(video.mesh);
-        const edges = Edges_1.Edges.getEdges(positions);
+    static calcStartPoint(edges) {
         const calcDelta = (x1, x2) => (x2 - x1) / 2 + x1;
-        const startPoint = {
+        return {
             x: calcDelta(edges[0].x, edges[3].x),
             y: calcDelta(edges[0].y, edges[3].y),
             z: 0,
         };
+    }
+    static createMover(video, fn) {
+        const id = uuid();
+        const positions = VideoSceneHelper_1.VideoSceneHelper.getEdgesFromScene(video.mesh);
+        const edges = Edges_1.Edges.getEdges(positions);
+        const startPoint = this.calcStartPoint(edges);
         return {
             dragEventType: DragEventType.Drag,
             edges,
@@ -52877,6 +52936,22 @@ var VideoType;
     VideoType[VideoType["Mapper"] = 1] = "Mapper";
 })(VideoType = exports.VideoType || (exports.VideoType = {}));
 class VideoMaterialBuilder {
+    static init(video, src) {
+        const mesh = src.mesh;
+        const texture = this.loadTexture(video);
+        const index = mesh.geometries[0].data.index.array;
+        const uv = new Float32Array(mesh.geometries[0].data.attributes.uv.array);
+        const position = new Float32Array(mesh.geometries[0].data.attributes.position.array);
+        const geometry = this.loadGeometry(index, uv, position);
+        const videoMesh = new three_1.Mesh(geometry, new three_1.MeshBasicMaterial({ map: texture, wireframe: false }));
+        return {
+            id: src.id,
+            type: src.type,
+            dragHandler: [],
+            mesh: videoMesh,
+            positions: DimensionTransformer_1.DimensionTransformer.fromFloatArrayToDimension(position),
+        };
+    }
     static create(video, startPoint) {
         const indices = Indices_1.Indices.calcIndices(config_1.Config.Vertices.size);
         const positions = Mapper_1.Mapper.verticesWithStartPoint(config_1.Config.Vertices.size, 2, startPoint);
@@ -53067,6 +53142,19 @@ class Edges {
             index === length - Math.sqrt(length) ||
             index === Math.sqrt(length) - 1 ||
             index === length - 1;
+    }
+    /**
+     * @JKU dirty hack for cutter save function
+     * needs to be rewritten in a clean way.
+     * @param edges
+     */
+    static reorderLineEdgesForSprites(edges) {
+        return [
+            edges[0],
+            edges[1],
+            edges[3],
+            edges[2],
+        ];
     }
     static getEdges(vertices) {
         return vertices.filter((_, i) => this.isEdge(vertices.length, i));
