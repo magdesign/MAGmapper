@@ -10,15 +10,17 @@ cache:
     - node_modules
 
 install:
+  - cd client
   - npm install
 
 script:
+  - cd client
   - npm run test
   - npm run build
 
 deploy:
   provider: pages
-  local-dir: dist
+  local-dir: client/dist
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   keep-history: true

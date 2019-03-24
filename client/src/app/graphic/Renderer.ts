@@ -25,7 +25,20 @@ export interface IScene {
 class Renderer {
 
     public static init() {
+        let ws = new WebSocket("ws://localhost:9030");
 
+
+
+        ws.addEventListener('open', (event) => {
+            console.log(event);
+            // Send a message to the WebSocket server
+            ws.send(JSON.stringify({test: "test"}));
+        });
+
+        ws.addEventListener('message', (event) => {
+            console.log(event);
+            // Send a message to the WebSocket server
+        });
 
 
         const scene: Scene = new Scene();
@@ -45,8 +58,6 @@ class Renderer {
 
         videoMapper.push(videoCutter);
         SceneManager.addToScene(videoMapper, scene);
-
-
 
 
         EventManager.init(videoMapper, scene, renderer, camera, video);

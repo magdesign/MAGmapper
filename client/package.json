@@ -1,5 +1,5 @@
 {
-  "name": "mag-mapper",
+  "name": "magmapper-client",
   "version": "1.0.0",
   "description": "Videomapper",
   "main": "index.js",
