@@ -1,14 +1,14 @@
-
-# MAGmapper  [![Build Status](https://travis-ci.org/magdesign/MAGmapper.svg?branch=master)](https://travis-ci.org/magdesign/MAGmapper)
+# Openmapper  [![Build Status](https://travis-ci.org/magdesign/MAGmapper.svg?branch=master)](https://travis-ci.org/magdesign/MAGmapper)
 
 
 ## Basic Idea
 An opensource videomapper based on three.js</br>
-Rubs on any plattform using Chrome or Firefox.
+Runs on any plattform using Chrome or Firefox.
 See [example](https://mapper.jku.one/)
 
-Feel free to contribute or donate :-)</br
-donation@openmapper.ch
+Feel free to contribute or donate :-) </br>
+
+donation@openmapper.ch</br>
 https://openmapper.ch</br>
 
 If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
