@@ -7,7 +7,7 @@
     "start": "tsc src/Socket.ts && node src/Socket.js",
     "build": "npm-run-all build:*",
     "build:transpile": "tsc",
-    "build:compile": "nexe dist/Socket.js"
+    "build:compile": "nexe dist/Socket.js -o dist/socket"
   },
   "author": "Jaun1011",
   "license": "ISC",
