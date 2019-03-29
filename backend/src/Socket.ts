@@ -9,10 +9,7 @@ let log4js = require("log4js");
 let logger = log4js.getLogger();
 
 logger.level = "debug";
-
-
 logger.info("Listen on port: " + port);
-
 
 
 wss.on("connection", (ws: any) => {
@@ -20,7 +17,7 @@ wss.on("connection", (ws: any) => {
     console.log(ws.id);
 
 
-    sendRegistrationReguest(ws.id, wss.clients);
+    sendRegistrationRequest(ws.id, wss.clients);
 
     ws.on("message", (msg) => {
         console.log("message");
@@ -34,10 +31,11 @@ wss.on("connection", (ws: any) => {
 });
 
 
-function sendRegistrationReguest(id, clients) {
+function sendRegistrationRequest(id: string, clients: any) {
+    const ids = clients.map((client: any) => client.id);
+
+
     clients.forEach( (client) => {
-        const ids = [];
-        wss.clients.forEach((client: any) => ids.push(client.id));
 
         client.send(JSON.stringify({
             id,

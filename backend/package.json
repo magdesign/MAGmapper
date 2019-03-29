@@ -4,16 +4,25 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "tsc src/Socket.ts && node src/Socket.js"
+    "start": "tsc src/Socket.ts && node src/Socket.js",
+    "build": "npm-run-all build:*",
+    "build:transpile": "tsc",
+    "build:compile": "nexe dist/Socket.js"
   },
   "author": "Jaun1011",
   "license": "ISC",
   "dependencies": {
     "@types/log4js": "^2.3.5",
+    "@types/node": "^11.12.1",
     "@types/uuid": "^3.4.4",
     "@types/ws": "^6.0.1",
     "log4js": "^4.0.2",
     "uuid": "^3.3.2",
     "ws": "^6.2.0"
+  },
+  "devDependencies": {
+    "nexe": "^2.0.0-rc.34",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.3.3333"
   }
 }
