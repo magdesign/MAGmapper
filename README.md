@@ -3,12 +3,13 @@
 
 
 ## Basic Idea
-A Videomapper based on three.js</br>
-Should run on any plattform using Chrome or Firefox.
+An opensource videomapper based on three.js</br>
+Rubs on any plattform using Chrome or Firefox.
 See [example](https://mapper.jku.one/)
 
-Feel free to contribute or donate :-)</br>
-https://magmapper.ch</br>
+Feel free to contribute or donate :-)</br
+donation@openmapper.ch
+https://openmapper.ch</br>
 
 If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
 
@@ -16,7 +17,8 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 ## Next important fixes
 - [ ] remote access on mapper
-- [ ] curb mapper.jku.one to magmapper.ch/mapper
+- [ ] configure all the deploy stuff on server
+- [ ] curb mapper.jku.one to openmapper.ch/mapper
 - [ ] hide menu by default (see comment in UiConfig.ts)
 - [x] save current state
 - [ ] Auto Snatch Draghandles
@@ -26,7 +28,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 - [x] Basic working prototype to find contributers
 - [ ] Fundraising, make bountysources, promote on known vj channels
-- [x] Open a domain: magmapper.ch
+- [x] Open a domain: openmapper.ch 
 
 ### Basics
 - [x] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
