@@ -19,7 +19,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [ ] remote access on mapper
 - [ ] configure all the deploy stuff on server
 - [ ] curb mapper.jku.one to openmapper.ch/mapper
-- [ ] hide menu by default (see comment in UiConfig.ts)
+- [ ] hide menu by default (see comment in UiConfig.ts, https://github.com/dataarts/dat.gui/commit/d979883423e5fa4483d8cede5fbe8cc80e0ecd)
 - [x] save current state
 - [ ] Auto Snatch Draghandles
 - [ ] Show only draghandles for selected quad
