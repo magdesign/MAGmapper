@@ -13,24 +13,24 @@ https://openmapper.ch</br>
 
 If you are experinced and have useful inputs, please contact us: info_at_magdesign.ch
 
-![Alt text](https://github.com/magdesign/MAGmapper/blob/master/doc/Layout/Layout_01_MappingMode.png?raw=true "Optional Title")
+## Next important features
 
-## Next important fixes
-- [ ] remote access on mapper
-- [ ] configure all the deploy stuff on server
-- [ ] curb mapper.jku.one to openmapper.ch/mapper
+- [ ] remote access on mapper (the whole websockets/docker stuff)
+- [ ] configure all the deploy stuff on server openmapper.dev
+- [ ] curb mapper.jku.one to openmapper.dev
 - [ ] hide menu by default (see comment in UiConfig.ts, https://github.com/dataarts/dat.gui/commit/d979883423e5fa4483d8cede5fbe8cc80e0ecd)
 - [x] save current state
 - [ ] Auto Snatch Draghandles
-- [ ] Show only draghandles for selected quad
+- [ ] Show only draghandles for selected quad, maybe use colors
 
 ## To Do Tasklist
 
+- [ ] Fundraising, make bountysources, promote on known vj channels, find foundations
 - [x] Basic working prototype to find contributers
-- [ ] Fundraising, make bountysources, promote on known vj channels
 - [x] Open a domain: openmapper.ch 
 
 ### Basics
+- [ ] Save and load (video)files
 - [x] Migrate to productive software version (better code, dashboard, comments, modular, typed sourcecode)
 - [x] Play / Pause
 - [x] Enable/Disable Wireframe mode
@@ -42,23 +42,24 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 - [x] Define uvw read input for texture coverage (cutter)
 - [ ] Various colors for the various quads/cutter
 - [x] Define UI/UX, when calling it must be an overlay
-- [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, colors, 3d objects, shadertoy code, clock, website input)
+- [ ] Function to select [sources](https://threejs.org/docs/#api/textures/VideoTexture) (video, image, slideshow with sync, camera, NDI, colors, 3d objects, shadertoy code, clock, website input)
 - [X] Shortcuts
 - [x] Define Shortcut List, [see here](https://github.com/magdesign/MAGmapper/blob/master/doc/Keymap.md)
-- [ ] Save and load files
+- [ ] Create some sort of layers to change the behaviour of which surface is in front and which is back
 - [ ] Other surfaces triangles, spheres, hexagons
 
 
 ### Advanced
+- [ ] add [blending](https://threejs.org/examples/#webgl_materials_blending) function for each surface
+- [ ] Softedge blending on each surface (sides, if possible also custom grade) if not, create a workaround with blending a second material e.g. .png file with the opacity [function](https://threejs.org/examples/#webgl_materials_transparency)
 - [ ] Bezier function [check this](https://computergraphics.stackexchange.com/questions/3764/apply-distortion-to-b%C3%A9zier-surface?answertab=votes#tab-top) ight be based on [this](https://pomax.github.io/bezierjs/) and needs again a shit load of mathematical braining....
 - [ ] Share timecode to sync multiple players (websockets)
 - [ ] List in UI to show all connected slaves
 - [ ] Switch UI to control a defined client (mark them with colors)
 - [ ] Grid warp
 - [ ] Adjust brightness, contrast, rgb of output texture with [filters](https://threejs.org/examples/?q=filt#webgl_materials_texture_filters)
-- [ ] Softedge blending on each surface.
-- [ ] Audio reactive FX.
-
+- [ ] Mapping converter to create mapping coordinates from a .svg file, similar to [this](https://github.com/magdesign/mapping-converter2)
+- [ ] Audio reactive FX
 - [ ] much much more crazy stuff....
 
 
