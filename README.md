@@ -51,7 +51,7 @@ If you are experinced and have useful inputs, please contact us: info_at_magdesi
 
 ### Advanced
 - [ ] add [blending](https://threejs.org/examples/#webgl_materials_blending) function for each surface
-- [ ] Softedge blending on each surface (sides, if possible also custom grade) if not, create a workaround with blending a second material e.g. .png file with the opacity [function](https://threejs.org/examples/#webgl_materials_transparency)
+- [ ] Softedge blending on each surface if possible with mouse if not with some sliders in the menu to adjust: left, right, top, button, worst case: create a workaround with blending a second material e.g. .png file with the opacity [function](https://threejs.org/examples/#webgl_materials_transparency)
 - [ ] Bezier function [check this](https://computergraphics.stackexchange.com/questions/3764/apply-distortion-to-b%C3%A9zier-surface?answertab=votes#tab-top) ight be based on [this](https://pomax.github.io/bezierjs/) and needs again a shit load of mathematical braining....
 - [ ] Share timecode to sync multiple players (websockets)
 - [ ] List in UI to show all connected slaves
